@@ -7,13 +7,12 @@
 ##########################################################################
 
 """
-Wrappers for the FreeSurfer's surface utilities.
+Wrappers for the FreeSurfer's surface conversion utilities.
 """
 
 # System import
 import os
 import glob
-import json
 import numpy
 import nibabel
 from nibabel import freesurfer
@@ -122,7 +121,7 @@ def resample_cortical_surface(
         The surface we want to resample ('white' or 'pial').
     fsconfig: str (optional)
         The freesurfer configuration batch.
-        
+
     Returns
     -------
     resamplefiles: list of str
@@ -223,7 +222,7 @@ def surf_convert(
 
     Returns
     -------
-    csurffiles: 
+    csurffiles:
         The converted surfaces in the native space indexed coordinates.
     """
     # Create a t1 subject map

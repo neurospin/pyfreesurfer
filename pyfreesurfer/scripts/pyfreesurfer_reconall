@@ -131,7 +131,7 @@ First check if the subject FreeSurfer directory exists on the file system, and
 clean it if requested.
 """
 tool = "pyfreesurfer_reconall"
-config = args.fsconfig or DEFAULT_FREESURFER_PATH 
+config = args.fsconfig or DEFAULT_FREESURFER_PATH
 if args.verbose > 0:
     print("[info] Start FreeSurfer recon_all...")
     print("[info] Directory: {0}.".format(args.fsdir))

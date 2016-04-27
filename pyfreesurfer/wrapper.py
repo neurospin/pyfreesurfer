@@ -11,6 +11,7 @@ import os
 import subprocess
 import json
 import re
+import warnings
 
 # Pyfreesurfer import
 from .configuration import environment
@@ -129,7 +130,7 @@ class FSWrapper(object):
                         message = ("Installed '{0}' version of FreeSurfer "
                                    "not tested. Currently supported version "
                                    "is '{1}'.".format(self.version,
-                                                      FREESURFER_RELEASEE))
+                                                      FREESURFER_RELEASE))
                         warnings.warn(message)
 
         # Configuration file is not a file

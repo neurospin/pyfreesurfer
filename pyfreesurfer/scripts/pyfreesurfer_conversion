@@ -18,11 +18,11 @@ try:
     import bredala
     bredala.USE_PROFILER = False
     bredala.register("pyfreesurfer.conversions.voltools",
-        names=["mri_convert"])
+                     names=["mri_convert"])
     bredala.register("pyfreesurfer.conversions.surftools",
-        names=["resample_cortical_surface", "surf_convert"])
+                     names=["resample_cortical_surface", "surf_convert"])
     bredala.register("pyfreesurfer.utils.regtools",
-        names=["conformed_to_native_space"])
+                     names=["conformed_to_native_space"])
 except:
     pass
 
@@ -74,7 +74,7 @@ python $HOME/git/pyfreesurfer/pyfreesurfer/scripts/pyfreesurfer_conversion \
     -d /neurospin/senior/nsap/data/V4/freesurfer \
     -s ag110371 \
     -o /neurospin/senior/nsap/data/V4/qc/freesurfer \
-    -e 
+    -e
 """
 
 
@@ -123,7 +123,7 @@ First construct the subject FreeSurfer directory and check its existance on
 the file system.
 """
 tool = "pyfreesurfer_conversion"
-config = args.fsconfig or DEFAULT_FREESURFER_PATH 
+config = args.fsconfig or DEFAULT_FREESURFER_PATH
 if args.verbose > 0:
     print("[info] Start FreeSurfer conversions...")
     print("[info] Directory: {0}.".format(args.fsdir))
@@ -196,4 +196,3 @@ annotations = list(set(annotations))
 outputs += annotations
 if args.verbose > 1:
     print("[result] Annotations: {0}.".format(annotations))
-

@@ -63,6 +63,8 @@ VERSION = __version__
 PROVIDES = ["pyfreesurfer"]
 REQUIRES = [
     "numpy>=1.6.1",
-    "nibabel>=1.1.0"
+    "nibabel>=1.1.0",
+    "matplotlib>=1.3.1",
+    "openctm"
 ]
 EXTRA_REQUIRES = {}

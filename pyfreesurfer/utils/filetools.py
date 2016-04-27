@@ -78,7 +78,8 @@ def surf2ctm(fsdir, outdir):
             for label in surface.labels:
                 if label < 0:
                     label = 0
-                color = numpy.asarray(surface.metadata[label]["color"], dtype=float)
+                color = numpy.asarray(surface.metadata[label]["color"],
+                                      dtype=float)
                 color /= 255.
                 colors.append(tuple(color))
             pVerts = make_blob(surface.vertices, ctypes.c_float)
@@ -127,5 +128,3 @@ def parse_fs_lut(path_lut):
                 except ValueError:
                     continue
     return fs_lut_names, fs_lut_colors
-
-

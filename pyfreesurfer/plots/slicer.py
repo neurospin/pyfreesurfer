@@ -7,9 +7,7 @@
 ##########################################################################
 
 # System import
-import subprocess
 import os
-import shutil
 import glob
 
 # Pyfreesurfer import
@@ -107,4 +105,3 @@ def slice_aparc_overlay(fsdir, sid, outdir, cut_axis="C",
         os.remove(path)
 
     return slices
-

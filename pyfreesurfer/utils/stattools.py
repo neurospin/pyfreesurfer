@@ -140,10 +140,6 @@ def aparcstats2table(fsdir, outdir, fsconfig=DEFAULT_FREESURFER_PATH):
 
             recon = FSWrapper(cmd, shfile=fsconfig)
             recon()
-            if recon.exitcode != 0:
-                raise FreeSurferRuntimeError(
-                    recon.cmd[0], " ".join(recon.cmd[1:]), recon.stderr +
-                    recon.stdout)
 
     # Restore the FreeSurfer working directory
     if fscwd is not None:
@@ -168,7 +164,7 @@ def asegstats2table(fsdir, outdir, fsconfig=DEFAULT_FREESURFER_PATH):
         The statistical destination folder.
     fsconfig: str (optional)
         The freesurfer configuration batch.
-        
+
     Return
     ------
     statfiles: list of str
@@ -204,10 +200,6 @@ def asegstats2table(fsdir, outdir, fsconfig=DEFAULT_FREESURFER_PATH):
         "--meas", "volume", "--tablefile", statfile, "--delimiter", "comma"]
     recon = FSWrapper(cmd, shfile=fsconfig)
     recon()
-    if recon.exitcode != 0:
-        raise FreeSurferRuntimeError(
-            recon.cmd[0], " ".join(recon.cmd[1:]), recon.stderr +
-            recon.stdout)
 
     # Restore the FreeSurfer working directory
     if fscwd is not None:
@@ -332,4 +324,3 @@ def textures2table(
         textures_files.append(textures_file)
 
     return textures_files
-

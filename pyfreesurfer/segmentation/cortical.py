@@ -69,7 +69,7 @@ def recon_all(fsdir, anatfile, sid, fsconfig=DEFAULT_FREESURFER_PATH):
         The FreeSurfer configuration batch.
     Returns
     -------
-    subjfsdir: str 
+    subjfsdir: str
         Path to the resulting FreeSurfer segmentation.
     """
     # Check input parameters
@@ -84,4 +84,3 @@ def recon_all(fsdir, anatfile, sid, fsconfig=DEFAULT_FREESURFER_PATH):
     subjfsdir = os.path.join(fsdir, sid)
 
     return subjfsdir
-

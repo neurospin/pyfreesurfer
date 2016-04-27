@@ -7,9 +7,7 @@
 ##########################################################################
 
 # System import
-import os
 import copy
-import re
 import numpy
 from nibabel import freesurfer
 
@@ -34,7 +32,8 @@ class TriSurface(object):
         labels: array (nvert)
             a label associated to each vertex.
         metadata: dict
-            a mapping between each label and associated 'color' and 'region' name.
+            a mapping between each label and associated 'color' and 'region'
+            name.
         inflated_vertices: array (nvert, 3)
             the mesh inflated vertices.
         """

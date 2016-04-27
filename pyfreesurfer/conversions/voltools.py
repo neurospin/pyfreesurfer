@@ -7,13 +7,12 @@
 ##########################################################################
 
 """
-Wrappers for the FreeSurfer's volume utilities.
+Wrappers for the FreeSurfer's volume conversion utilities.
 """
 
 # System import
 import os
 import glob
-import json
 
 # Pyfreesurfer import
 from pyfreesurfer.wrapper import FSWrapper
@@ -197,4 +196,3 @@ def mri_vol2surf(
     # Execute the FreeSurfer command
     recon = FSWrapper(cmd, shfile=fsconfig)
     recon()
-

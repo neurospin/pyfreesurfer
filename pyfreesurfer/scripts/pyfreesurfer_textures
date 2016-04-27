@@ -137,7 +137,7 @@ First check if the texture output directory exists on the file system, and
 clean it if requested.
 """
 tool = "pyfreesurfer_textures"
-config = args.fsconfig or DEFAULT_FREESURFER_PATH 
+config = args.fsconfig or DEFAULT_FREESURFER_PATH
 if args.verbose > 0:
     print("[info] Start FreeSurfer cat textures...")
     print("[info] Directory: {0}.".format(args.fsdir))
