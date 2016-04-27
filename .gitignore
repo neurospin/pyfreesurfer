@@ -14,5 +14,6 @@
 ###########
 build/
 dist/
-pyConnectomist.egg-info/
+pyFreeSurfer.egg-info/
 __pycache__/
+.eggs/
