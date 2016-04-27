@@ -17,7 +17,7 @@ install:
     - conda create -n testenv --yes pip python=$TRAVIS_PYTHON_VERSION
     - source activate testenv
     - if [ ${TRAVIS_PYTHON_VERSION:0:1} == "2" ]; then pip install mock; fi
-    - conda install --yes numpy matplotlib
+    - conda install --yes numpy matplotlib openctm
     - pip install nose
     - pip install nose-exclude
     - pip install coverage
