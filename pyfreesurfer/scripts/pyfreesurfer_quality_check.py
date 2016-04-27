@@ -125,7 +125,7 @@ First construct the subject FreeSurfer directory and check its existance on
 the file system.
 """
 tool = "FreeSurfer QC"
-config = args.fsconfig or DEFAULT_FREESURFER_PATH 
+config = args.fsconfig or DEFAULT_FREESURFER_PATH
 if args.verbose > 0:
     print("[info] Start FreeSurfer QC...")
     print("[info] Directory: {0}.".format(args.fsdir))
@@ -172,16 +172,30 @@ for name, cohort_stats in popstats.items():
 """
 Create white/pial mesh overlays
 """
-slices = []
+slices_mesh = []
 for cut_axis in ["C", "A", "S"]:
-    axisdir = os.path.join(qcdir, AXIS_NAME[cut_axis], "aparc_overlay")
+    axisdir = os.path.join(qcdir, AXIS_NAME[cut_axis], "aparc_mesh")
     if not os.path.isdir(axisdir):
         os.makedirs(axisdir)
-    slices.append(
+    slices_mesh.append(
         slice_aparc_overlay(args.fsdir, args.subjectid, axisdir,
                             cut_axis=cut_axis, erase=False,
                             slice_interval=(0, 255, increment),
                             fsconfig=config))
+"""
+Create aparc segmentation overlays
+"""
+slices_segmentation = []
+for cut_axis in ["C", "A", "S"]:
+    axisdir = os.path.join(qcdir, AXIS_NAME[cut_axis], "aparc_segmentation")
+    if not os.path.isdir(axisdir):
+        os.makedirs(axisdir)
+    slices_segmentation.append(
+        slice_aparc_segmentation(args.fsdir, args.subjectid, axisdir,
+                                 cut_axis=cut_axis, erase=False,
+                                 slice_interval=(0, 255, increment),
+                                 fsconfig=config,
+                                 fslookup=None))
 
 
 """
@@ -189,8 +203,7 @@ Compress the FreeSurfer surfaces
 """
 surfaces = surf2ctm(subjdir, qcdir)
 
-
 """
 Update the script outputs
 """
-outputs = polars + slices + surfaces
+outputs = polars + slices_mesh + slices_segmentation + surfaces
