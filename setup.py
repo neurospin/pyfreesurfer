@@ -14,13 +14,21 @@ import os
 
 
 release_info = {}
-infopath = os.path.join(os.path.dirname(__file__), "pyfreesufer", "info.py")
+infopath = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "pyfreesurfer", "info.py"))
+print infopath
 with open(infopath) as open_file:
     exec(open_file.read(), release_info)
 pkgdata = {
     "pyfreesufer": ["tests/*.py", "tests/*/*.py", "plots/tkmedit_slicer.tcl"],
 }
 scripts = [
+    "pyfreesufer/scripts/pyfreesufer_conversion",
+    "pyfreesufer/scripts/pyfreesufer_datacheck",
+    "pyfreesufer/scripts/pyfreesufer_qualitycheck",
+    "pyfreesufer/scripts/pyfreesufer_reconall",
+    "pyfreesufer/scripts/pyfreesufer_stats",
+    "pyfreesufer/scripts/pyfreesufer_textures"
 ]
 
 setup(
