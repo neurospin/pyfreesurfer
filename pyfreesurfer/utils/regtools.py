@@ -1,5 +1,5 @@
 ##########################################################################
-# NSAp - Copyright (C) CEA, 2013-2015
+# NSAp - Copyright (C) CEA, 2013 - 2016
 # Distributed under the terms of the CeCILL-B license, as published by
 # the CEA-CNRS-INRIA. Refer to the LICENSE file or to
 # http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
@@ -89,7 +89,7 @@ def conformed_to_native_space(
     return trffiles
 
 
-def tkregister_translation(mgzfile, fsconfig):
+def tkregister_translation(mgzfile, fsconfig=DEFAULT_FREESURFER_PATH):
     """ Get the tkregister translation.
 
     FreeSurfer use a special origin for the Right-Anterior-Superior
@@ -111,6 +111,10 @@ def tkregister_translation(mgzfile, fsconfig):
     translation: array
         the translation matrix between the ras and ras-tkregister spaces.
     """
+    # Check the input parameter
+    if not os.path.isfile(mgzfile):
+        raise ValueError("'{0}' is not a valid '.mgz' file.".format(mgzfile))
+
     # Get the affine matrices corresponding to the the ras or ras-tkregister
     # spaces
     affines = {}

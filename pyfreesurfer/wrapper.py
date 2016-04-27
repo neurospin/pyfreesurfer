@@ -37,7 +37,7 @@ class FSWrapper(object):
         """
         self.cmd = cmd
         self.shfile = shfile
-        self._freesurfer_version_check()
+        self.environment = self._freesurfer_version_check()
 
         # Update the environment variables
         if "SUBJECTS_DIR" in os.environ:
@@ -104,16 +104,22 @@ class FSWrapper(object):
         return env
 
     def _freesurfer_version_check(self):
-        """ Check that a tested FreeSurfer version is installed.
+        """ Check that a tested FreeSurfer version is installed. This method
+        also returns the FreeSurfer environment.
+
+        Returns
+        -------
+        environment: dict
+            the configured FreeSurfer environment.
         """
         # If a configuration file is passed
         if os.path.isfile(self.shfile):
 
             # Parse FreeSurfer environment
-            self.environment = self._environment()
+            environment = self._environment()
 
             # Check FreeSurfer version
-            version_file = os.path.join(self.environment["FREESURFER_HOME"],
+            version_file = os.path.join(environment["FREESURFER_HOME"],
                                         "build-stamp.txt")
             version_regex = "\d.\d.\d"
             with open(version_file, "r") as open_file:
@@ -138,3 +144,5 @@ class FSWrapper(object):
             message = ("'{0}' is not a valid file, can't configure "
                        "FreeSurfer.".format(self.shfile))
             raise ValueError(message)
+
+        return environment

@@ -8,12 +8,13 @@
 
 # System import
 import os
-import openctm
 import ctypes
 import numpy
+import sys
 
 # Pyfreesurfer import
 from .surftools import TriSurface
+from pyfreesurfer.utils import openctm
 
 
 def make_blob(verts, ctype):
@@ -52,6 +53,13 @@ def surf2ctm(fsdir, outdir):
     paths_ctm: list of str
         the converted surfaces.
     """
+    # COMPATIBILITIES: Python 3 string encoding compatibilities.
+    python_version = sys.version_info
+    if python_version[:1] < (3, ):
+        openctm_c_char_p = "Color"
+    else:
+        openctm_c_char_p = bytes(str("Color"), 'ascii')
+
     # Treat both hemishperes
     for hemi in ["lh", "rh"]:
 
@@ -89,7 +97,7 @@ def surf2ctm(fsdir, outdir):
             ctm = openctm.ctmNewContext(openctm.CTM_EXPORT)
             openctm.ctmDefineMesh(ctm, pVerts, len(surface.vertices), pFaces,
                                   len(surface.triangles), pNormals)
-            openctm.ctmAddAttribMap(ctm, pColors, "Color")
+            openctm.ctmAddAttribMap(ctm, pColors, openctm_c_char_p)
             openctm.ctmSave(ctm, path_ctm)
             openctm.ctmFreeContext(ctm)
 
@@ -111,20 +119,27 @@ def parse_fs_lut(path_lut):
     -------
     fs_lut_names: dict
         Map with the FreeSurfer labels and the assocaited region names.
-
     fs_lut_colors: dict
         Map with the FreeSurfer labels and associated RGB colors.
     """
+    # Check input parameter
+    if not os.path.isfile(path_lut):
+        raise ValueError("'{0}' FreeSurfer lookup table does not "
+                         "exists.".format(path_lut))
+
+    # Parse the FreeSurfer lookup table
     fs_lut_names = {}
     fs_lut_colors = {}
     with open(path_lut) as open_file:
-        for line in open_file:
+        for line in open_file.readlines():
             token = line.split()
-            if len(token) >= 6:
+            if len(token) == 6:
                 try:
                     fs_lut_names[int(token[0])] = token[1]
                     fs_lut_colors[int(token[0])] = (
                         int(token[2]), int(token[3]), int(token[4]))
-                except ValueError:
-                    continue
+                except:
+                    raise ValueError("Can't parse '{0}' FreeSurfer lookup "
+                                     "table file.".format(path_lut))
+
     return fs_lut_names, fs_lut_colors

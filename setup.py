@@ -16,7 +16,6 @@ import os
 release_info = {}
 infopath = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "pyfreesurfer", "info.py"))
-print infopath
 with open(infopath) as open_file:
     exec(open_file.read(), release_info)
 pkgdata = {
