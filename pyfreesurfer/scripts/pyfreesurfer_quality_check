@@ -31,7 +31,7 @@ try:
 except:
     pass
 
-# Clindmri import
+# Pyfreesurfer import
 from pyfreesurfer import __version__ as version
 from pyfreesurfer.utils.stattools import population_summary
 from pyfreesurfer.plots.slicer import slice_aparc_overlay
@@ -124,7 +124,7 @@ args = parser.parse_args()
 First construct the subject FreeSurfer directory and check its existance on
 the file system.
 """
-tool = "FreeSurfer QC"
+tool = "pyfreesurfer_quality_check"
 config = args.fsconfig or DEFAULT_FREESURFER_PATH 
 if args.verbose > 0:
     print("[info] Start FreeSurfer QC...")

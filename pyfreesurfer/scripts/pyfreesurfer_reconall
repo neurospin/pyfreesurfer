@@ -1,14 +1,11 @@
 #! /usr/bin/env python
 ##########################################################################
-# NSAp - Copyright (C) CEA, 2013-2015
+# NSAp - Copyright (C) CEA, 2013 - 2016
 # Distributed under the terms of the CeCILL-B license, as published by
 # the CEA-CNRS-INRIA. Refer to the LICENSE file or to
 # http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
 # for details.
 ##########################################################################
-
-"""
-"""
 
 # System import
 from __future__ import print_function
@@ -20,16 +17,20 @@ import argparse
 try:
     import bredala
     bredala.USE_PROFILER = False
-    bredala.register("clindmri.segmentation.freesurfer", names=["recon_all"])
+    bredala.register("pyfreesurfer.segmentation.cortical",
+                     names=["recon_all"])
 except:
     pass
 
-# Wrappers of FreeSurfer's tabs
-from pyfreesurfer.segmentation import recon_all
+# Pyfreesurfer import
+from pyfreesurfer import __version__ as version
+from pyfreesurfer.segmentation.cortical import recon_all
+from pyfreesurfer import DEFAULT_FREESURFER_PATH
 
 
 # Parameters to keep trace
-__hopla__ = ["fsdir", "subjectid", "anatfile"]
+__hopla__ = ["tool", "version", "config", "inputs", "outputs",
+             "fsdir", "subjectid", "anatfile"]
 
 
 # Script documentation
@@ -75,12 +76,12 @@ Steps:
 
 Command:
 
-python $HOME/git/clindmri/scripts/freesurfer_reconall.py
-    -v 2
-    -c /i2bm/local/freesurfer/SetUpFreeSurfer.sh
-    -d /volatile/imagen/dmritest/freesurfer
-    -s 000043561374
-    -a /volatile/imagen/dmritest/t1.nii.gz
+python $HOME/git/pyfreesurfer/pyfreesurfer/scripts/pyfreesurfer_reconall \
+    -v 2 \
+    -c /i2bm/local/freesurfer/SetUpFreeSurfer.sh \
+    -d /neurospin/senior/nsap/data/V4/qc/freesurfer \
+    -s ag110371 \
+    -a /neurospin/senior/nsap/data/V4/nifti/ag110371/000002_3DT1/3DT1.nii.gz \
     -e
 """
 
@@ -102,30 +103,26 @@ def is_directory(dirarg):
             "The directory '{0}' does not exist!".format(dirarg))
     return dirarg
 
-# Setting up a Parser
-parser = argparse.ArgumentParser(description=doc)
 
-# Defining Arguments
+parser = argparse.ArgumentParser(description=doc)
 parser.add_argument(
     "-v", "--verbose", dest="verbose", type=int, choices=[0, 1, 2], default=0,
     help="increase the verbosity level: 0 silent, [1, 2] verbose.")
 parser.add_argument(
-    "-e", "--errase", dest="errase", action="store_true",
+    "-e", "--erase", dest="erase", action="store_true",
     help="if activated, clean the subject folder.")
 parser.add_argument(
     "-c", "--config", dest="fsconfig", metavar="FILE", required=True,
     help="the FreeSurfer configuration file.", type=is_file)
 parser.add_argument(
     "-d", "--fsdir", dest="fsdir", required=True, metavar="PATH",
-    help="the FreeSurfer processing home directory.", type=is_directory)
+    help="the FreeSurfer home directory.", type=is_directory)
 parser.add_argument(
     "-s", "--subjectid", dest="subjectid", required=True,
     help="the subject identifier.")
 parser.add_argument(
     "-a", "--anatfile", dest="anatfile", metavar="FILE", required=True,
     help="the subject anatomical image to be processed.", type=is_file)
-
-# Parsing a Command Line
 args = parser.parse_args()
 
 
@@ -133,6 +130,8 @@ args = parser.parse_args()
 First check if the subject FreeSurfer directory exists on the file system, and
 clean it if requested.
 """
+tool = "pyfreesurfer_reconall"
+config = args.fsconfig or DEFAULT_FREESURFER_PATH 
 if args.verbose > 0:
     print("[info] Start FreeSurfer recon_all...")
     print("[info] Directory: {0}.".format(args.fsdir))
@@ -142,13 +141,15 @@ fsdir = args.fsdir
 subjectid = args.subjectid
 anatfile = args.anatfile
 subjdir = os.path.join(fsdir, subjectid)
-if os.path.isdir(subjdir) and args.errase:
+inputs = [anatfile]
+outputs = [subjdir]
+if os.path.isdir(subjdir) and args.erase:
     shutil.rmtree(subjdir)
 
 
 """
 Segmentation: all steps
 """
-subjdir = recon_all(fsdir, anatfile, subjectid, fsconfig=args.fsconfig)
+subjdir = recon_all(fsdir, anatfile, subjectid, fsconfig=config)
 if args.verbose > 1:
     print("[result] In folder: {0}.".format(subjdir))

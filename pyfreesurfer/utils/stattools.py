@@ -11,6 +11,8 @@ import os
 import csv
 import glob
 import numpy
+import nibabel
+import shutil
 
 # Pyfreesurfer import
 from pyfreesurfer import DEFAULT_FREESURFER_PATH
@@ -218,7 +220,7 @@ def textures2table(
         regex,
         ico_order,
         fsdir,
-        outdir=None,
+        outdir,
         keep_individual_textures=False,
         save_mode="numpy",
         fsconfig=DEFAULT_FREESURFER_PATH):
@@ -240,9 +242,8 @@ def textures2table(
         'clindmri.segmentation.freesurfer.resample_cortical_surface' function).
     fsdir: str (mandatory)
         FreeSurfer subjects directory 'SUBJECTS_DIR'.
-    outdir: str (optional, default None)
-        a folder where some information about the processing could
-        be written.
+    outdir: str (mandatory)
+        The textures destination folder.
     keep_individual_textures: bool (optional, default False)
         if True, keep the individual resampled subject textures on disk.
     save_mode: str (optional, default 'numpy')
@@ -264,14 +265,10 @@ def textures2table(
 
     # Get the requested subject textures from the regex
     textures = glob.glob(os.path.join(fsdir, regex))
-    if outdir is not None:
-        path = os.path.join(outdir, "textrues.json")
-        with open(path, "w") as open_file:
-            json.dump(textures, open_file, indent=4)
 
     # Resample each texture file
     basename = os.path.basename(regex)
-    fsoutdir = os.path.join(fsdir, "textures")
+    fsoutdir = os.path.join(outdir, "textures")
     surfacesdir = os.path.join(fsoutdir, basename)
     if not os.path.isdir(surfacesdir):
         os.makedirs(surfacesdir)

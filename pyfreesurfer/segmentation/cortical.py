@@ -14,7 +14,7 @@ Wrapper for the FreeSurfer's cortical reconstruction steps.
 import os
 
 # Pyfreesurfer import
-from pyfreesurfer.wrappers import FSWrapper
+from pyfreesurfer.wrapper import FSWrapper
 from pyfreesurfer import DEFAULT_FREESURFER_PATH
 
 

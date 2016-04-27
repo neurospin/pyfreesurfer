@@ -1,14 +1,11 @@
 #! /usr/bin/env python
 ##########################################################################
-# NSAp - Copyright (C) CEA, 2013-2015
+# NSAp - Copyright (C) CEA, 2013 - 2016
 # Distributed under the terms of the CeCILL-B license, as published by
 # the CEA-CNRS-INRIA. Refer to the LICENSE file or to
 # http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
 # for details.
 ##########################################################################
-
-"""
-"""
 
 # System import
 from __future__ import print_function
@@ -20,17 +17,22 @@ import argparse
 try:
     import bredala
     bredala.USE_PROFILER = False
-    bredala.register("clindmri.segmentation.freesurfer",
-                     names=["textures2table", "mri_surf2surf"])
+    bredala.register("pyfreesurfer.utils.stattools",
+                     names=["textures2table"])
+    bredala.register("pyfreesurfer.conversion.surftools",
+                     names=["mri_surf2surf"])
 except:
     pass
 
-# Wrappers of FreeSurfer's tabs
-from pyfreesurfer.utils.datatools import textures2table
+# Pyfreesurfer import
+from pyfreesurfer import __version__ as version
+from pyfreesurfer.utils.stattools import textures2table
+from pyfreesurfer import DEFAULT_FREESURFER_PATH
 
 
 # Parameters to keep trace
-__hopla__ = ["fsdir", "ico_order", "fsconfig", "textures_regex",
+__hopla__ = ["tool", "version", "config", "inputs", "outputs",
+             "fsdir", "ico_order", "textures_regex", "outdir"
              "textures_files"]
 
 
@@ -44,7 +46,7 @@ can then be easily imported into a spreadsheet and/or stats program. Note that
 all the subject texture vertices need to be resampled in a common space.
 
 The statistics are generated in a 'textures' sub folder of the FreeSurfer
-'SUBJECTS_DIR' directory.
+processing home directory.
 
 The 'sulc' surface
 ------------------
@@ -75,11 +77,12 @@ whereas the 'curv' is that of the white surface.
 Command
 -------
 
-python $HOME/git/caps-clindmri/clindmri/scripts/freesurfer_textures.py \
+python $HOME/git/pyfreesurfer/pyfreesurfer/scripts/pyfreesurfer_textures \
     -v 2 \
     -i 7 \
     -c /i2bm/local/freesurfer-5.3.0/SetUpFreeSurfer.sh \
-    -d /neurospin/imagen/BL/processed/freesurfer \
+    -d /neurospin/senior/nsap/data/V4/freesurfer \
+    -o /neurospin/senior/nsap/data/V4/qc/freesurfer \
     -e
 """
 
@@ -101,16 +104,14 @@ def is_directory(dirarg):
             "The directory '{0}' does not exist!".format(dirarg))
     return dirarg
 
-# Setting up a Parser
-parser = argparse.ArgumentParser(description=doc)
 
-# Defining Arguments
+parser = argparse.ArgumentParser(description=doc)
 parser.add_argument(
     "-v", "--verbose", dest="verbose", type=int, choices=[0, 1, 2], default=0,
     help="increase the verbosity level: 0 silent, [1, 2] verbose.")
 parser.add_argument(
     "-e", "--erase", dest="erase", action="store_true",
-    help="if activated, clean the subject folder.")
+    help="if activated, clean the 'textures' folder.")
 parser.add_argument(
     "-c", "--config", dest="fsconfig", metavar="FILE", required=True,
     help="the FreeSurfer configuration file.", type=is_file)
@@ -123,10 +124,11 @@ parser.add_argument(
     help=("specifies the order of the icosahedral tesselation (in [0, 7]) "
           "used to define the surface resolution."))
 parser.add_argument(
+    "-o", "--outdir", dest="outdir", metavar="PATH", required=True,
+    help="the FreeSurfer processing home directory.", type=is_directory)
+parser.add_argument(
     "-k", "--keep", dest="keep",  action="store_true",
     help=("if activated, keep the individual FreeSurfer resampled surfaces."))
-
-# Parsing a Command Line
 args = parser.parse_args()
 
 
@@ -134,11 +136,17 @@ args = parser.parse_args()
 First check if the texture output directory exists on the file system, and
 clean it if requested.
 """
+tool = "pyfreesurfer_textures"
+config = args.fsconfig or DEFAULT_FREESURFER_PATH 
 if args.verbose > 0:
     print("[info] Start FreeSurfer cat textures...")
     print("[info] Directory: {0}.".format(args.fsdir))
 fsdir = args.fsdir
-texturesdir = os.path.join(fsdir, "textures")
+outdir = args.outdir
+ico_order = args.ico_order
+texturesdir = os.path.join(outdir, "textures")
+inputs = [fsdir]
+outputs = []
 if os.path.isdir(texturesdir) and args.erase:
     shutil.rmtree(texturesdir)
 if not os.path.isdir(texturesdir):
@@ -148,8 +156,6 @@ if not os.path.isdir(texturesdir):
 Summarize all the subjects' textures
 """
 textures_files = []
-ico_order = args.ico_order
-fsconfig = args.fsconfig
 textures_regex = [
     os.path.join("*", "surf", "lh.sulc"),
     os.path.join("*", "surf", "rh.sulc"),
@@ -160,8 +166,14 @@ textures_regex = [
 ]
 for regex in textures_regex:
     textures_files.extend(
-        textures2table(regex, ico_order, fsdir,
+        textures2table(regex, ico_order, fsdir, outdir,
                        keep_individual_textures=args.keep, save_mode="all",
-                       fsconfig=fsconfig))
+                       fsconfig=config))
 if args.verbose > 1:
     print("[result] Textures: {0}.".format(textures_files))
+
+
+"""
+Update the script outputs
+"""
+outputs = textures_files
