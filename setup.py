@@ -22,12 +22,12 @@ pkgdata = {
     "pyfreesufer": ["tests/*.py", "tests/*/*.py", "plots/tkmedit_slicer.tcl"],
 }
 scripts = [
-    "pyfreesufer/scripts/pyfreesufer_conversion",
-    "pyfreesufer/scripts/pyfreesufer_datacheck",
-    "pyfreesufer/scripts/pyfreesufer_qualitycheck",
-    "pyfreesufer/scripts/pyfreesufer_reconall",
-    "pyfreesufer/scripts/pyfreesufer_stats",
-    "pyfreesufer/scripts/pyfreesufer_textures"
+    "pyfreesurfer/scripts/pyfreesurfer_conversion",
+    "pyfreesurfer/scripts/pyfreesurfer_datacheck",
+    "pyfreesurfer/scripts/pyfreesurfer_qualitycheck",
+    "pyfreesurfer/scripts/pyfreesurfer_reconall",
+    "pyfreesurfer/scripts/pyfreesurfer_stats",
+    "pyfreesurfer/scripts/pyfreesurfer_textures"
 ]
 
 setup(
