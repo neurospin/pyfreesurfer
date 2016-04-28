@@ -1,20 +1,11 @@
-# tkmedit_slicer.tcl
+# tkmedit_slicer_labels.tcl
 
 
 #-------------------------------------
-# Load surfaces:
-# 
-#LoadMainSurface [0=main; 1=Aux] [filename] 
+# Load surfaces and colormap:
 
-puts "Load main surfaces"
-LoadMainSurface      0 lh.white
-LoadPialSurface      0 lh.pial
-LoadOriginalSurface  0 lh.orig
-
-puts "Load aux surfaces"
-LoadMainSurface      1 rh.white
-LoadPialSurface      1 rh.pial
-LoadOriginalSurface  1 rh.orig
+puts "Load segmentation volume and colormap"
+LoadSegmentationVolume nu.mgz aparc+aseg.mgz %(LOOKUPTABLE)s
 
 
 #-------------------------------------

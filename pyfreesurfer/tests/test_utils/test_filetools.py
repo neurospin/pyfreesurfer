@@ -153,7 +153,7 @@ class FreeSurferLUT(unittest.TestCase):
         mock_context_manager = mock.Mock()
         mock_open.return_value = mock_context_manager
         mock_file = mock.Mock()
-        mock_file.readlines.return_value = ["WRONG Unknown 0 0 0 0"]
+        mock_file.readlines.return_value = ["0 Unknown 0 WRONG 0 0"]
         mock_enter = mock.Mock()
         mock_enter.return_value = mock_file
         mock_exit = mock.Mock()

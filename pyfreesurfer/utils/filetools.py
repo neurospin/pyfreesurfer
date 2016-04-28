@@ -133,7 +133,7 @@ def parse_fs_lut(path_lut):
     with open(path_lut) as open_file:
         for line in open_file.readlines():
             token = line.split()
-            if len(token) == 6:
+            if len(token) == 6 and token[0].isdigit():
                 try:
                     fs_lut_names[int(token[0])] = token[1]
                     fs_lut_colors[int(token[0])] = (

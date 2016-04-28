@@ -20,7 +20,7 @@ try:
     bredala.register("pyfreesurfer.utils.stattools",
                      names=["population_summary"])
     bredala.register("pyfreesurfer.plots.slicer",
-                     names=["slice_aparc_overlay"])
+                     names=["tkmedit_slice"])
     bredala.register("pyfreesurfer.plots.polar",
                      names=["polar_plot"])
     bredala.register("pyfreesurfer.utils.filetools",
@@ -31,7 +31,7 @@ except:
 # Pyfreesurfer import
 from pyfreesurfer import __version__ as version
 from pyfreesurfer.utils.stattools import population_summary
-from pyfreesurfer.plots.slicer import slice_aparc_overlay
+from pyfreesurfer.plots.slicer import tkmedit_slice
 from pyfreesurfer.plots.slicer import AXIS_NAME
 from pyfreesurfer.plots.polar import polar_plot
 from pyfreesurfer import DEFAULT_FREESURFER_PATH
@@ -117,7 +117,7 @@ parser.add_argument(
     help="the subject identifier.")
 parser.add_argument(
     "-i", "--incr", dest="incr", default=1, type=int,
-    help="the increment between to slices.")
+    help="the increment between two slices.")
 args = parser.parse_args()
 
 
@@ -174,15 +174,17 @@ for name, cohort_stats in popstats.items():
 Create white/pial mesh overlays
 """
 slices = []
+path_lut = os.path.join(os.path.dirname(config), "FreeSurferColorLUT.txt")
 for cut_axis in ["C", "A", "S"]:
-    axisdir = os.path.join(qcdir, AXIS_NAME[cut_axis], "aparc_overlay")
-    if not os.path.isdir(axisdir):
-        os.makedirs(axisdir)
-    slices.append(
-        slice_aparc_overlay(args.fsdir, args.subjectid, axisdir,
-                            cut_axis=cut_axis, erase=False,
-                            slice_interval=(0, 255, increment),
-                            fsconfig=config))
+    for stype in ["aparc", "edges", "aseg"]:
+        axisdir = os.path.join(qcdir, AXIS_NAME[cut_axis], stype)
+        if not os.path.isdir(axisdir):
+            os.makedirs(axisdir)
+        slices.append(
+            tkmedit_slice(args.fsdir, args.subjectid, axisdir, stype,
+                          cut_axis=cut_axis, erase=False,
+                          slice_interval=(0, 255, increment),
+                          path_lut=path_lut, fsconfig=config))
 
 
 """
