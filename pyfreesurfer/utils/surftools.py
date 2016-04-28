@@ -286,23 +286,23 @@ class TriSurface(object):
         return polydata
 
 
-def apply_affine_on_mesh(vertex, affine):
+def apply_affine_on_mesh(vertices, affine):
     """ Apply an affine transformation on each vetex of the mesh.
 
     Parameters
     ----------
-    vertex: array (N, 3)
-        N vertex.
+    vertices: array (N, 3)
+        N vertices.
     affine: array (4, 4)
         an affine transformation to applied.
 
     Results
     -------
-    warp_vertex: array (N, 3)
-        N interpolated vertex.
+    warp_vertices: array (N, 3)
+        N interpolated vertices.
     """
-    N, _ = vertex.shape
-    ones = numpy.ones((N, 1), dtype=vertex.dtype)
-    homogenous_vertex = numpy.concatenate((vertex, ones), axis=1)
-    warp_vertex = numpy.dot(affine, homogenous_vertex.T).T[..., :3]
-    return warp_vertex
+    N, _ = vertices.shape
+    ones = numpy.ones((N, 1), dtype=vertices.dtype)
+    homogenous_vertices = numpy.concatenate((vertices, ones), axis=1)
+    warp_vertices = numpy.dot(affine, homogenous_vertices.T).T[..., :3]
+    return warp_vertices

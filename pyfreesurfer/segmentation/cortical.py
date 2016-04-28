@@ -74,8 +74,8 @@ def recon_all(fsdir, anatfile, sid, fsconfig=DEFAULT_FREESURFER_PATH):
     """
     # Check input parameters
     if not os.path.isdir(fsdir):
-        raise ValueError("'{0}' is not a valid FreeSurfer home "
-                         "directory.".format(fsdir))
+        raise ValueError("'{0}' FreeSurfer home directory does not "
+                         "exists.".format(fsdir))
 
     # Call FreeSurfer segmentation
     cmd = ["recon-all", "-all", "-subjid", sid, "-i", anatfile, "-sd", fsdir]

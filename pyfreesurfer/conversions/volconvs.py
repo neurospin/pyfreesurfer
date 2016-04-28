@@ -42,6 +42,11 @@ def mri_binarize(
     fsconfig: str (optional)
         The freesurfer configuration batch.
     """
+    # Check input parameters
+    for path in (inputfile, outputfile):
+        if not os.path.isfile(path):
+            raise ValueError("'{0}' is not a valid file.".format(path))
+
     # Call FreeSurfer
     cmd = ["mri_binarize", "--i", inputfile, "--o", outputfile]
     if match is not None:
@@ -71,7 +76,7 @@ def mri_convert(
     Parameters
     ----------
     fsdir: str (mandatory)
-        The FreeSurfer working directory with all the subjects.
+        The FreeSurfer home directory with all the subjects.
     regex: str (mandatory)
         A regular expression used to locate the files to be converted from the
         'fsdir' directory.
@@ -176,9 +181,15 @@ def mri_vol2surf(
         The FreeSurfer '.sh' config file.
     """
     # Check input parameters
+    for path in (volume_file, dat_file):
+        if not os.path.isfile(path):
+            raise ValueError("'{0}' is not a valid input file.".format(path))
+    for path in (fsdir, ):
+        if not os.path.isdir(path):
+            raise ValueError("'{0}' is not a valid directory.".format(path))
     if hemi not in ["lh", "rh"]:
         raise ValueError("'{0}' is not a valid hemisphere value which must be "
-                         "in ['lh', 'rf']".format(hemi))
+                         "in ['lh', 'rh']".format(hemi))
     if surface_name not in ["white", "pial"]:
         raise ValueError("'{0}' is not a valid surface value which must be in "
                          "['white', 'pial']".format(surface_name))

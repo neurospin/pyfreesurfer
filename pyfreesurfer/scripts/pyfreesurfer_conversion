@@ -17,9 +17,9 @@ import argparse
 try:
     import bredala
     bredala.USE_PROFILER = False
-    bredala.register("pyfreesurfer.conversions.voltools",
+    bredala.register("pyfreesurfer.conversions.volconvs",
                      names=["mri_convert"])
-    bredala.register("pyfreesurfer.conversions.surftools",
+    bredala.register("pyfreesurfer.conversions.surfconvs",
                      names=["resample_cortical_surface", "surf_convert"])
     bredala.register("pyfreesurfer.utils.regtools",
                      names=["conformed_to_native_space"])
@@ -29,10 +29,10 @@ except:
 # Pyfreesurfer import
 from pyfreesurfer import __version__ as version
 from pyfreesurfer import DEFAULT_FREESURFER_PATH
-from pyfreesurfer.conversions.voltools import mri_convert
-from pyfreesurfer.conversions.surftools import resample_cortical_surface
+from pyfreesurfer.conversions.volconvs import mri_convert
+from pyfreesurfer.conversions.surfconvs import surf_convert
+from pyfreesurfer.conversions.surfconvs import resample_cortical_surface
 from pyfreesurfer.utils.regtools import conformed_to_native_space
-from pyfreesurfer.conversions.surftools import surf_convert
 
 
 # Parameters to keep trace

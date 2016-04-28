@@ -58,9 +58,15 @@ def mri_surf2surf(
         The FreeSurfer '.sh' config file.
     """
     # Check input parameters
+    for path in (input_surface_file, output_surface_file):
+        if not os.path.isfile(path):
+            raise ValueError("'{0}' is not a valid input file.".format(path))
+    for path in (fsdir, ):
+        if not os.path.isdir(path):
+            raise ValueError("'{0}' is not a valid directory.".format(path))
     if hemi not in ["lh", "rh"]:
         raise ValueError("'{0}' is not a valid hemisphere value which must be "
-                         "in ['lh', 'rf']".format(hemi))
+                         "in ['lh', 'rh']".format(hemi))
     if ico_order < 0 or ico_order > 7:
         raise ValueError("'Ico order '{0}' is not in 0-7 "
                          "range.".format(ico_order))
@@ -109,7 +115,7 @@ def resample_cortical_surface(
     Parameters
     ----------
     fsdir: str (mandatory)
-        The freesurfer working directory with all the subjects.
+        The freesurfer home directory with all the subjects.
     regex: str (mandatory)
         A regular expression used to locate the surface files to be converted
         from the 'fsdir' directory.
@@ -191,7 +197,7 @@ def resample_cortical_surface(
     # Remove duplicate annotation files
     annotfiles = list(set(annotfiles))
 
-    return resamplefiles, annotfiles
+    return sorted(resamplefiles), sorted(annotfiles)
 
 
 def surf_convert(
@@ -225,12 +231,20 @@ def surf_convert(
     csurffiles:
         The converted surfaces in the native space indexed coordinates.
     """
+    # Check input parameters
+    for path in t1files + surffiles:
+        if not os.path.isfile(path):
+            raise ValueError("'{0}' is not a valid file.".format(path))
+    if not os.path.isdir(fsdir):
+        raise ValueError("'{0}' is not a valid directory.".format(fsdir))
+
     # Create a t1 subject map
     t1map = {}
     for fname in t1files:
         subject_id = fname.split(os.path.sep)[-3]
         if subject_id in t1map:
-            raise ("Can't map two t1 for subject '{0}'.".format(subject_id))
+            raise ValueError("Can't map two t1 for subject "
+                             "'{0}'.".format(subject_id))
         t1map[subject_id] = fname
 
     # Convert all the surfaces

@@ -41,7 +41,7 @@ from pyfreesurfer.utils.filetools import surf2ctm
 # Parameters to keep trace
 __hopla__ = ["tool", "version", "config", "inputs", "outputs",
              "subjdir", "fsconfig", "slices", "polars", "qcoutdir",
-             "increment", "surfaces"]
+             "increment", "surfaces", "statdir"]
 
 
 # Script documentation
@@ -67,6 +67,7 @@ python $HOME/git/pyfreesurfer/pyfreesurfer/scripts/pyfreesurfer_qualitycheck \
     -v 2 \
     -c /i2bm/local/freesurfer/SetUpFreeSurfer.sh \
     -d /neurospin/senior/nsap/data/V4/freesurfer \
+    -m /neurospin/senior/nsap/data/V4/freesurfer/stats \
     -s ag110371 \
     -o /neurospin/senior/nsap/data/V4/qc/freesurfer \
     -i 20 \
@@ -103,6 +104,9 @@ parser.add_argument(
     "-c", "--fsconfig", dest="fsconfig", metavar="FILE", required=True,
     help="the FreeSurfer configuration file.", type=is_file)
 parser.add_argument(
+    "-m", "--statdir", dest="statdir", required=True, metavar="PATH",
+    help="the path to the summary FreeSurfer 'stats'.", type=is_directory)
+parser.add_argument(
     "-d", "--fsdir", dest="fsdir", required=True, metavar="PATH",
     help="the FreeSurfer processing home directory.", type=is_directory)
 parser.add_argument(
@@ -129,8 +133,9 @@ if args.verbose > 0:
     print("[info] Subject: {0}.".format(args.subjectid))
 subjdir = os.path.join(args.fsdir, args.subjectid)
 outdir = args.outdir
+statdir = args.statdir
 increment = args.incr
-inputs = [subjdir]
+inputs = [subjdir, statdir]
 outputs = []
 if outdir is None:
     outdir = args.fsdir
@@ -149,8 +154,8 @@ elif args.erase:
 """
 Create the population statistic and get the subjects measures
 """
-popstats = population_summary(args.fsdir)
-indstats = population_summary(args.fsdir, args.subjectid)
+popstats = population_summary(statdir)
+indstats = population_summary(statdir, args.subjectid)
 
 
 """
