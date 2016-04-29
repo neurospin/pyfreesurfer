@@ -19,7 +19,9 @@ infopath = os.path.abspath(
 with open(infopath) as open_file:
     exec(open_file.read(), release_info)
 pkgdata = {
-    "pyfreesufer": ["tests/*.py", "tests/*/*.py", "plots/tkmedit_slicer.tcl"],
+    "pyfreesufer": ["tests/*.py", "tests/*/*.py",
+                    "plots/tkmedit_slicer_edges.tcl",
+                    "plots/tkmedit_slicer_labels.tcl"],
 }
 scripts = [
     "pyfreesurfer/scripts/pyfreesurfer_conversion",
