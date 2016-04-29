@@ -9,3 +9,10 @@
 """
 This module can be used to render the produced FreeSurfer data.
 """
+
+# System import
+import matplotlib
+
+
+# Make sure that we don't get DISPLAY problems when running without X
+matplotlib.use("Agg")
