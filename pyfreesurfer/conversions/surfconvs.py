@@ -211,7 +211,7 @@ def surf_convert(
     Note that all the returned vetices are given in the index coordinate
     system.
     The subject id in the t1 and surf files must appear in the '-3' position:
-        xxx/subject_id/convert/t1.nii.gz
+    xxx/subject_id/convert/t1.nii.gz
 
     Parameters
     ----------

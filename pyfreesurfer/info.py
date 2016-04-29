@@ -31,17 +31,28 @@ CLASSIFIERS = ["Development Status :: 5 - Production/Stable",
                "Topic :: Utilities"]
 
 # Project descriptions
-description = "pyFreeSurfer"
+description = """
+[pyFreeSurfer]
+This package provides common scripts:
+
+* pyfreesurfer_reconall: FreeSurfer cortical and subcortical segmentation.
+* pyfreesurfer_datacheck: check FreeSurfer 'reconall' produced data integrity.
+* pyfreesurfer_conversion:  convert FreeSurfer volume, mesh , annotations
+  to the native space. The produced meshes will also be aligned across
+  subjects.
+* pyfreesurfer_qualitycheck: check FreeSurfer 'reconall' produced data quality.
+* pyfreesurfer_stats: summarize the FreeSurfer 'reconall' individual
+  statistics.
+* pyfreesurfer_textures: build texture arrays aligned across subjects.
+"""
 long_description = """
 ======================
 pyFreeSurfer
 ======================
 
-[pyfreesurfer] Python wrappers for FreeSurfer.
-
-Package to wrap the FreeSurfer software and simplify scripting calls.
-Each segmentation step can be run through the use of a dedicated function
-of the package.
+Python wrappers for FreeSurfer: wrap the FreeSurfer software and simplify
+scripting calls. Such calls can be performed through the use of a
+dedicated function of the package.
 """
 
 # Main setup parameters

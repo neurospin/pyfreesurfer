@@ -65,7 +65,7 @@ def mri_convert(
         reslice=True,
         interpolation="interpolate",
         fsconfig=DEFAULT_FREESURFER_PATH):
-    """ Export FreeSurfer "*.mgz" image in Nifti format.
+    """ Export FreeSurfer '.mgz' image in Nifti format.
 
     Convert in native space: the destination image is resliced like the
     'rawavg.mgz' file if the reslice option is set. The converted file will

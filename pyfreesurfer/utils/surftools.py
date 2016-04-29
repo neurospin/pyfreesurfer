@@ -296,7 +296,7 @@ def apply_affine_on_mesh(vertices, affine):
     affine: array (4, 4)
         an affine transformation to applied.
 
-    Results
+    Returns
     -------
     warp_vertices: array (N, 3)
         N interpolated vertices.

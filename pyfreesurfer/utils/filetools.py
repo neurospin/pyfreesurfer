@@ -42,10 +42,10 @@ def surf2ctm(fsdir, outdir):
     Parameters
     ----------
     fsdir: str (mandatory)
-        the subject FreeSurfer home directory where the '*.white', '*.pial'
-        sufraces and the '*.aparc.annot' files can be found.
+        the subject FreeSurfer home directory where the '.white', '.pial'
+        sufraces and the '.aparc.annot' files can be found.
     outdir: str
-        directory where a '*.ctm' file will be saved. The output file base
+        directory where a '.ctm' file will be saved. The output file base
         name will be the same as the input 'path_mesh' file.
 
     Returns
@@ -111,7 +111,7 @@ def parse_fs_lut(path_lut):
     file, ie. '/i2bm/local/freesurfer/FreeSurferColorLUT.txt'.
 
     Parameters
-    ---------
+    ----------
     path_lut: str (mandatory)
         The FreeSurfer lookup table.
 
