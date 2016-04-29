@@ -1,0 +1,185 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+  
+    <title>PYFREESURFER &mdash; pyFreeSurfer</title>
+  <!-- htmltitle is before nature.css - we use this hack to load bootstrap first -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../_static/css/bootstrap.min.css" media="screen" />
+
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="pyFreeSurfer" href="../index.html" />
+  
+   
+       <script type="text/javascript" src="../_static/sidebar.js"></script>
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="../_static/js/bootstrap.min.js" type="text/javascript"></script>
+
+  <script src="../_static/js/angular.min.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    var app = angular.module("navApp", []);
+    app.controller('navCtrl', ['$scope', '$window', function($scope, $window) {
+      $scope.isActive = function (viewLocation) {
+        var rel = $window.location.pathname.split("/")
+        rel = rel[rel.length - 1]
+        rel = rel.split(".")[0]
+        var active = (viewLocation === rel);
+        return active;};
+    }]);
+  </script>
+
+  </head>
+  <body><nav class="navbar navbar-default navbar-static-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+        <img alt="Logo" src="../_static/pyfreesurfer.png">
+        </a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse" ng-controller="navCtrl" ng-app="navApp">
+      <ul class="nav navbar-nav">
+        <li ng-class="{ active: isActive('index') }"><a href="../index.html">Home</a></li>
+        <li ng-class="{ active: isActive('installation') }"><a href="installation.html">Installation</a></li>
+        <li ng-class="{ active: isActive('documentation') }"><a href="documentation.html">Documentation</a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+	        <li><a href="pyfreesurfer.html">Pyfreesurfer</a></li>
+<li><a href="pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
+<li><a href="pyfreesurfer.conversions.html">Pyfreesurfer.conversions</a></li>
+<li><a href="pyfreesurfer.segmentation.html">Pyfreesurfer.segmentation</a></li>
+<li><a href="pyfreesurfer.utils.html">Pyfreesurfer.utils</a></li>
+          </ul>
+        </li>
+        <li><a href="https://github.com/AGrigis/pysphinxdoc">PYSPHINXDOC</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+<div class="content-wrapper">
+    <div class="sphinxsidebar">
+      <div class="sphinxsidebarwrapper">
+
+        <!-- info setup -->
+          <p class="doc-version">
+           This documentation is for pyfreesurfer <strong>version 1.0.0</strong>
+          </p>
+        <p class="citing">
+          If you use the software, please do not esitate to 
+          <a &mdash; <a href="https://github.com/neurospin/pyfreesurfer">
+          Report a Bug</a>.
+        </p>
+
+      <!-- toc tree -->
+      <ul class="simple">
+</ul>
+
+
+      </div>
+    </div>
+  
+
+  <div class="content">
+      
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <span class="target" id="module-pyfreesurfer.plots.slicer"></span><dl class="function">
+<dt id="pyfreesurfer.plots.slicer.tkmedit_slice">
+<tt class="descclassname">pyfreesurfer.plots.slicer.</tt><tt class="descname">tkmedit_slice</tt><big>(</big><em>fsdir</em>, <em>sid</em>, <em>outdir</em>, <em>stype='edges'</em>, <em>cut_axis='C'</em>, <em>slice_interval=(0</em>, <em>255</em>, <em>1)</em>, <em>path_lut=None</em>, <em>fsconfig='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em><big>)</big><a class="reference internal" href="../_modules/pyfreesurfer/plots/slicer.html#tkmedit_slice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.plots.slicer.tkmedit_slice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Slice the anatomical volume overlayed with the pial and white surfaces.
+Wrapping around the &#8216;tkmedit&#8217; command.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fsdir: str (mandatory)</strong></p>
+<blockquote>
+<div><p>the FreeSurfer segmentation home directory.</p>
+</div></blockquote>
+<p><strong>sid: str (mandatory)</strong></p>
+<blockquote>
+<div><p>the subject identifier.</p>
+</div></blockquote>
+<p><strong>outdir: str (mandatory)</strong></p>
+<blockquote>
+<div><p>the valid destination folder where sliced data will be written.</p>
+</div></blockquote>
+<p><strong>stype: str (optional, default &#8216;edges&#8217;)</strong></p>
+<blockquote>
+<div><p>the slicer type: &#8216;edges&#8217; stands for pial/white edges overlay, &#8216;aseg&#8217;
+stands for subcortical regions overlay and &#8216;aparc&#8217; stands for cortical
+labels overlay.</p>
+</div></blockquote>
+<p><strong>cut_axis: str (optional, default &#8216;C&#8217;)</strong></p>
+<blockquote>
+<div><p>the cut axis, use &#8216;C&#8217; for Coronal, &#8216;A&#8217; for Axial and &#8216;S&#8217; for Sagittal.</p>
+</div></blockquote>
+<p><strong>slice_interval: 3-uplet (optional, default (0, 255, 1))</strong></p>
+<blockquote>
+<div><p>the slice interval (start index, stop index, increment).</p>
+</div></blockquote>
+<p><strong>path_lut: str (optional, default None)</strong></p>
+<blockquote>
+<div><p>the lookup table to use for label coloration: mandatory option
+for the &#8216;aparc&#8217; and &#8216;aseg&#8217; slicer.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">slices: list of str</p>
+<blockquote class="last">
+<div><p>the generated PNG slices.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer">
+    </div>
+  </div>
+  
+</div>
+
+<div class="footer">
+    &copy; 2016, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
+</div>
+  </body>
+</html>

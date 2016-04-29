@@ -1,0 +1,32 @@
+..  pyfreesurfer documentation master file
+
+
+
+======================
+pyFreeSurfer
+======================
+
+Python wrappers for FreeSurfer: wrap the FreeSurfer software and simplify
+scripting calls. Such calls can be performed through the use of a
+dedicated function of the package.
+
+
+
+Contents
+========
+.. toctree::
+    :maxdepth: 1
+
+    generated/installation
+    generated/documentation
+
+
+Search
+=======
+
+:ref:`search`
+
+
+
+
+

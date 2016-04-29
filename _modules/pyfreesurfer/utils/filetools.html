@@ -1,0 +1,278 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+  
+    <title>PYFREESURFER &mdash; pyFreeSurfer</title>
+  <!-- htmltitle is before nature.css - we use this hack to load bootstrap first -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../../../_static/css/bootstrap.min.css" media="screen" />
+
+    
+    <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="pyFreeSurfer" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+  
+   
+       <script type="text/javascript" src="../../../_static/sidebar.js"></script>
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="../../../_static/js/bootstrap.min.js" type="text/javascript"></script>
+
+  <script src="../../../_static/js/angular.min.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    var app = angular.module("navApp", []);
+    app.controller('navCtrl', ['$scope', '$window', function($scope, $window) {
+      $scope.isActive = function (viewLocation) {
+        var rel = $window.location.pathname.split("/")
+        rel = rel[rel.length - 1]
+        rel = rel.split(".")[0]
+        var active = (viewLocation === rel);
+        return active;};
+    }]);
+  </script>
+
+  </head>
+  <body><nav class="navbar navbar-default navbar-static-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../index.html">
+        <img alt="Logo" src="../../../_static/pyfreesurfer.png">
+        </a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse" ng-controller="navCtrl" ng-app="navApp">
+      <ul class="nav navbar-nav">
+        <li ng-class="{ active: isActive('index') }"><a href="../../../index.html">Home</a></li>
+        <li ng-class="{ active: isActive('installation') }"><a href="../../../generated/installation.html">Installation</a></li>
+        <li ng-class="{ active: isActive('documentation') }"><a href="../../../generated/documentation.html">Documentation</a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+	        <li><a href="../../../generated/pyfreesurfer.html">Pyfreesurfer</a></li>
+<li><a href="../../../generated/pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
+<li><a href="../../../generated/pyfreesurfer.conversions.html">Pyfreesurfer.conversions</a></li>
+<li><a href="../../../generated/pyfreesurfer.segmentation.html">Pyfreesurfer.segmentation</a></li>
+<li><a href="../../../generated/pyfreesurfer.utils.html">Pyfreesurfer.utils</a></li>
+          </ul>
+        </li>
+        <li><a href="https://github.com/AGrigis/pysphinxdoc">PYSPHINXDOC</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+<div class="content-wrapper">
+    <div class="sphinxsidebar">
+      <div class="sphinxsidebarwrapper">
+
+        <!-- info setup -->
+          <p class="doc-version">
+           This documentation is for pyfreesurfer <strong>version 1.0.0</strong>
+          </p>
+        <p class="citing">
+          If you use the software, please do not esitate to 
+          <a &mdash; <a href="https://github.com/neurospin/pyfreesurfer">
+          Report a Bug</a>.
+        </p>
+
+      <!-- toc tree -->
+      
+
+      </div>
+    </div>
+  
+
+  <div class="content">
+      
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyfreesurfer.utils.filetools</h1><div class="highlight"><pre>
+<span class="c">##########################################################################</span>
+<span class="c"># NSAp - Copyright (C) CEA, 2016</span>
+<span class="c"># Distributed under the terms of the CeCILL-B license, as published by</span>
+<span class="c"># the CEA-CNRS-INRIA. Refer to the LICENSE file or to</span>
+<span class="c"># http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html</span>
+<span class="c"># for details.</span>
+<span class="c">##########################################################################</span>
+
+<span class="c"># System import</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">ctypes</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="c"># Pyfreesurfer import</span>
+<span class="kn">from</span> <span class="nn">.surftools</span> <span class="kn">import</span> <span class="n">TriSurface</span>
+<span class="kn">from</span> <span class="nn">pyfreesurfer.utils</span> <span class="kn">import</span> <span class="n">openctm</span>
+
+
+<div class="viewcode-block" id="make_blob"><a class="viewcode-back" href="../../../generated/pyfreesurfer.utils.filetools.html#pyfreesurfer.utils.filetools.make_blob">[docs]</a><span class="k">def</span> <span class="nf">make_blob</span><span class="p">(</span><span class="n">verts</span><span class="p">,</span> <span class="n">ctype</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Convert a list of tuples of numbers into a ctypes pointer-to-array.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    verts: list (N, 3)</span>
+<span class="sd">        the position of each vetex in 3d.</span>
+<span class="sd">    ctype: ctype</span>
+<span class="sd">        type for conversion.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">verts</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">verts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">Blob</span> <span class="o">=</span> <span class="n">ctype</span> <span class="o">*</span> <span class="n">size</span>
+    <span class="n">floats</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">verts</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">v</span><span class="p">]</span>
+    <span class="n">blob</span> <span class="o">=</span> <span class="n">Blob</span><span class="p">(</span><span class="o">*</span><span class="n">floats</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="n">ctype</span><span class="p">))</span>
+
+</div>
+<div class="viewcode-block" id="surf2ctm"><a class="viewcode-back" href="../../../generated/pyfreesurfer.utils.filetools.html#pyfreesurfer.utils.filetools.surf2ctm">[docs]</a><span class="k">def</span> <span class="nf">surf2ctm</span><span class="p">(</span><span class="n">fsdir</span><span class="p">,</span> <span class="n">outdir</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Convert a FreeSurfer surface to a compressed CTM surface.</span>
+
+<span class="sd">    Treat both hemishperes: &#39;lh&#39; and &#39;rh&#39;.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fsdir: str (mandatory)</span>
+<span class="sd">        the subject FreeSurfer home directory where the &#39;.white&#39;, &#39;.pial&#39;</span>
+<span class="sd">        sufraces and the &#39;.aparc.annot&#39; files can be found.</span>
+<span class="sd">    outdir: str</span>
+<span class="sd">        directory where a &#39;.ctm&#39; file will be saved. The output file base</span>
+<span class="sd">        name will be the same as the input &#39;path_mesh&#39; file.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    paths_ctm: list of str</span>
+<span class="sd">        the converted surfaces.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># COMPATIBILITIES: Python 3 string encoding compatibilities.</span>
+    <span class="n">python_version</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span>
+    <span class="k">if</span> <span class="n">python_version</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="p">):</span>
+        <span class="n">openctm_c_char_p</span> <span class="o">=</span> <span class="s">&quot;Color&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">openctm_c_char_p</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="s">&quot;Color&quot;</span><span class="p">),</span> <span class="s">&#39;ascii&#39;</span><span class="p">)</span>
+
+    <span class="c"># Treat both hemishperes</span>
+    <span class="k">for</span> <span class="n">hemi</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;lh&quot;</span><span class="p">,</span> <span class="s">&quot;rh&quot;</span><span class="p">]:</span>
+
+        <span class="c"># Guess file locations fom the FreeSurfer standard organization</span>
+        <span class="n">path_white</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fsdir</span><span class="p">,</span> <span class="s">&quot;surf&quot;</span><span class="p">,</span> <span class="s">&quot;{0}.white&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hemi</span><span class="p">))</span>
+        <span class="n">path_pial</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fsdir</span><span class="p">,</span> <span class="s">&quot;surf&quot;</span><span class="p">,</span> <span class="s">&quot;{0}.pial&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hemi</span><span class="p">))</span>
+        <span class="n">path_annot</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fsdir</span><span class="p">,</span> <span class="s">&quot;label&quot;</span><span class="p">,</span>
+                                  <span class="s">&quot;{0}.aparc.annot&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hemi</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="p">(</span><span class="n">path_white</span><span class="p">,</span> <span class="n">path_pial</span><span class="p">,</span> <span class="n">path_annot</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;&#39;{0}&#39; FreeSurfer standard file cannot be &quot;</span>
+                                 <span class="s">&quot;found.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+
+        <span class="c"># Load the surfaces</span>
+        <span class="n">paths_ctm</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">path_surf</span> <span class="ow">in</span> <span class="p">(</span><span class="n">path_white</span><span class="p">,</span> <span class="n">path_pial</span><span class="p">):</span>
+            <span class="n">surface</span> <span class="o">=</span> <span class="n">TriSurface</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path_surf</span><span class="p">,</span> <span class="n">annotfile</span><span class="o">=</span><span class="n">path_annot</span><span class="p">)</span>
+
+            <span class="c"># Convert the loaded surface in compressed CTM format</span>
+            <span class="n">path_ctm</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span>
+                                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path_surf</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;.ctm&quot;</span><span class="p">)</span>
+            <span class="n">paths_ctm</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path_ctm</span><span class="p">)</span>
+            <span class="n">colors</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">surface</span><span class="o">.</span><span class="n">labels</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">label</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">label</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">color</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">surface</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">label</span><span class="p">][</span><span class="s">&quot;color&quot;</span><span class="p">],</span>
+                                      <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+                <span class="n">color</span> <span class="o">/=</span> <span class="mf">255.</span>
+                <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">color</span><span class="p">))</span>
+            <span class="n">pVerts</span> <span class="o">=</span> <span class="n">make_blob</span><span class="p">(</span><span class="n">surface</span><span class="o">.</span><span class="n">vertices</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_float</span><span class="p">)</span>
+            <span class="n">pFaces</span> <span class="o">=</span> <span class="n">make_blob</span><span class="p">(</span><span class="n">surface</span><span class="o">.</span><span class="n">triangles</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_uint</span><span class="p">)</span>
+            <span class="n">pNormals</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_float</span><span class="p">)()</span>
+            <span class="n">pColors</span> <span class="o">=</span> <span class="n">make_blob</span><span class="p">(</span><span class="n">colors</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_float</span><span class="p">)</span>
+            <span class="n">ctm</span> <span class="o">=</span> <span class="n">openctm</span><span class="o">.</span><span class="n">ctmNewContext</span><span class="p">(</span><span class="n">openctm</span><span class="o">.</span><span class="n">CTM_EXPORT</span><span class="p">)</span>
+            <span class="n">openctm</span><span class="o">.</span><span class="n">ctmDefineMesh</span><span class="p">(</span><span class="n">ctm</span><span class="p">,</span> <span class="n">pVerts</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">surface</span><span class="o">.</span><span class="n">vertices</span><span class="p">),</span> <span class="n">pFaces</span><span class="p">,</span>
+                                  <span class="nb">len</span><span class="p">(</span><span class="n">surface</span><span class="o">.</span><span class="n">triangles</span><span class="p">),</span> <span class="n">pNormals</span><span class="p">)</span>
+            <span class="n">openctm</span><span class="o">.</span><span class="n">ctmAddAttribMap</span><span class="p">(</span><span class="n">ctm</span><span class="p">,</span> <span class="n">pColors</span><span class="p">,</span> <span class="n">openctm_c_char_p</span><span class="p">)</span>
+            <span class="n">openctm</span><span class="o">.</span><span class="n">ctmSave</span><span class="p">(</span><span class="n">ctm</span><span class="p">,</span> <span class="n">path_ctm</span><span class="p">)</span>
+            <span class="n">openctm</span><span class="o">.</span><span class="n">ctmFreeContext</span><span class="p">(</span><span class="n">ctm</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">paths_ctm</span>
+
+</div>
+<div class="viewcode-block" id="parse_fs_lut"><a class="viewcode-back" href="../../../generated/pyfreesurfer.utils.filetools.html#pyfreesurfer.utils.filetools.parse_fs_lut">[docs]</a><span class="k">def</span> <span class="nf">parse_fs_lut</span><span class="p">(</span><span class="n">path_lut</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Parse the FreeSurfer general lookup table.</span>
+
+<span class="sd">    The FreeSurfer lookup table is located in the same folder as configuration</span>
+<span class="sd">    file, ie. &#39;/i2bm/local/freesurfer/FreeSurferColorLUT.txt&#39;.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path_lut: str (mandatory)</span>
+<span class="sd">        The FreeSurfer lookup table.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fs_lut_names: dict</span>
+<span class="sd">        Map with the FreeSurfer labels and the assocaited region names.</span>
+<span class="sd">    fs_lut_colors: dict</span>
+<span class="sd">        Map with the FreeSurfer labels and associated RGB colors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Check input parameter</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path_lut</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;&#39;{0}&#39; FreeSurfer lookup table does not &quot;</span>
+                         <span class="s">&quot;exists.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path_lut</span><span class="p">))</span>
+
+    <span class="c"># Parse the FreeSurfer lookup table</span>
+    <span class="n">fs_lut_names</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">fs_lut_colors</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_lut</span><span class="p">)</span> <span class="k">as</span> <span class="n">open_file</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">open_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+            <span class="n">token</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span> <span class="ow">and</span> <span class="n">token</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">fs_lut_names</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">token</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span> <span class="o">=</span> <span class="n">token</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">fs_lut_colors</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">token</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="nb">int</span><span class="p">(</span><span class="n">token</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">token</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">token</span><span class="p">[</span><span class="mi">4</span><span class="p">]))</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Can&#39;t parse &#39;{0}&#39; FreeSurfer lookup &quot;</span>
+                                     <span class="s">&quot;table file.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path_lut</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">fs_lut_names</span><span class="p">,</span> <span class="n">fs_lut_colors</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer">
+    </div>
+  </div>
+  
+</div>
+
+<div class="footer">
+    &copy; 2016, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
+</div>
+  </body>
+</html>

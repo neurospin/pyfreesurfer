@@ -1,0 +1,33 @@
+.. AUTO-GENERATED FILE -- DO NOT EDIT!
+
+:orphan:
+
+Documentation of *pyfreesurfer.conversions*
+============================================
+
+
+This module can be used to convert the FreeSurfer produced data.
+
+
+.. raw:: html
+
+    <br/>    <!-- Block section -->
+    <table border='1' class='docutils' style='width:100%'>
+    <colgroup><col width='25%'/><col width='75%'/></colgroup>
+    <tbody valign='top'>
+    <tr class='row-odd'>
+    <td><a class='reference internal' href='pyfreesurfer.conversions.volconvs.html'><em>pyfreesurfer.conversions.volconvs</em></a></td>
+    <td>
+        <p>Wrappers for the FreeSurfer's volume conversion utilities.</p>
+    </td>
+    </tr>
+    <tr class='row-even'>
+    <td><a class='reference internal' href='pyfreesurfer.conversions.surfconvs.html'><em>pyfreesurfer.conversions.surfconvs</em></a></td>
+    <td>
+        <p>Wrappers for the FreeSurfer's surface conversion utilities.</p>
+    </td>
+    </tr>
+    </tbody>
+
+
+    </table>

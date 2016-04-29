@@ -1,0 +1,216 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+  
+    <title>PYFREESURFER &mdash; pyFreeSurfer</title>
+  <!-- htmltitle is before nature.css - we use this hack to load bootstrap first -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../_static/css/bootstrap.min.css" media="screen" />
+
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="pyFreeSurfer" href="../index.html" />
+  
+   
+       <script type="text/javascript" src="../_static/sidebar.js"></script>
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="../_static/js/bootstrap.min.js" type="text/javascript"></script>
+
+  <script src="../_static/js/angular.min.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    var app = angular.module("navApp", []);
+    app.controller('navCtrl', ['$scope', '$window', function($scope, $window) {
+      $scope.isActive = function (viewLocation) {
+        var rel = $window.location.pathname.split("/")
+        rel = rel[rel.length - 1]
+        rel = rel.split(".")[0]
+        var active = (viewLocation === rel);
+        return active;};
+    }]);
+  </script>
+
+  </head>
+  <body><nav class="navbar navbar-default navbar-static-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+        <img alt="Logo" src="../_static/pyfreesurfer.png">
+        </a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse" ng-controller="navCtrl" ng-app="navApp">
+      <ul class="nav navbar-nav">
+        <li ng-class="{ active: isActive('index') }"><a href="../index.html">Home</a></li>
+        <li ng-class="{ active: isActive('installation') }"><a href="installation.html">Installation</a></li>
+        <li ng-class="{ active: isActive('documentation') }"><a href="documentation.html">Documentation</a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+	        <li><a href="pyfreesurfer.html">Pyfreesurfer</a></li>
+<li><a href="pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
+<li><a href="pyfreesurfer.conversions.html">Pyfreesurfer.conversions</a></li>
+<li><a href="pyfreesurfer.segmentation.html">Pyfreesurfer.segmentation</a></li>
+<li><a href="pyfreesurfer.utils.html">Pyfreesurfer.utils</a></li>
+          </ul>
+        </li>
+        <li><a href="https://github.com/AGrigis/pysphinxdoc">PYSPHINXDOC</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+<div class="content-wrapper">
+    <div class="sphinxsidebar">
+      <div class="sphinxsidebarwrapper">
+
+        <!-- info setup -->
+          <p class="doc-version">
+           This documentation is for pyfreesurfer <strong>version 1.0.0</strong>
+          </p>
+        <p class="citing">
+          If you use the software, please do not esitate to 
+          <a &mdash; <a href="https://github.com/neurospin/pyfreesurfer">
+          Report a Bug</a>.
+        </p>
+
+      <!-- toc tree -->
+      <ul class="simple">
+</ul>
+
+
+      </div>
+    </div>
+  
+
+  <div class="content">
+      
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <span class="target" id="module-pyfreesurfer.utils.filetools"></span><dl class="function">
+<dt id="pyfreesurfer.utils.filetools.make_blob">
+<tt class="descclassname">pyfreesurfer.utils.filetools.</tt><tt class="descname">make_blob</tt><big>(</big><em>verts</em>, <em>ctype</em><big>)</big><a class="reference internal" href="../_modules/pyfreesurfer/utils/filetools.html#make_blob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.utils.filetools.make_blob" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a list of tuples of numbers into a ctypes pointer-to-array.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>verts: list (N, 3)</strong></p>
+<blockquote>
+<div><p>the position of each vetex in 3d.</p>
+</div></blockquote>
+<p><strong>ctype: ctype</strong></p>
+<blockquote class="last">
+<div><p>type for conversion.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyfreesurfer.utils.filetools.parse_fs_lut">
+<tt class="descclassname">pyfreesurfer.utils.filetools.</tt><tt class="descname">parse_fs_lut</tt><big>(</big><em>path_lut</em><big>)</big><a class="reference internal" href="../_modules/pyfreesurfer/utils/filetools.html#parse_fs_lut"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.utils.filetools.parse_fs_lut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse the FreeSurfer general lookup table.</p>
+<p>The FreeSurfer lookup table is located in the same folder as configuration
+file, ie. &#8216;/i2bm/local/freesurfer/FreeSurferColorLUT.txt&#8217;.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>path_lut: str (mandatory)</strong></p>
+<blockquote>
+<div><p>The FreeSurfer lookup table.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">fs_lut_names: dict</p>
+<blockquote>
+<div><p>Map with the FreeSurfer labels and the assocaited region names.</p>
+</div></blockquote>
+<p>fs_lut_colors: dict</p>
+<blockquote class="last">
+<div><p>Map with the FreeSurfer labels and associated RGB colors.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyfreesurfer.utils.filetools.surf2ctm">
+<tt class="descclassname">pyfreesurfer.utils.filetools.</tt><tt class="descname">surf2ctm</tt><big>(</big><em>fsdir</em>, <em>outdir</em><big>)</big><a class="reference internal" href="../_modules/pyfreesurfer/utils/filetools.html#surf2ctm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.utils.filetools.surf2ctm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a FreeSurfer surface to a compressed CTM surface.</p>
+<p>Treat both hemishperes: &#8216;lh&#8217; and &#8216;rh&#8217;.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fsdir: str (mandatory)</strong></p>
+<blockquote>
+<div><p>the subject FreeSurfer home directory where the &#8216;.white&#8217;, &#8216;.pial&#8217;
+sufraces and the &#8216;.aparc.annot&#8217; files can be found.</p>
+</div></blockquote>
+<p><strong>outdir: str</strong></p>
+<blockquote>
+<div><p>directory where a &#8216;.ctm&#8217; file will be saved. The output file base
+name will be the same as the input &#8216;path_mesh&#8217; file.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">paths_ctm: list of str</p>
+<blockquote class="last">
+<div><p>the converted surfaces.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer">
+    </div>
+  </div>
+  
+</div>
+
+<div class="footer">
+    &copy; 2016, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
+</div>
+  </body>
+</html>

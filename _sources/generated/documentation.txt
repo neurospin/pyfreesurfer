@@ -1,0 +1,59 @@
+.. AUTO-GENERATED FILE -- DO NOT EDIT!
+
+Documentation of PYFREESURFER
+==============================
+
+.. raw:: html
+
+    <!-- Block section -->
+
+    <div class='container-fluid'>
+
+    <div class='row'>
+
+    <div class='col-md-4'>
+    <h3><a href='pyfreesurfer.html'>
+    pyfreesurfer
+    </a></h3>
+    <blockquote>
+        <p>Package to wrap the FreeSurfer software and simplify scripting calls.
+    In the root location of the module are implemented:</p>
+    <blockquote>
+    <ul class="simple">
+    <li>the FreeSurfer's dedicated exceptions.</li>
+    <li>the FreeSurfer's wrapper.</li>
+    </ul>
+    </blockquote>    </blockquote>
+    </div>
+    <div class='col-md-4'>
+    <h3><a href='pyfreesurfer.plots.html'>
+    pyfreesurfer.plots
+    </a></h3>
+    <blockquote>
+        <p>This module can be used to render the produced FreeSurfer data.</p>    </blockquote>
+    </div>
+    <div class='col-md-4'>
+    <h3><a href='pyfreesurfer.conversions.html'>
+    pyfreesurfer.conversions
+    </a></h3>
+    <blockquote>
+        <p>This module can be used to convert the FreeSurfer produced data.</p>    </blockquote>
+    </div>
+    <div class='col-md-4'>
+    <h3><a href='pyfreesurfer.segmentation.html'>
+    pyfreesurfer.segmentation
+    </a></h3>
+    <blockquote>
+        <p>This module provides a fonction to execute the main FreeSurfer cortical
+    reconstruction tool: recon-all.</p>    </blockquote>
+    </div>
+    <div class='col-md-4'>
+    <h3><a href='pyfreesurfer.utils.html'>
+    pyfreesurfer.utils
+    </a></h3>
+    <blockquote>
+        <p>Utility functions wrapped from the FreeSurfer package.</p>    </blockquote>
+    </div>
+
+    </div>
+    </div>

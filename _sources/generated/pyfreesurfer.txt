@@ -1,0 +1,43 @@
+.. AUTO-GENERATED FILE -- DO NOT EDIT!
+
+:orphan:
+
+Documentation of *pyfreesurfer*
+================================
+
+
+Package to wrap the FreeSurfer software and simplify scripting calls.
+In the root location of the module are implemented:
+
+    * the FreeSurfer's dedicated exceptions.
+    * the FreeSurfer's wrapper.
+
+
+.. raw:: html
+
+    <br/>    <!-- Block section -->
+    <table border='1' class='docutils' style='width:100%'>
+    <colgroup><col width='25%'/><col width='75%'/></colgroup>
+    <tbody valign='top'>
+    <tr class='row-odd'>
+    <td><a class='reference internal' href='pyfreesurfer.exceptions.html'><em>pyfreesurfer.exceptions</em></a></td>
+    <td>
+    
+    </td>
+    </tr>
+    <tr class='row-even'>
+    <td><a class='reference internal' href='pyfreesurfer.configuration.html'><em>pyfreesurfer.configuration</em></a></td>
+    <td>
+    
+    </td>
+    </tr>
+    <tr class='row-odd'>
+    <td><a class='reference internal' href='pyfreesurfer.wrapper.html'><em>pyfreesurfer.wrapper</em></a></td>
+    <td>
+    
+    </td>
+    </tr>
+    </tbody>
+
+
+    </table>

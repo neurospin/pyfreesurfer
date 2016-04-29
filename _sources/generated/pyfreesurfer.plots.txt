@@ -1,0 +1,33 @@
+.. AUTO-GENERATED FILE -- DO NOT EDIT!
+
+:orphan:
+
+Documentation of *pyfreesurfer.plots*
+======================================
+
+
+This module can be used to render the produced FreeSurfer data.
+
+
+.. raw:: html
+
+    <br/>    <!-- Block section -->
+    <table border='1' class='docutils' style='width:100%'>
+    <colgroup><col width='25%'/><col width='75%'/></colgroup>
+    <tbody valign='top'>
+    <tr class='row-odd'>
+    <td><a class='reference internal' href='pyfreesurfer.plots.polar.html'><em>pyfreesurfer.plots.polar</em></a></td>
+    <td>
+    
+    </td>
+    </tr>
+    <tr class='row-even'>
+    <td><a class='reference internal' href='pyfreesurfer.plots.slicer.html'><em>pyfreesurfer.plots.slicer</em></a></td>
+    <td>
+    
+    </td>
+    </tr>
+    </tbody>
+
+
+    </table>
