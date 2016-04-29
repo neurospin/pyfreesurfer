@@ -182,7 +182,7 @@ for cut_axis in ["C", "A", "S"]:
             os.makedirs(axisdir)
         slices.append(
             tkmedit_slice(args.fsdir, args.subjectid, axisdir, stype,
-                          cut_axis=cut_axis, erase=False,
+                          cut_axis=cut_axis,
                           slice_interval=(0, 255, increment),
                           path_lut=path_lut, fsconfig=config))
 

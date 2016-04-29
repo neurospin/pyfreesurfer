@@ -36,7 +36,7 @@ class FreeSurferWrapper(unittest.TestCase):
             "shfile": "/my/path/mock_shfile"
         }
 
-    @mock.patch("os.path")
+    @mock.patch("pyfreesurfer.wrapper.os.path")
     def test_badfileerror_raise(self, mock_path):
         """ Bad configuration file -> raise ValueError.
         """

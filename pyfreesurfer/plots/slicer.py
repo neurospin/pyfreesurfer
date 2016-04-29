@@ -31,7 +31,7 @@ AXIS_NAME = {
 
 
 def tkmedit_slice(fsdir, sid, outdir, stype="edges", cut_axis="C",
-                  slice_interval=(0, 255, 1), path_lut=None, erase=False,
+                  slice_interval=(0, 255, 1), path_lut=None,
                   fsconfig=DEFAULT_FREESURFER_PATH):
     """ Slice the anatomical volume overlayed with the pial and white surfaces.
     Wrapping around the 'tkmedit' command.
@@ -55,9 +55,6 @@ def tkmedit_slice(fsdir, sid, outdir, stype="edges", cut_axis="C",
     path_lut: str (optional, default None)
         the lookup table to use for label coloration: mandatory option
         for the 'aparc' and 'aseg' slicer.
-    erase: bool (optional, default)
-        if the destination subjects already exists and if this option is True,
-        delete the folder, otherwise raise a ValueError.
 
     Returns
     -------
@@ -66,17 +63,18 @@ def tkmedit_slice(fsdir, sid, outdir, stype="edges", cut_axis="C",
     """
     # Check input parameters
     if stype not in ["edges", "aparc", "aseg"]:
-        raise ValueError("Unrecognize slicer type '{0}'. Implemented options "
+        raise ValueError("Unrecognize slicing type '{0}'. Implemented options "
                          "are ['edges', 'aparc', 'aseg'].".format(stype))
-    if stype is not None and path_lut is None:
+    if stype in ["aparc", "aseg"] and path_lut is None:
         raise ValueError("Need to specify the 'path_lut' parameter when the "
-                         "slicer is set to '{0}'.".format(stype))
-    if stype is not None and not os.path.isfile(path_lut):
+                         "slicing is set to '{0}'.".format(stype))
+    if stype in ["aparc", "aseg"] and not os.path.isfile(path_lut):
         raise ValueError("'{0}' lookup table path does not "
                          "exists.".format(path_lut))
     if cut_axis not in AXIS_MAP:
         raise ValueError(
-            "{0} axis is not recognized: use {1}.".format(cut_axis, AXIS_MAP))
+            "'{0}' axis is not recognized: use {1}.".format(cut_axis,
+                                                            AXIS_MAP))
     subjdir = os.path.join(fsdir, sid)
     if not os.path.isdir(subjdir):
         raise ValueError("'{0}' is not a valid FreeSurfer subject "
@@ -88,9 +86,11 @@ def tkmedit_slice(fsdir, sid, outdir, stype="edges", cut_axis="C",
     # Check T1 file existence
     anat_file = os.path.join(subjdir, "mri", "nu.mgz")
     if not os.path.isfile(anat_file):
-        raise Exception("'{0}' file is missing.".format(anat_file))
+        raise ValueError("'{0}' FreeSurfer anatomical file is "
+                         "missing.".format(anat_file))
 
     # Generate/execute the tcl slicer script for each axis
+    fsvar = os.environ.get("SUBJECTS_DIR")
     os.environ["SUBJECTS_DIR"] = fsdir
     if stype == "edges":
         path_template = os.path.join(
@@ -143,5 +143,11 @@ def tkmedit_slice(fsdir, sid, outdir, stype="edges", cut_axis="C",
         process = FSWrapper(cmd, shfile=fsconfig)
         process()
         os.remove(path)
+
+    # Restore environ
+    if fsvar is not None:
+        os.environ["SUBJECTS_DIR"] = fsvar
+    else:
+        del os.environ["SUBJECTS_DIR"]
 
     return slices

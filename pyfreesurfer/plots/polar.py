@@ -21,7 +21,7 @@ def polar_plot(individual_stats, cohort_stats, snapfile, name=None):
         on the individual: can be generated with the
         'pyfreesurfer.utils.statistics.population_summary'.
     snapfile: str (mandatory)
-        the name of the generated polar snap.
+        the destination file name where polar plot is saved.
     name: str (optional, default None)
         the name of the polar plot.
     """
