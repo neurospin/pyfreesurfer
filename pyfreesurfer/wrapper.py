@@ -37,12 +37,14 @@ class FSWrapper(object):
         """
         self.cmd = cmd
         self.shfile = shfile
+        self.version = None
         self.environment = self._freesurfer_version_check()
 
         # Update the environment variables
         if "SUBJECTS_DIR" in os.environ:
             self.environment["SUBJECTS_DIR"] = os.environ["SUBJECTS_DIR"]
-        if self.cmd[0] == "tkmedit" and "DISPLAY" in os.environ:
+        if (len(self.cmd) > 0 and self.cmd[0] == "tkmedit" and
+                "DISPLAY" in os.environ):
             self.environment["DISPLAY"] = os.environ["DISPLAY"]
 
     def __call__(self):
