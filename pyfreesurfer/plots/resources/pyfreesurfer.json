@@ -1,0 +1,92 @@
+{
+    "cover": {
+        "type": "cover"
+    },
+    "page1": {
+        "type": "triplanar",
+        "style": "OneColLandscape",
+        "images": [
+            ["polarplot-aseg.png"]
+        ],
+        "texts": [
+            "The subcortical segmentation volumes of one subject compared to the reference population."
+        ],
+        "topmargin": 0.1,
+        "linecount": 120
+    },
+    "page2": {
+        "type": "triplanar",
+        "style": "OneColLandscape",
+        "images": [
+            ["polarplot-lh.png"]
+        ],
+        "texts": [
+            "The cortical surface textures of one subject compared to the reference population."
+        ],
+        "topmargin": 0.1,
+        "linecount": 120
+    },
+    "page3": {
+        "type": "triplanar",
+        "style": "OneColLandscape",
+        "images": [
+            ["polarplot-rh.png"]
+        ],
+        "texts": [
+            "The cortical surface textures of one subject compared to the reference population."
+        ],
+        "topmargin": 0.1,
+        "linecount": 120
+    },
+    "page4": {
+        "type": "triplanar",
+        "style": "TwoCol",
+        "images": [
+            ["coronal/aparc/slice-C-60.png"],
+            ["coronal/aparc/slice-C-80.png"],
+            ["coronal/aparc/slice-C-100.png"],
+            ["coronal/aparc/slice-C-120.png"],
+            ["coronal/aparc/slice-C-140.png"],
+            ["coronal/aparc/slice-C-160.png"]
+        ],
+        "texts": [
+            "The cortical parcellation in the coronal direction."
+        ],
+        "topmargin": 0.05,
+        "linecount": 120
+    },
+    "page5": {
+        "type": "triplanar",
+        "style": "TwoCol",
+        "images": [
+            ["coronal/aseg/slice-C-60.png"],
+            ["coronal/aseg/slice-C-80.png"],
+            ["coronal/aseg/slice-C-100.png"],
+            ["coronal/aseg/slice-C-120.png"],
+            ["coronal/aseg/slice-C-140.png"],
+            ["coronal/aseg/slice-C-160.png"]
+        ],
+        "texts": [
+            "The subcortical segmentation in the coronal direction."
+        ],
+        "topmargin": 0.05,
+        "linecount": 120
+    },
+    "page6": {
+        "type": "triplanar",
+        "style": "TwoCol",
+        "images": [
+            ["coronal/edges/slice-C-60.png"],
+            ["coronal/edges/slice-C-80.png"],
+            ["coronal/edges/slice-C-100.png"],
+            ["coronal/edges/slice-C-120.png"],
+            ["coronal/edges/slice-C-140.png"],
+            ["coronal/edges/slice-C-160.png"]
+        ],
+        "texts": [
+            "The pial and white surface edges in the coronal direction."
+        ],
+        "topmargin": 0.05,
+        "linecount": 120
+    }
+}
