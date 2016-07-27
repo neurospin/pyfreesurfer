@@ -18,7 +18,8 @@ from pyfreesurfer.wrapper import FSWrapper
 from pyfreesurfer import DEFAULT_FREESURFER_PATH
 
 
-def recon_all(fsdir, anatfile, sid, fsconfig=DEFAULT_FREESURFER_PATH):
+def recon_all(fsdir, anatfile, sid, reconstruction_stage="all", resume=False,
+              t2file=None, flairfile=None, fsconfig=DEFAULT_FREESURFER_PATH):
     """ Performs all the FreeSurfer cortical reconstruction steps.
 
     Binding around the FreeSurfer's 'recon-all' command.
@@ -65,6 +66,17 @@ def recon_all(fsdir, anatfile, sid, fsconfig=DEFAULT_FREESURFER_PATH):
         The input anatomical image to be segmented with FreeSurfer.
     sid: str (mandatory)
         The current subject identifier.
+    reconstruction_stage: str (optional, default 'all')
+        The FreeSurfer reconstruction stage that will be launched.
+    resume: bool (optional, default False)
+        If true, try to resume the recon-all. This option is also usefull if
+        custom segmentation is used in recon-all.
+    t2file: str (optional, default None)
+        Specify the path to a T2 image that will be used to improve the pial
+        surfaces.
+    flairfile: str (optional, default None)
+        Specify the path to a FLAIR image that will be used to improve the pial
+        surfaces.
     fsconfig: str (optional)
         The FreeSurfer configuration batch.
     Returns
@@ -76,9 +88,21 @@ def recon_all(fsdir, anatfile, sid, fsconfig=DEFAULT_FREESURFER_PATH):
     if not os.path.isdir(fsdir):
         raise ValueError("'{0}' FreeSurfer home directory does not "
                          "exists.".format(fsdir))
+    if reconstruction_stage not in ("all", "autorecon1", "autorecon2",
+                                    "autorecon2-cp", "autorecon2-wm",
+                                    "autorecon2-pial", "autorecon3"):
+        raise ValueError("Unsupported '{0}' recon-all reconstruction "
+                         "stage.".format(reconstruction_stage))
 
     # Call FreeSurfer segmentation
-    cmd = ["recon-all", "-all", "-subjid", sid, "-i", anatfile, "-sd", fsdir]
+    cmd = ["recon-all", "-{0}".format(reconstruction_stage), "-subjid", sid,
+           "-i", anatfile, "-sd", fsdir]
+    if t2file is not None:
+        cmd.extend(["-T2", t2file, "-T2pial"])
+    if flairfile is not None:
+        cmd.extend(["-FLAIR", t2file, "-FLAIRpial"])
+    if resume:
+        cmd[1] = "-make all"
     recon = FSWrapper(cmd, shfile=fsconfig)
     recon()
     subjfsdir = os.path.join(fsdir, sid)

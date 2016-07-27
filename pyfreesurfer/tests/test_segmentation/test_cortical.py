@@ -10,6 +10,7 @@
 import unittest
 import sys
 import os
+import copy
 # COMPATIBILITY: since python 3.3 mock is included in unittest module
 python_version = sys.version_info
 if python_version[:2] <= (3, 3):
@@ -53,6 +54,10 @@ class FreeSurferReconAll(unittest.TestCase):
             "fsdir": "/my/path/mock_fsdir",
             "anatfile": "/my/path/mock_anat",
             "sid": "Lola",
+            "reconstruction_stage": "all",
+            "resume": False,
+            "t2file": "/my/path/mock_t2",
+            "flairfile": None,
             "fsconfig": "/my/path/mock_fsconfig"
         }
 
@@ -73,6 +78,18 @@ class FreeSurferReconAll(unittest.TestCase):
         self.assertRaises(ValueError, recon_all, **self.kwargs)
 
     @mock.patch("pyfreesurfer.segmentation.cortical.os.path.isdir")
+    def test_badstageerror_raise(self, mock_isdir):
+        """ Bad input stage -> raise ValueError.
+        """
+        # Set the mocked functions returned values
+        mock_isdir.side_effect = [True]
+
+        # Test execution
+        wrong_kwargs = copy.copy(self.kwargs)
+        wrong_kwargs["reconstruction_stage"] = "WRONG"
+        self.assertRaises(ValueError, recon_all, **wrong_kwargs)
+
+    @mock.patch("pyfreesurfer.segmentation.cortical.os.path.isdir")
     def test_normal_execution(self, mock_isdir):
         """ Test the normal behaviour of the function.
         """
@@ -86,7 +103,8 @@ class FreeSurferReconAll(unittest.TestCase):
             mock.call(["which", "recon-all"], env={}, stderr=-1, stdout=-1),
             mock.call(["recon-all", "-all", "-subjid", self.kwargs["sid"],
                        "-i", self.kwargs["anatfile"], "-sd",
-                       self.kwargs["fsdir"]], env={}, stderr=-1, stdout=-1)],
+                       self.kwargs["fsdir"], "-T2", self.kwargs["t2file"],
+                       "-T2pial"], env={}, stderr=-1, stdout=-1)],
             self.mock_popen.call_args_list)
         self.assertEqual(len(self.mock_env.call_args_list), 1)
         self.assertEqual(subjfsdir, os.path.join(self.kwargs["fsdir"],
