@@ -125,6 +125,7 @@ class FreeSurferMRIConvert(unittest.TestCase):
             "fsdir": "/my/path/mock_fsdir",
             "regex": "mock_regex",
             "outdir": "/my/path/mock_outdir",
+            "destdirname": "convert",
             "reslice": True,
             "interpolation": "interpolate",
             "fsconfig": "/my/path/mock_fsconfig"

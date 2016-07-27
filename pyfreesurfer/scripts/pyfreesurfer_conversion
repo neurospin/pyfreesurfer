@@ -12,6 +12,9 @@ from __future__ import print_function
 import os
 import shutil
 import argparse
+from datetime import datetime
+import json
+from pprint import pprint
 
 # Bredala import
 try:
@@ -28,6 +31,7 @@ except:
 
 # Pyfreesurfer import
 from pyfreesurfer import __version__ as version
+from pyfreesurfer.wrapper import FSWrapper
 from pyfreesurfer import DEFAULT_FREESURFER_PATH
 from pyfreesurfer.conversions.volconvs import mri_convert
 from pyfreesurfer.conversions.surfconvs import surf_convert
@@ -36,9 +40,7 @@ from pyfreesurfer.utils.regtools import conformed_to_native_space
 
 
 # Parameters to keep trace
-__hopla__ = ["tool", "version", "config", "inputs", "outputs",
-             "subjdir", "convertdir", "niftifiles", "trffile",
-             "surfaces", "annotations"]
+__hopla__ = ["runtime", "inputs", "outputs"]
 
 
 # Script documentation
@@ -123,23 +125,34 @@ First construct the subject FreeSurfer directory and check its existance on
 the file system.
 """
 tool = "pyfreesurfer_conversion"
-config = args.fsconfig or DEFAULT_FREESURFER_PATH
+timestamp = datetime.now().isoformat()
+tool_version = version
+freesurfer_config = args.fsconfig or DEFAULT_FREESURFER_PATH
+freesurfer_version = FSWrapper([], freesurfer_config).version
+runtime = dict([(name, locals()[name])
+               for name in ("freesurfer_config", "tool", "tool_version",
+                            "freesurfer_version", "timestamp")])
 if args.verbose > 0:
     print("[info] Start FreeSurfer conversions...")
     print("[info] Directory: {0}.".format(args.fsdir))
     print("[info] Subject: {0}.".format(args.subjectid))
-subjdir = os.path.join(args.fsdir, args.subjectid)
-inputs = [subjdir]
-outputs = []
+subjectid = args.subjectid
+subjdir = os.path.join(args.fsdir, subjectid)
 convertdir = os.path.join(args.outdir, args.subjectid, "convert")
+imagedir = os.path.join(convertdir, "images")
+surfacedir = os.path.join(convertdir, "surfaces")
+inputs = dict([(name, locals()[name])
+               for name in ("subjectid", "subjdir", "convertdir", "imagedir",
+                            "surfacedir")])
+outputs = None
 if not os.path.isdir(subjdir):
     raise ValueError(
         "'{0}' is not a FreeSurfer subject folder.".format(subjdir))
-if not os.path.isdir(convertdir):
-    os.mkdir(convertdir)
-elif args.erase:
+if args.erase and os.path.isdir(convertdir):
     shutil.rmtree(convertdir)
-    os.mkdir(convertdir)
+for directory in (convertdir, imagedir, surfacedir):
+    if not os.path.isdir(directory):
+        os.mkdir(directory)
 
 
 """
@@ -151,9 +164,13 @@ niftifiles = {}
 for modality in ["aparc+aseg", "aparc.a2009s+aseg", "aseg", "wm", "rawavg"]:
     regex = os.path.join(args.subjectid, "mri", "{0}.mgz".format(modality))
     niftifiles[modality] = mri_convert(
-        args.fsdir, regex, args.outdir, reslice=True,
-        interpolation="nearest", fsconfig=config)
-    outputs += niftifiles[modality]
+        args.fsdir,
+        regex,
+        args.outdir,
+        destdirname=os.path.join("convert", "images"),
+        reslice=True,
+        interpolation="nearest",
+        fsconfig=freesurfer_config)
     if args.verbose > 1:
         print("[result] {0}: {1}.".format(modality, niftifiles[modality]))
 
@@ -165,8 +182,10 @@ if args.verbose > 0:
     print("[info] Start Registration matrix...")
 regex = os.path.join(args.subjectid, "mri")
 trffile = conformed_to_native_space(
-    args.fsdir, regex, args.outdir, fsconfig=config)
-outputs.append(trffile)
+    args.fsdir,
+    regex,
+    args.outdir,
+    fsconfig=freesurfer_config)
 if args.verbose > 1:
     print("[result] trffile: {0}.".format(trffile))
 
@@ -183,16 +202,44 @@ for modality in ["pial", "white"]:
         name = "{0}.{1}".format(hemi, modality)
         regex = os.path.join(args.subjectid, "surf", name)
         resamplefiles, annotfiles = resample_cortical_surface(
-            args.fsdir, regex, args.outdir, orders=[4, 5, 6, 7],
-            surface_name=modality, fsconfig=config)
+            args.fsdir,
+            regex,
+            args.outdir,
+            destdirname=os.path.join("convert", "surfaces"),
+            orders=[4, 5, 6, 7],
+            surface_name=modality,
+            fsconfig=freesurfer_config)
         annotations.extend(annotfiles)
         surfaces[name] = surf_convert(
-            args.fsdir, niftifiles["rawavg"], resamplefiles,
-            rm_orig=True, fsconfig=config)
-        outputs += surfaces[name]
+            args.fsdir,
+            niftifiles["rawavg"],
+            resamplefiles,
+            sidpos=-4,
+            rm_orig=True,
+            fsconfig=freesurfer_config)
         if args.verbose > 1:
             print("[result] {0}: {1}.".format(name, surfaces[name]))
 annotations = list(set(annotations))
-outputs += annotations
 if args.verbose > 1:
     print("[result] Annotations: {0}.".format(annotations))
+
+
+"""
+Update the outputs and save them and the inputs in a 'logs' directory.
+"""
+logdir = os.path.join(convertdir, "logs")
+if not os.path.isdir(logdir):
+    os.mkdir(logdir)
+outputs = dict([(name, locals()[name])
+               for name in ("niftifiles", "trffile", "surfaces",
+                            "annotations")])
+for name, final_struct in [("inputs", inputs), ("outputs", outputs),
+                           ("runtime", runtime)]:
+    log_file = os.path.join(logdir, "{0}.json".format(name))
+    with open(log_file, "wt") as open_file:
+        json.dump(final_struct, open_file, sort_keys=True, check_circular=True,
+                  indent=4)
+if args.verbose > 1:
+    print("[final]")
+    pprint(outputs)
+

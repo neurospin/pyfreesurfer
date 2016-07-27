@@ -50,8 +50,8 @@ def surf2ctm(fsdir, outdir):
 
     Returns
     -------
-    paths_ctm: list of str
-        the converted surfaces.
+    paths_ctm: dict of list of str
+        the converted surfaces for each hemisphere.
     """
     # COMPATIBILITIES: Python 3 string encoding compatibilities.
     python_version = sys.version_info
@@ -61,6 +61,7 @@ def surf2ctm(fsdir, outdir):
         openctm_c_char_p = bytes(str("Color"), 'ascii')
 
     # Treat both hemishperes
+    paths_ctm = {}
     for hemi in ["lh", "rh"]:
 
         # Guess file locations fom the FreeSurfer standard organization
@@ -74,14 +75,14 @@ def surf2ctm(fsdir, outdir):
                                  "found.".format(path))
 
         # Load the surfaces
-        paths_ctm = []
+        paths_ctm[hemi] = []
         for path_surf in (path_white, path_pial):
             surface = TriSurface.load(path_surf, annotfile=path_annot)
 
             # Convert the loaded surface in compressed CTM format
             path_ctm = os.path.join(outdir,
                                     os.path.basename(path_surf) + ".ctm")
-            paths_ctm.append(path_ctm)
+            paths_ctm[hemi].append(path_ctm)
             colors = []
             for label in surface.labels:
                 if label < 0:

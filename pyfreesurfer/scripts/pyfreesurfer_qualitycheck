@@ -12,6 +12,9 @@ from __future__ import print_function
 import argparse
 import os
 import shutil
+from datetime import datetime
+import json
+from pprint import pprint
 
 # Bredala import
 try:
@@ -25,23 +28,26 @@ try:
                      names=["polar_plot"])
     bredala.register("pyfreesurfer.utils.filetools",
                      names=["surf2ctm"])
+    bredala.register("pyconnectomist.utils.pdftools",
+                     names=["generate_pdf"])
 except:
     pass
 
 # Pyfreesurfer import
+import pyfreesurfer
 from pyfreesurfer import __version__ as version
 from pyfreesurfer.utils.stattools import population_summary
 from pyfreesurfer.plots.slicer import tkmedit_slice
 from pyfreesurfer.plots.slicer import AXIS_NAME
 from pyfreesurfer.plots.polar import polar_plot
+from pyfreesurfer.wrapper import FSWrapper
 from pyfreesurfer import DEFAULT_FREESURFER_PATH
 from pyfreesurfer.utils.filetools import surf2ctm
+from pyconnectomist.utils.pdftools import generate_pdf
 
 
 # Parameters to keep trace
-__hopla__ = ["tool", "version", "config", "inputs", "outputs",
-             "subjdir", "fsconfig", "slices", "polars", "qcoutdir",
-             "increment", "surfaces", "statdir"]
+__hopla__ = ["runtime", "inputs", "outputs"]
 
 
 # Script documentation
@@ -59,7 +65,7 @@ Steps:
 
 3- Create white/pial mesh overlays.
 
-4- Compress the FreeSurfer surfaces
+4- Compress the FreeSurfer surfaces.
 
 Command:
 
@@ -71,6 +77,9 @@ python $HOME/git/pyfreesurfer/pyfreesurfer/scripts/pyfreesurfer_qualitycheck \
     -s ag110371 \
     -o /neurospin/senior/nsap/data/V4/qc/freesurfer \
     -i 20 \
+    -a C \
+    -P SENIOR \
+    -T V4 \
     -e
 """
 
@@ -101,6 +110,15 @@ parser.add_argument(
     "-e", "--erase", dest="erase", action="store_true",
     help="if activated, clean the result folder if already created.")
 parser.add_argument(
+    "-C", "--clientname", dest="clientname", default="NC",
+    help="the client name.")
+parser.add_argument(
+    "-P", "--projectname", dest="projectname", required=True,
+    help="the project name.")
+parser.add_argument(
+    "-T", "--timestep", dest="timestep", required=True,
+    help="the time step assocaited to the diffusion dataset.")
+parser.add_argument(
     "-c", "--fsconfig", dest="fsconfig", metavar="FILE", required=True,
     help="the FreeSurfer configuration file.", type=is_file)
 parser.add_argument(
@@ -118,6 +136,10 @@ parser.add_argument(
 parser.add_argument(
     "-i", "--incr", dest="incr", default=1, type=int,
     help="the increment between two slices.")
+parser.add_argument(
+    "-a", "--cutaxis", dest="cutaxis", nargs="+", choices=["C", "A", "S"],
+    help=("the cut axis, use 'C' for Coronal, 'A' for Axial and 'S' for "
+          "Sagittal."))
 args = parser.parse_args()
 
 
@@ -125,23 +147,35 @@ args = parser.parse_args()
 First construct the subject FreeSurfer directory and check its existance on
 the file system.
 """
-tool = "pyfreesurfer_quality_check"
-config = args.fsconfig or DEFAULT_FREESURFER_PATH
+tool = "pyfreesurfer_qualitycheck"
+timestamp = datetime.now().isoformat()
+tool_version = version
+freesurfer_config = args.fsconfig or DEFAULT_FREESURFER_PATH
+freesurfer_version = FSWrapper([], freesurfer_config).version
+runtime = dict([(name, locals()[name])
+               for name in ("freesurfer_config", "tool", "tool_version",
+                            "freesurfer_version", "timestamp")])
 if args.verbose > 0:
     print("[info] Start FreeSurfer QC...")
     print("[info] Directory: {0}.".format(args.fsdir))
     print("[info] Subject: {0}.".format(args.subjectid))
+clientname = args.clientname
+projectname = args.projectname
+timepoint = args.timestep
+sid = args.subjectid
 subjdir = os.path.join(args.fsdir, args.subjectid)
 outdir = args.outdir
-statdir = args.statdir
-increment = args.incr
-inputs = [subjdir, statdir]
-outputs = []
 if outdir is None:
     outdir = args.fsdir
-    qcdir = os.path.join(subjdir, "qc")
-else:
-    qcdir = os.path.join(outdir, args.subjectid)
+statdir = args.statdir
+increment = args.incr
+cut_axis = args.cutaxis
+qcdir = os.path.join(outdir, args.subjectid, "qc")
+inputs = dict([(name, locals()[name])
+               for name in ("sid", "subjdir", "outdir", "statdir", "increment",
+                            "qcdir", "cut_axis", "clientname", "projectname",
+                            "timepoint")])
+outputs = None
 if not os.path.isdir(subjdir):
     raise ValueError(
         "'{0}' is not a FreeSurfer subject folder.".format(subjdir))
@@ -150,6 +184,7 @@ if not os.path.isdir(qcdir):
 elif args.erase:
     shutil.rmtree(qcdir)
     os.mkdir(qcdir)
+
 
 """
 Create the population statistic and get the subjects measures
@@ -166,25 +201,33 @@ for name, cohort_stats in popstats.items():
     individual_stats = indstats[name]
     snapfile = os.path.join(qcdir, "polarplot-{0}.png".format(name))
     polars.append(snapfile)
-    polar_plot(individual_stats, cohort_stats, snapfile,
+    polar_plot(individual_stats,
+               cohort_stats,
+               snapfile,
                name="polarplot-{0}".format(name))
 
 
 """
 Create white/pial mesh overlays
 """
-slices = []
-path_lut = os.path.join(os.path.dirname(config), "FreeSurferColorLUT.txt")
-for cut_axis in ["C", "A", "S"]:
+slices = {}
+path_lut = os.path.join(os.path.dirname(freesurfer_config),
+                        "FreeSurferColorLUT.txt")
+for axis in cut_axis:
+    slices[AXIS_NAME[axis]] = {}
     for stype in ["aparc", "edges", "aseg"]:
-        axisdir = os.path.join(qcdir, AXIS_NAME[cut_axis], stype)
+        axisdir = os.path.join(qcdir, AXIS_NAME[axis], stype)
         if not os.path.isdir(axisdir):
             os.makedirs(axisdir)
-        slices.append(
-            tkmedit_slice(args.fsdir, args.subjectid, axisdir, stype,
-                          cut_axis=cut_axis,
-                          slice_interval=(0, 255, increment),
-                          path_lut=path_lut, fsconfig=config))
+        slices[AXIS_NAME[axis]][stype] = tkmedit_slice(
+            args.fsdir,
+            args.subjectid,
+            axisdir,
+            stype,
+            cut_axis=axis,
+            slice_interval=(0, 255, increment),
+            path_lut=path_lut,
+            fsconfig=freesurfer_config)
 
 
 """
@@ -194,6 +237,55 @@ surfaces = surf2ctm(subjdir, qcdir)
 
 
 """
-Update the script outputs
+Generate QC reporting
 """
-outputs = polars + slices + surfaces
+if "C" in cut_axis or increment != 20:
+    reportfile = os.path.join(qcdir, "QcFreeSurfer_{0}_{1}_{2}.pdf".format(
+        projectname, sid, timepoint))
+    tic = datetime.now()
+    generate_pdf(
+        datapath=qcdir,
+        struct_file=os.path.join(
+            os.path.abspath(os.path.dirname(pyfreesurfer.__file__)), "plots",
+            "resources", "pyfreesurfer.json"),
+        author="NeuroSpin",
+        client=clientname,
+        poweredby="PyFreeSurfer-{0}".format(tool_version),
+        project=projectname,
+        timepoint=timepoint,
+        subject=sid,
+        date="{0}-{1}-{2}".format(tic.year, tic.month, tic.day),
+        title="FreeSurfer QC Reporting",
+        filename=reportfile,
+        pagesize=None,
+        left_margin=10,
+        right_margin=10,
+        top_margin=20,
+        bottom_margin=20,
+        show_boundary=False,
+        verbose=0)
+    if args.verbose > 1:
+        print("[result] In file: {0}.".format(reportfile))
+else:
+  print("[warn] Impossible to compute the report, the 'C' cut axis must be "
+        "set with a '20' increment.")
+  reportfile = None  
+
+
+"""
+Update the outputs and save them and the inputs in a 'logs' directory.
+"""
+logdir = os.path.join(qcdir, "logs")
+if not os.path.isdir(logdir):
+    os.mkdir(logdir)
+outputs = dict([(name, locals()[name])
+               for name in ("polars", "surfaces", "slices", "reportfile")])
+for name, final_struct in [("inputs", inputs), ("outputs", outputs),
+                           ("runtime", runtime)]:
+    log_file = os.path.join(logdir, "{0}.json".format(name))
+    with open(log_file, "wt") as open_file:
+        json.dump(final_struct, open_file, sort_keys=True, check_circular=True,
+                  indent=4)
+if args.verbose > 1:
+    print("[final]")
+    pprint(outputs)

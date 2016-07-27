@@ -44,7 +44,7 @@ def mri_surf2surf(
     input_surface_file: str (mandatory)
         input surface path.
     output_surface_file: str (mandatory)
-        output '.mgz' surface path.
+        output surface path.
     ico_order: int (mandatory)
         icosahedron order in [0, 7] that will be used to generate the cortical
         surface texture at a specific tessalation (the corresponding cortical
@@ -58,7 +58,7 @@ def mri_surf2surf(
         The FreeSurfer '.sh' config file.
     """
     # Check input parameters
-    for path in (input_surface_file, output_surface_file):
+    for path in (input_surface_file, ):
         if not os.path.isfile(path):
             raise ValueError("'{0}' is not a valid input file.".format(path))
     for path in (fsdir, ):
@@ -70,10 +70,6 @@ def mri_surf2surf(
     if ico_order < 0 or ico_order > 7:
         raise ValueError("'Ico order '{0}' is not in 0-7 "
                          "range.".format(ico_order))
-
-    # Set the output surface extension if necessary
-    if not output_surface_file.endswith(".mgz"):
-        output_surface_file += ".mgz"
 
     # Define FreeSurfer command
     cmd = ["mri_surf2surf", "--hemi", hemi, "--srcsurfval", input_surface_file,
@@ -90,6 +86,7 @@ def resample_cortical_surface(
         fsdir,
         regex,
         outdir,
+        destdirname="convert",
         orders=[4, 5, 6, 7],
         surface_name="white",
         fsconfig=DEFAULT_FREESURFER_PATH):
@@ -121,6 +118,9 @@ def resample_cortical_surface(
         from the 'fsdir' directory.
     outdir: str (optional, default None)
         The destination folder.
+    destdirname: str (optional, default 'convert')
+        The name of the folder where each subject resample cortical surface
+        will be saved.
     orders: list of int
         The icosahedron orders.
     surface_name: str (optional, default 'white')
@@ -158,7 +158,7 @@ def resample_cortical_surface(
         # Get some information based on the surface path
         subject_id = surf.split("/")[-3]
         hemi = os.path.basename(surf).split(".")[0]
-        convertdir = os.path.join(outdir, subject_id, "convert")
+        convertdir = os.path.join(outdir, subject_id, destdirname)
         if not os.path.isdir(convertdir):
             os.makedirs(convertdir)
 
@@ -204,14 +204,16 @@ def surf_convert(
         fsdir,
         t1files,
         surffiles,
+        sidpos=-3,
         rm_orig=False,
         fsconfig=DEFAULT_FREESURFER_PATH):
     """ Export FreeSurfer surfaces to the native space.
 
     Note that all the returned vetices are given in the index coordinate
     system.
-    The subject id in the t1 and surf files must appear in the '-3' position:
-    xxx/subject_id/convert/t1.nii.gz
+    The subject id in the t1 and surf files must appear in the 'sidpos'
+    position. For the default value '-3', the T1 path might look like:
+        xxx/subject_id/convert/t1.nii.gz
 
     Parameters
     ----------
@@ -221,6 +223,8 @@ def surf_convert(
         The t1 nifti files.
     surffiles:
         The surfaces to be converted.
+    sidpos: int (optional, default -3)
+        The subject identifier position in the surface and T1 files.
     rm_orig: bool (optional)
         If True remove the input surfaces.
     fsconfig: str (optional)
@@ -241,7 +245,7 @@ def surf_convert(
     # Create a t1 subject map
     t1map = {}
     for fname in t1files:
-        subject_id = fname.split(os.path.sep)[-3]
+        subject_id = fname.split(os.path.sep)[sidpos]
         if subject_id in t1map:
             raise ValueError("Can't map two t1 for subject "
                              "'{0}'.".format(subject_id))
@@ -252,7 +256,7 @@ def surf_convert(
     for fname in surffiles:
 
         # Get the t1 reference image
-        subject_id = fname.split(os.path.sep)[-3]
+        subject_id = fname.split(os.path.sep)[sidpos]
         t1file = t1map[subject_id]
         t1_image = nibabel.load(t1file)
 

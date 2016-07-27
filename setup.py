@@ -21,7 +21,8 @@ with open(infopath) as open_file:
 pkgdata = {
     "pyfreesufer": ["tests/*.py", "tests/*/*.py",
                     "plots/tkmedit_slicer_edges.tcl",
-                    "plots/tkmedit_slicer_labels.tcl"],
+                    "plots/tkmedit_slicer_labels.tcl",
+                    "plot/resources/*.json"],
 }
 scripts = [
     "pyfreesurfer/scripts/pyfreesurfer_conversion",

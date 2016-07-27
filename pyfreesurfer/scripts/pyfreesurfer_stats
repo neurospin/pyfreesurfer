@@ -12,6 +12,9 @@ from __future__ import print_function
 import os
 import shutil
 import argparse
+from datetime import datetime
+import json
+from pprint import pprint
 
 # Bredala import
 try:
@@ -26,12 +29,12 @@ except:
 from pyfreesurfer import __version__ as version
 from pyfreesurfer.utils.stattools import aparcstats2table
 from pyfreesurfer.utils.stattools import asegstats2table
+from pyfreesurfer.wrapper import FSWrapper
 from pyfreesurfer import DEFAULT_FREESURFER_PATH
 
 
 # Parameters to keep trace
-__hopla__ = ["tool", "version", "config", "inputs", "outputs",
-             "fsdir", "statfiles", "outdir"]
+__hopla__ = ["runtime", "inputs", "outputs"]
 
 
 # Script documentation
@@ -99,15 +102,22 @@ First check if the statistic directory exists on the file system, and
 clean it if requested.
 """
 tool = "pyfreesurfer_stats"
-config = args.fsconfig or DEFAULT_FREESURFER_PATH
+timestamp = datetime.now().isoformat()
+tool_version = version
+freesurfer_config = args.fsconfig or DEFAULT_FREESURFER_PATH
+freesurfer_version = FSWrapper([], freesurfer_config).version
+runtime = dict([(name, locals()[name])
+               for name in ("freesurfer_config", "tool", "tool_version",
+                            "freesurfer_version", "timestamp")])
 if args.verbose > 0:
     print("[info] Start FreeSurfer cat stats...")
     print("[info] Directory: {0}.".format(args.fsdir))
 fsdir = args.fsdir
 outdir = args.outdir
-inputs = [fsdir]
 statsdir = os.path.join(outdir, "stats")
-outputs = []
+inputs = dict([(name, locals()[name])
+              for name in ("fsdir", "outdir", "statsdir")])
+outputs = None
 if os.path.isdir(statsdir) and args.erase:
     shutil.rmtree(statsdir)
 if not os.path.isdir(statsdir):
@@ -117,13 +127,25 @@ if not os.path.isdir(statsdir):
 """
 Summarize all the subjects' statistics
 """
-statfiles = aparcstats2table(fsdir, outdir, fsconfig=config)
-statfiles.extend(asegstats2table(fsdir, outdir, fsconfig=config))
+statfiles = aparcstats2table(fsdir, outdir, fsconfig=freesurfer_config)
+statfiles.extend(asegstats2table(fsdir, outdir, fsconfig=freesurfer_config))
 if args.verbose > 1:
     print("[result] Stats: {0}.".format(statfiles))
 
 
 """
-Update the script outputs
+Update the outputs and save them and the inputs in a 'logs' directory.
 """
-outputs = statfiles
+logdir = os.path.join(statsdir, "logs")
+if not os.path.isdir(logdir):
+    os.mkdir(logdir)
+outputs = dict([(name, locals()[name]) for name in ("statfiles", )])
+for name, final_struct in [("inputs", inputs), ("outputs", outputs),
+                           ("runtime", runtime)]:
+    log_file = os.path.join(logdir, "{0}.json".format(name))
+    with open(log_file, "wt") as open_file:
+        json.dump(final_struct, open_file, sort_keys=True, check_circular=True,
+                  indent=4)
+if args.verbose > 1:
+    print("[final]")
+    pprint(outputs)

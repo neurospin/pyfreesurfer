@@ -12,6 +12,9 @@ from __future__ import print_function
 import os
 import shutil
 import argparse
+from datetime import datetime
+import json
+from pprint import pprint
 
 # Bredala import
 try:
@@ -27,13 +30,12 @@ except:
 # Pyfreesurfer import
 from pyfreesurfer import __version__ as version
 from pyfreesurfer.utils.stattools import textures2table
+from pyfreesurfer.wrapper import FSWrapper
 from pyfreesurfer import DEFAULT_FREESURFER_PATH
 
 
 # Parameters to keep trace
-__hopla__ = ["tool", "version", "config", "inputs", "outputs",
-             "fsdir", "ico_order", "textures_regex", "outdir"
-             "textures_files"]
+__hopla__ = ["runtime", "inputs", "outputs"]
 
 
 # Script documentation
@@ -137,20 +139,30 @@ First check if the texture output directory exists on the file system, and
 clean it if requested.
 """
 tool = "pyfreesurfer_textures"
-config = args.fsconfig or DEFAULT_FREESURFER_PATH
+timestamp = datetime.now().isoformat()
+tool_version = version
+freesurfer_config = args.fsconfig or DEFAULT_FREESURFER_PATH
+freesurfer_version = FSWrapper([], freesurfer_config).version
+runtime = dict([(name, locals()[name])
+               for name in ("freesurfer_config", "tool", "tool_version",
+                            "freesurfer_version", "timestamp")])
 if args.verbose > 0:
     print("[info] Start FreeSurfer cat textures...")
-    print("[info] Directory: {0}.".format(args.fsdir))
+    print("[info] FreeSurfer data directory: {0}.".format(args.fsdir))
+    print("[info] Output directory: {0}.".format(args.outdir))
+    print("[info] Resampling level: {0}.".format(args.ico_order))
 fsdir = args.fsdir
 outdir = args.outdir
 ico_order = args.ico_order
 texturesdir = os.path.join(outdir, "textures")
-inputs = [fsdir]
-outputs = []
+inputs = dict([(name, locals()[name])
+               for name in ("fsdir", "outdir", "ico_order", "texturesdir")])
+outputs = None
 if os.path.isdir(texturesdir) and args.erase:
     shutil.rmtree(texturesdir)
 if not os.path.isdir(texturesdir):
     os.makedirs(texturesdir)
+
 
 """
 Summarize all the subjects' textures
@@ -164,16 +176,29 @@ textures_regex = [
     os.path.join("*", "surf", "lh.curv.pial"),
     os.path.join("*", "surf", "rh.curv.pial")
 ]
+inputs["textures_regex"] = textures_regex
 for regex in textures_regex:
     textures_files.extend(
         textures2table(regex, ico_order, fsdir, outdir,
                        keep_individual_textures=args.keep, save_mode="all",
-                       fsconfig=config))
+                       fsconfig=freesurfer_config))
 if args.verbose > 1:
     print("[result] Textures: {0}.".format(textures_files))
 
 
 """
-Update the script outputs
+Update the outputs and save them and the inputs in a 'logs' directory.
 """
-outputs = textures_files
+logdir = os.path.join(texturesdir, "logs")
+if not os.path.isdir(logdir):
+    os.mkdir(logdir)
+outputs = dict([(name, locals()[name]) for name in ("textures_files", )])
+for name, final_struct in [("inputs", inputs), ("outputs", outputs),
+                           ("runtime", runtime)]:
+    log_file = os.path.join(logdir, "{0}.json".format(name))
+    with open(log_file, "wt") as open_file:
+        json.dump(final_struct, open_file, sort_keys=True, check_circular=True,
+                  indent=4)
+if args.verbose > 1:
+    print("[final]")
+    pprint(outputs)

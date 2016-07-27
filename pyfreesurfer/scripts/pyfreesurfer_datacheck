@@ -29,7 +29,7 @@ identifier.
 This script can also checks the 'freesurfer_conversion' outputs by specifying
 the expected number of generated files.
 
-python $HOME/git/caps-clindmri/clindmri/scripts/freesurfer_datacheck.py \
+python $HOME/git/pyfreesurfer/pyfreesurfer/scripts/pyfreesurfer_datacheck \
     -v 2 \
     -d /neurospin/senior/nsap/data/V4/freesurfer \
     -r '[a-z]{2}\d{6}' \

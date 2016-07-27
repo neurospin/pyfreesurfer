@@ -76,7 +76,7 @@ class FreeSurferMRISurf2Surf(unittest.TestCase):
         """ Bad input file -> raise ValueError.
         """
         # Set the mocked functions returned values
-        mock_isfile.side_effect = [False, True]
+        mock_isfile.side_effect = [False]
 
         # Test execution
         self.assertRaises(ValueError, mri_surf2surf, **self.kwargs)
@@ -87,7 +87,7 @@ class FreeSurferMRISurf2Surf(unittest.TestCase):
         """ Bad input directory -> raise ValueError.
         """
         # Set the mocked functions returned values
-        mock_isfile.side_effect = [True, True]
+        mock_isfile.side_effect = [True]
         mock_isdir.side_effect = [False]
 
         # Test execution
@@ -141,8 +141,7 @@ class FreeSurferMRISurf2Surf(unittest.TestCase):
                        "--srcsurfval", self.kwargs["input_surface_file"],
                        "--srcsubject", self.kwargs["sid"], "--trgsubject",
                        "ico", "--trgicoorder", str(self.kwargs["ico_order"]),
-                       "--trgsurfval",
-                       self.kwargs["output_surface_file"] + ".mgz",
+                       "--trgsurfval", self.kwargs["output_surface_file"],
                        "--sd", self.kwargs["fsdir"], "--trg_type", "mgz"],
                       env={}, stderr=-1, stdout=-1)],
             self.mock_popen.call_args_list)
@@ -179,6 +178,7 @@ class FreeSurferResampleCorticalSurface(unittest.TestCase):
             "fsdir": "/my/path/mock_fsdir",
             "regex": "Lola/surf/lh.white",
             "outdir": "/my/path/mock_outdir",
+            "destdirname": "convert",
             "orders": [4, 5, 6, 7],
             "surface_name": "white",
             "fsconfig": "/my/path/mock_fsconfig"
@@ -267,6 +267,7 @@ class FreeSurferSurfConvert(unittest.TestCase):
             "fsdir": "/my/path/mock_fsdir",
             "t1files": ["/my/path/Lola/mri/mock_t1"],
             "surffiles": ["/my/path/out/Lola/surf/mock_surf"],
+            "sidpos": -3,
             "rm_orig": True,
             "fsconfig": "/my/path/mock_fsconfig"
         }

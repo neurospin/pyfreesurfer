@@ -62,6 +62,7 @@ def mri_convert(
         fsdir,
         regex,
         outdir,
+        destdirname="convert",
         reslice=True,
         interpolation="interpolate",
         fsconfig=DEFAULT_FREESURFER_PATH):
@@ -82,6 +83,9 @@ def mri_convert(
         'fsdir' directory.
     outdir: str (mandatory)
         The conversion destination folder.
+    destdirname: str (optional, default 'convert')
+        The name of the folder where each subject converted volumes will be
+        saved.
     reslice: bool (optional default False)
         If True reslice the input images like the raw image.
     interpolation: str (optional default interpolate)
@@ -114,7 +118,7 @@ def mri_convert(
         # Create the output directory
         subject = input_file.replace(fsdir, "")
         subject = subject.lstrip(os.sep).split(os.sep)[0]
-        subjoutdir = os.path.join(outdir, subject, "convert")
+        subjoutdir = os.path.join(outdir, subject, destdirname)
         if not os.path.isdir(subjoutdir):
             os.makedirs(subjoutdir)
 
