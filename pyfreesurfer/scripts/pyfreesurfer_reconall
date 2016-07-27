@@ -12,6 +12,9 @@ from __future__ import print_function
 import os
 import shutil
 import argparse
+from datetime import datetime
+import json
+from pprint import pprint
 
 # Bredala import
 try:
@@ -25,12 +28,12 @@ except:
 # Pyfreesurfer import
 from pyfreesurfer import __version__ as version
 from pyfreesurfer.segmentation.cortical import recon_all
+from pyfreesurfer.wrapper import FSWrapper
 from pyfreesurfer import DEFAULT_FREESURFER_PATH
 
 
 # Parameters to keep trace
-__hopla__ = ["tool", "version", "config", "inputs", "outputs",
-             "fsdir", "subjectid", "anatfile"]
+__hopla__ = ["runtime", "inputs", "outputs"]
 
 
 # Script documentation
@@ -79,7 +82,7 @@ Command:
 python $HOME/git/pyfreesurfer/pyfreesurfer/scripts/pyfreesurfer_reconall \
     -v 2 \
     -c /i2bm/local/freesurfer/SetUpFreeSurfer.sh \
-    -d /neurospin/senior/nsap/data/V4/qc/freesurfer \
+    -d /tmp/freesurfer \
     -s ag110371 \
     -a /neurospin/senior/nsap/data/V4/nifti/ag110371/000002_3DT1/3DT1.nii.gz \
     -e
@@ -123,6 +126,12 @@ parser.add_argument(
 parser.add_argument(
     "-a", "--anatfile", dest="anatfile", metavar="FILE", required=True,
     help="the subject anatomical image to be processed.", type=is_file)
+parser.add_argument(
+    "-t", "--t2file", dest="t2file", metavar="FILE", required=False,
+    help="the subject T2 image to be processed.", type=is_file)
+parser.add_argument(
+    "-f", "--flairfile", dest="flairfile", metavar="FILE", required=False,
+    help="the subject FALIR image to be processed.", type=is_file)
 args = parser.parse_args()
 
 
@@ -131,7 +140,13 @@ First check if the subject FreeSurfer directory exists on the file system, and
 clean it if requested.
 """
 tool = "pyfreesurfer_reconall"
-config = args.fsconfig or DEFAULT_FREESURFER_PATH
+timestamp = datetime.now().isoformat()
+tool_version = version
+freesurfer_config = args.fsconfig or DEFAULT_FREESURFER_PATH
+freesurfer_version = FSWrapper([], freesurfer_config).version
+runtime = dict([(name, locals()[name])
+               for name in ("freesurfer_config", "tool", "tool_version",
+                            "freesurfer_version", "timestamp")])
 if args.verbose > 0:
     print("[info] Start FreeSurfer recon_all...")
     print("[info] Directory: {0}.".format(args.fsdir))
@@ -141,8 +156,12 @@ fsdir = args.fsdir
 subjectid = args.subjectid
 anatfile = args.anatfile
 subjdir = os.path.join(fsdir, subjectid)
-inputs = [anatfile]
-outputs = [subjdir]
+t2file = args.t2file
+flairfile = args.flairfile
+inputs = dict([(name, locals()[name])
+               for name in ("subjectid", "anatfile", "subjdir", "t2file",
+                            "flairfile")])
+outputs = None
 if os.path.isdir(subjdir) and args.erase:
     shutil.rmtree(subjdir)
 
@@ -150,6 +169,31 @@ if os.path.isdir(subjdir) and args.erase:
 """
 Segmentation: all steps
 """
-subjdir = recon_all(fsdir, anatfile, subjectid, fsconfig=config)
+subjdir = recon_all(fsdir,
+                    anatfile,
+                    subjectid,
+                    reconstruction_stage="all",
+                    resume=False,
+                    t2file=t2file,
+                    flairfile=flairfile,  
+                    fsconfig=freesurfer_config)
 if args.verbose > 1:
     print("[result] In folder: {0}.".format(subjdir))
+
+
+"""
+Update the outputs and save them and the inputs in a 'logs' directory.
+"""
+logdir = os.path.join(subjdir, "logs")
+if not os.path.isdir(logdir):
+    os.mkdir(logdir)
+outputs = dict([(name, locals()[name]) for name in ("subjdir", )])
+for name, final_struct in [("inputs", inputs), ("outputs", outputs),
+                           ("runtime", runtime)]:
+    log_file = os.path.join(logdir, "{0}.json".format(name))
+    with open(log_file, "wt") as open_file:
+        json.dump(final_struct, open_file, sort_keys=True, check_circular=True,
+                  indent=4)
+if args.verbose > 1:
+    print("[final]")
+    pprint(outputs)
