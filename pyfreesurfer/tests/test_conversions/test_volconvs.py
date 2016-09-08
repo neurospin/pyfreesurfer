@@ -71,7 +71,7 @@ class FreeSurferMRIBinarize(unittest.TestCase):
         """ Bad input file -> raise ValueError.
         """
         # Set the mocked functions returned values
-        mock_isfile.side_effect = [False, True]
+        mock_isfile.side_effect = [False]
 
         # Test execution
         self.assertRaises(ValueError, mri_binarize, **self.kwargs)
@@ -81,7 +81,7 @@ class FreeSurferMRIBinarize(unittest.TestCase):
         """ Test the normal behaviour of the function.
         """
         # Set the mocked functions returned values
-        mock_isfile.side_effect = [True, True]
+        mock_isfile.side_effect = [True]
 
         # Test execution
         mri_binarize(**self.kwargs)

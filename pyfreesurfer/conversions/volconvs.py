@@ -43,7 +43,7 @@ def mri_binarize(
         The freesurfer configuration batch.
     """
     # Check input parameters
-    for path in (inputfile, outputfile):
+    for path in (inputfile, ):
         if not os.path.isfile(path):
             raise ValueError("'{0}' is not a valid file.".format(path))
 
