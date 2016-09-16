@@ -16,10 +16,10 @@ version_micro = 0
 __version__ = "{0}.{1}.{2}".format(version_major, version_minor, version_micro)
 
 # Define default Connectomist path for the package
-DEFAULT_FREESURFER_PATH = ("/i2bm/local/freesurfer/SetUpFreeSurfer.sh")
-DEFAULT_FSL_PATH = ("/etc/fsl/5.0/fsl.sh")
-DEFAULT_WORKBENCH_PATH = ("/usr/bin")
-DEFAULT_GRADUNWARP_PATH = ("/usr/local/bin")
+DEFAULT_FREESURFER_PATH = "/i2bm/local/freesurfer/SetUpFreeSurfer.sh"
+DEFAULT_FSL_PATH = "/etc/fsl/5.0/fsl.sh"
+DEFAULT_WORKBENCH_PATH = "/usr/bin"
+DEFAULT_GRADUNWARP_PATH = "/usr/local/bin"
 
 # Define FreeSurfer supported version
 FREESURFER_RELEASE = "5.3.0"

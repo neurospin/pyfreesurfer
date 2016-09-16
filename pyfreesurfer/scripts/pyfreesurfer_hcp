@@ -42,8 +42,8 @@ from pyfreesurfer import __version__ as version
 from pyfreesurfer.wrapper import FSWrapper
 from pyfreesurfer import DEFAULT_FREESURFER_PATH
 from pyfreesurfer import DEFAULT_FSL_PATH
-#from pyfreesurfer import DEFAULT_HCP_PATH
-#from pyfreesurfer import DEFAULT_GRADUNWARP_PATH
+from pyfreesurfer import DEFAULT_WORKBENCH_PATH
+from pyfreesurfer import DEFAULT_GRADUNWARP_PATH
 
 from pyfreesurfer.hcp import prefreesurfer_hcp
 from pyfreesurfer.hcp import freesurfer_hcp
@@ -202,9 +202,11 @@ parser.add_argument(
     help="Set up specific environment variable for the FreeSurfer Software.")
 parser.add_argument(
     "--wbcommand", dest="wbcommand", required=True,
+    default=DEFAULT_WORKBENCH_PATH,
     help="Set up specific environment variable for the Workbench Software.")
 parser.add_argument(
     "--gradunwarpdir", dest="gradunwarpdir", required=True,
+    default=DEFAULT_GRADUNWARP_PATH,
     help="Set up specific environment variable for the gradun_warp module.")
 parser.add_argument(
     "-v", "--verbose", dest="verbose", type=int, choices=[0, 1, 2], default=0,
