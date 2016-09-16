@@ -1,0 +1,307 @@
+#! /usr/bin/env python
+##########################################################################
+# NSAp - Copyright (C) CEA, 2013-2016
+# Distributed under the terms of the CeCILL-B license, as published by
+# the CEA-CNRS-INRIA. Refer to the LICENSE file or to
+# http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
+# for details.
+##########################################################################
+
+# Requirements for this script:
+# installed versions of:
+#    - FSL (version 5.0.6),
+#    - FreeSurfer (version 5.3.0-HCP),
+#    - gradunwarp (HCP version 1.0.2) if doing gradient distortion correction
+#
+# environment:
+#    - FSLDIR
+#    - FREESURFER_HOME
+#    - HCPPIPEDIR
+#    - CARET7DIR
+#    - PYTHONPATH (for gradient_unwarp.py)
+
+# System import
+from __future__ import print_function
+import os
+import json
+import pprint
+import argparse
+from datetime import datetime
+
+# Bredala import
+try:
+    import bredala
+    bredala.USE_PROFILER = False
+    bredala.register("pyfreesurfer.wrapper",
+                     names=["HCPWrapper"])
+except:
+    pass
+
+# Pyfreesurfer import
+from pyfreesurfer import __version__ as version
+from pyfreesurfer.wrapper import FSWrapper
+from pyfreesurfer import DEFAULT_FREESURFER_PATH
+#from pyfreesurfer import DEFAULT_FSL_PATH
+#from pyfreesurfer import DEFAULT_HCP_PATH
+#from pyfreesurfer import DEFAULT_GRADUNWARP_PATH
+
+from pyfreesurfer.hcp import prefreesurfer_hcp
+from pyfreesurfer.hcp import freesurfer_hcp
+from pyfreesurfer.hcp import postfreesurfer_hcp
+
+# Parameters to keep trace
+__hopla__ = ["runtime", "inputs", "outputs"]
+
+
+# Script documentation
+doc = """
+
+The primary purposes of the PreFreeSurfer Pipeline
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+1. To average any image repeats (i.e. multiple T1w or T2w images available)
+2. To create a native, undistorted structural volume space for the subject
+        * Subject images in this native space will be distortion corrected
+          for gradient and b0 distortions and rigidly aligned to the axes
+          of the MNI space. "Native, undistorted structural volume space"
+          is sometimes shortened to the "subject's native space" or simply
+          "native space".
+3. To provide an initial robust brain extraction
+4. To align the T1w and T2w structural images (register them to the native
+   space)
+5. To perform bias field correction
+6. To register the subject's native space to the MNI space
+
+The primary purposes of the FreeSurfer Pipeline
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+1. Make Spline Interpolated Downsample to 1mm
+2. Initial recon-all steps (with flags that are part of "-autorecon1", with the
+   exception of -skullstrip)
+3. Generate brain mask
+4. Call recon-all to run most of the "-autorecon2" stages, but turning off
+   smooth2, inflate2, curvstats, and segstats stages.
+5. High resolution white matter and fine tune T2w to T1w registration.
+6. Intermediate Recon-all Steps
+7. High resolution pial matter (adjusts the pial surface based on the the T2w
+   image)
+8. Final recon-all steps
+
+The primary purposes of the PostFreeSurfer Pipeline
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+1. Conversion of FreeSurfer Volumes and Surfaces to NIFTI and GIFTI and Create
+   Caret Files and Registration
+2. Create FreeSurfer ribbon file at full resolution
+3. Myelin Mapping
+
+"""
+
+
+def is_file(filearg):
+    """ Type for argparse - checks that file exists but does not open.
+    """
+    if not os.path.isfile(filearg):
+        raise argparse.ArgumentError(
+            "The file '{0}' does not exist!".format(filearg))
+    return filearg
+
+
+def is_directory(dirarg):
+    """ Type for argparse - checks that directory exists.
+    """
+    if not os.path.isdir(dirarg):
+        raise argparse.ArgumentError(
+            "The directory '{0}' does not exist!".format(dirarg))
+    return dirarg
+
+
+parser = argparse.ArgumentParser(description=doc)
+parser.add_argument(
+    "--path", dest="path", required=True, type=is_directory,
+    help="Path to study data folder (~ to FreeSurfer home directory). Used "
+    "with --subject input to create full path to root directory for all"
+    " outputs generated as /path/subject.")
+parser.add_argument(
+    "--subject", dest="subject", required=True, type=str,
+    help="Subject ID. Used with --path input to create full path to root"
+         " directory for all outputs generated as path/subject.")
+parser.add_argument(
+    "--t1", dest="t1", required=True, type=is_file,  nargs="+",
+    help="List of full paths to T1-weighted structural images for the subject.")
+parser.add_argument(
+    "--t2", dest="t2", required=True, type=is_file, nargs="+",
+    help="List of full paths to T2-weighted structural images for the subject.")
+parser.add_argument(
+    "--brainsize", dest="brainsize", type=int, default=150,
+    help="Brain size estimate in mm, 150 for humans.")
+parser.add_argument(
+    "--fmapmag", dest="fmapmag", type=is_file,
+    help="Siemens Gradient Echo Fieldmap magnitude file.")
+parser.add_argument(
+    "--fmapphase", dest="fmapphase", type=is_file,
+    help="Siemens Gradient Echo Fieldmap phase file.")
+parser.add_argument(
+    "--fmapgeneralelectric", dest="fmapgeneralelectric", type=str,
+    default="NONE",
+    help="General Electric Gradient Echo Field Map file."
+         "Two volumes in one file: 1. field map in deg, 2. magnitude.")
+parser.add_argument(
+    "--echodiff", dest="echodiff", type=str, default=2.46,
+    help="Delta TE in ms for field map or 'NONE' if not used.")
+parser.add_argument(
+    "--SEPhaseNeg", dest="SEPhaseNeg", default="NONE",
+    help="For spin echo field map, path to volume with a negative phase"
+         "encoding direction (LR in HCP data), set to 'NONE' if not using Spin"
+         "Echo Field Maps.")
+parser.add_argument(
+    "--SEPhasePos", dest="SEPhasePos", default="NONE",
+    help="For spin echo field map, path to volume with a positive phase"
+         "encoding direction (RL in HCP data), set to 'NONE' if not using Spin"
+         "Echo Field Maps.")
+parser.add_argument(
+    "--echospacing", dest="echospacing", default="NONE",
+    help="Echo Spacing or Dwelltime of Spin Echo Field Map or 'NONE' if not"
+         "used.")
+parser.add_argument(
+    "--seunwarpdir", dest="seunwarpdir", default="NONE",
+    help="Phase encoding direction of the spin echo field map. (Only applies"
+         "when using a spin echo field map.).")
+parser.add_argument(
+    "--t1samplespacing", dest="t1samplespacing", default=0.0000074,
+    help="T1 image sample spacing, 'NONE' if not used.")
+parser.add_argument(
+    "--t2samplespacing", dest="t2samplespacing", default=0.0000021,
+    help="T2 image sample spacing, 'NONE' if not used.")
+parser.add_argument(
+    "--unwarpdir", dest="unwarpdir", default="z",
+    help="Readout direction of the T1w and T2w images (Used with either a"
+         "gradient echo field map or a spin echo field map).")
+parser.add_argument(
+    "--gdcoeffs", dest="gdcoeffs", default="NONE",
+    help="File containing gradient distortion coefficients."
+         "Set to 'NONE' to turn off.")
+parser.add_argument(
+    "--avgrdcmethod", dest="avgrdcmethod", default="SiemensFieldMap",
+    help="Averaging and readout distortion correction method. See below for"
+         "supported values.")
+parser.add_argument(
+    "--topupconfig", dest="topupconfig", default="NONE",
+    help="Configuration file for topup or 'NONE' if not used")
+parser.add_argument(
+    "--hcpdir", dest="hcpdir", required=True,
+    help="Set up specific environment variable for the HCP Pipeline.")
+parser.add_argument(
+    "--fsldir", dest="fsldir", required=True,
+    help="FreeSurfer uses FSL_DIR instead of FSLDIR to determine the "
+    "FSL version.")
+parser.add_argument(
+    "--fsconfig", dest="fsconfig", required=True,
+    help="Set up specific environment variable for the FreeSurfer Software.")
+parser.add_argument(
+    "--wbcommand", dest="wbcommand", required=True,
+    help="Set up specific environment variable for the Workbench Software.")
+parser.add_argument(
+    "--gradunwarpdir", dest="gradunwarpdir", required=True,
+    help="Set up specific environment variable for the gradun_warp module.")
+parser.add_argument(
+    "-v", "--verbose", dest="verbose", type=int, choices=[0, 1, 2], default=0,
+    help="increase the verbosity level: 0 silent, [1, 2] verbose.")
+args = parser.parse_args()
+
+
+#------------------------------------------------------------------------------
+# First check if the subject FreeSurfer directory exists on the file system,
+# and clean it if requested.
+#------------------------------------------------------------------------------
+# runtime
+tool = "pyfreesurfer_hcp"
+timestamp = datetime.now().isoformat()
+tool_version = version
+freesurfer_config = args.fsconfig or DEFAULT_FREESURFER_PATH
+fsl_config = args.fsldir or DEFAULT_FSL_PATH
+freesurfer_version = FSWrapper([], freesurfer_config).version
+runtime = dict([(name, locals()[name])
+               for name in ("freesurfer_config", "fsl_config", "tool",
+                            "tool_version", "freesurfer_version",
+                            "timestamp")])
+if args.verbose > 0:
+    print("[info] Start FreeSurfer HCP recon_all...")
+    print("[info] Directory: {0}.".format(args.fsconfig))
+    print("[info] Subject: {0}.".format(args.subjectid))
+    print("[info] Anatomy: {0}.".format(args.anatfile))
+
+# inputs
+workdir = args.path
+print(workdir)
+subject = args.subject
+t1file = args.t1
+t1w_folder = os.path.join(workdir, subject)
+print(t1w_folder)
+t2file = args.t2
+inputs = dict([(name, locals()[name])
+               for name in ("subject", "t1file", "t1w_folder", "t2file",
+                            "workdir")])
+
+# outputs
+outputs = None
+
+
+#------------------------------------------------------------------------------
+#                           PreFreeSurfer Pipeline
+#------------------------------------------------------------------------------
+
+
+t1w_folder, t1_img, t1_img_brain, t2_img = prefreesurfer_hcp(
+    args.path, args.subject, args.t1, args.t2, args.fmapmag, args.fmapphase,
+    args.brainsize, args.fmapgeneralelectric, args.echodiff, args.SEPhaseNeg,
+    args.SEPhasePos, args.echospacing, args.seunwarpdir, args.t1samplespacing,
+    args.t2samplespacing, args.unwarpdir, args.gdcoeffs, args.avgrdcmethod,
+    args.topupconfig, args.hcpdir, args.wbcommand)
+
+
+
+
+#------------------------------------------------------------------------------
+#                           FreeSurfer Pipeline
+#------------------------------------------------------------------------------
+
+
+freesurfer_hcp(args.subject,
+               t1w_folder,
+               t1_img,
+               t1_img_brain,
+               t2_img,
+               args.hcpdir,
+               args.wbcommand)
+
+
+#------------------------------------------------------------------------------
+#                           PostFreeSurfer Pipeline
+#------------------------------------------------------------------------------
+
+
+postfreesurfer_hcp(args.path,
+                   args.subject,
+                   args.hcpdir,
+                   args.wbcommand)
+
+
+#------------------------------------------------------------------------------
+# Update the outputs and save them and the inputs in a 'logs' directory.
+#------------------------------------------------------------------------------
+logdir = os.path.join(workdir, "logs")
+if not os.path.isdir(logdir):
+    os.mkdir(logdir)
+# update outputs
+outputs = dict([(name, locals()[name]) for name in ("subjdir", )])
+# save in json
+for name, final_struct in [("inputs", inputs), ("outputs", outputs),
+                           ("runtime", runtime)]:
+    log_file = os.path.join(logdir, "{0}.json".format(name))
+    with open(log_file, "wt") as open_file:
+        json.dump(final_struct, open_file, sort_keys=True, check_circular=True,
+                  indent=4)
+if args.verbose > 1:
+    print("[final]")
+    pprint(outputs)
