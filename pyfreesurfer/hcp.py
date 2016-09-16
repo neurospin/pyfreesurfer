@@ -429,4 +429,3 @@ def postfreesurfer_hcp(path, subject, hcpdir,
 
     # Execute the HCP command
     process(postfs_cmd)
-

@@ -153,7 +153,7 @@ class FSWrapper(object):
 
         return environment
 
-   
+
 class HCPWrapper(object):
     """ Parent class for the wrapping of HCP functions.
     """

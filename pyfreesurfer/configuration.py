@@ -57,8 +57,8 @@ def environment(sh_file=None, env={}):
                 environment[name] = value
 
     return environment
-    
-    
+
+
 def concat_environment(env1, env2):
     """ Concatenate two environments.
 

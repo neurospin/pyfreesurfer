@@ -37,8 +37,8 @@ class HCPError(Exception):
     """
     def __init__(self, message):
         super(HCPError, self).__init__(message)
-        
-        
+
+
 class HCPRuntimeError(HCPError):
     """ Error thrown when call to the HCP pipelines failed.
     """
@@ -47,8 +47,8 @@ class HCPRuntimeError(HCPError):
             "HCP call for '{0}' failed, with parameters: '{1}'.Error:: "
             "{2}.".format(algorithm_name, parameters, error))
         super(HCPRuntimeError, self).__init__(message)
-        
-        
+
+
 class HCPConfigurationError(HCPError):
     """ Error thrown when call to the HCP pipelines failed.
     """

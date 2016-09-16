@@ -41,7 +41,7 @@ except:
 from pyfreesurfer import __version__ as version
 from pyfreesurfer.wrapper import FSWrapper
 from pyfreesurfer import DEFAULT_FREESURFER_PATH
-#from pyfreesurfer import DEFAULT_FSL_PATH
+from pyfreesurfer import DEFAULT_FSL_PATH
 #from pyfreesurfer import DEFAULT_HCP_PATH
 #from pyfreesurfer import DEFAULT_GRADUNWARP_PATH
 
@@ -128,10 +128,12 @@ parser.add_argument(
          " directory for all outputs generated as path/subject.")
 parser.add_argument(
     "--t1", dest="t1", required=True, type=is_file,  nargs="+",
-    help="List of full paths to T1-weighted structural images for the subject.")
+    help="List of full paths to T1-weighted structural images for the "
+         "subject.")
 parser.add_argument(
     "--t2", dest="t2", required=True, type=is_file, nargs="+",
-    help="List of full paths to T2-weighted structural images for the subject.")
+    help="List of full paths to T2-weighted structural images for the "
+         "subject.")
 parser.add_argument(
     "--brainsize", dest="brainsize", type=int, default=150,
     help="Brain size estimate in mm, 150 for humans.")
@@ -258,8 +260,6 @@ t1w_folder, t1_img, t1_img_brain, t2_img = prefreesurfer_hcp(
     args.SEPhasePos, args.echospacing, args.seunwarpdir, args.t1samplespacing,
     args.t2samplespacing, args.unwarpdir, args.gdcoeffs, args.avgrdcmethod,
     args.topupconfig, args.hcpdir, args.wbcommand)
-
-
 
 
 #------------------------------------------------------------------------------
