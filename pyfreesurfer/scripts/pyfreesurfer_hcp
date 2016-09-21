@@ -296,7 +296,7 @@ logdir = os.path.join(workdir, "logs")
 if not os.path.isdir(logdir):
     os.mkdir(logdir)
 # update outputs
-outputs = dict([(name, locals()[name]) for name in ("subjdir", )])
+outputs = dict([(name, locals()[name]) for name in ("t1w_folder", )])
 # save in json
 for name, final_struct in [("inputs", inputs), ("outputs", outputs),
                            ("runtime", runtime)]:

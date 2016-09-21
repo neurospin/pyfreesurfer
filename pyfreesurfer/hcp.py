@@ -28,9 +28,6 @@ import os
 from pyfreesurfer.wrapper import HCPWrapper
 from .info import DEFAULT_WORKBENCH_PATH
 
-#FREESURFER_HOME = os.path.dirname(DEFAULT_FREESURFER_PATH)
-FREESURFER_HOME = "/i2bm/local/freesurfer"
-
 
 def prefreesurfer_hcp(path, subject, t1, t2, fmapmag, fmapphase, brainsize=150,
                       fmapgeneralelectric="NONE", echodiff=2.46,
@@ -332,7 +329,7 @@ def freesurfer_hcp(subject, t1w_folder, t1_img, t1_img_brain, t2_img, hcpdir,
 
     # Check input parameters: filenames
     for filename in (t1_img, t1_img_brain, t2_img):
-        if not os.path.isdir(filename):
+        if not os.path.isfile(filename):
             raise ValueError("'{0}' is not a valid filename.".format(
                              filename))
 
@@ -396,8 +393,8 @@ def postfreesurfer_hcp(path, subject, hcpdir,
         hcpdir, "global/config/FreeSurferAllLut.txt")
     reference_myelin_maps = os.path.join(
         hcpdir,
-        "global/templates/standard_mesh_atlases/"
-        + "Conte69.MyelinMap_BC.164k_fs_LR.dscalar.nii")
+        ("global/templates/standard_mesh_atlases/"
+         "Conte69.MyelinMap_BC.164k_fs_LR.dscalar.nii"))
 
     # Command path
     postfs_pipeline = os.path.join(
