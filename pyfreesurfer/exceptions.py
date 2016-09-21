@@ -30,3 +30,28 @@ class FreeSurferConfigurationError(FreeSurferError):
     def __init__(self, command_name):
         message = "FreeSurfer command '{0}' not found.".format(command_name)
         super(FreeSurferConfigurationError, self).__init__(message)
+
+
+class HCPError(Exception):
+    """ Base exception type for the package.
+    """
+    def __init__(self, message):
+        super(HCPError, self).__init__(message)
+
+
+class HCPRuntimeError(HCPError):
+    """ Error thrown when call to the HCP pipelines failed.
+    """
+    def __init__(self, algorithm_name, parameters, error=None):
+        message = (
+            "HCP call for '{0}' failed, with parameters: '{1}'.Error:: "
+            "{2}.".format(algorithm_name, parameters, error))
+        super(HCPRuntimeError, self).__init__(message)
+
+
+class HCPConfigurationError(HCPError):
+    """ Error thrown when call to the HCP pipelines failed.
+    """
+    def __init__(self, command_name):
+        message = "HCP command '{0}' not found.".format(command_name)
+        super(HCPConfigurationError, self).__init__(message)

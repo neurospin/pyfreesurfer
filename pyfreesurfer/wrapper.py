@@ -15,9 +15,13 @@ import warnings
 
 # Pyfreesurfer import
 from .configuration import environment
+from .configuration import concat_environment
 from .exceptions import FreeSurferConfigurationError
 from .exceptions import FreeSurferRuntimeError
+from .exceptions import HCPConfigurationError
+from .exceptions import HCPRuntimeError
 from .info import DEFAULT_FREESURFER_PATH
+from .info import DEFAULT_FSL_PATH
 from .info import FREESURFER_RELEASE
 
 
@@ -148,3 +152,86 @@ class FSWrapper(object):
             raise ValueError(message)
 
         return environment
+
+
+class HCPWrapper(object):
+    """ Parent class for the wrapping of HCP functions.
+    """
+    def __init__(self, env, fslconfig=DEFAULT_FSL_PATH,
+                 fsconfig=DEFAULT_FREESURFER_PATH):
+        """ Initialize the HCPWrapper class.
+
+        Parameters
+        ----------
+        env: dict (mandatory)
+            the HCP environment.
+        fslconfig: str (optional, default NeuroSpin path)
+            the path to the FSL 'fsl.sh' configuration file.
+        fsconfig: str (optional, default NeuroSpin path)
+            the path to the FreeSurfer configuration file.
+        """
+        # Class parameter
+        self.fslconfig = fslconfig
+        self.fsconfig = fsconfig
+
+        # Add the HCP environment variables
+        self.environment = env
+
+        # Check if FreeSurfer has already been configures
+        fs_env = os.environ.get("FREESURFER_CONFIGURED", None)
+        # Load FreeSurfer configuration
+        fs_env = json.loads(fs_env)
+
+        # Load FSL configuration
+        fsl_env = environment(self.fslconfig)
+
+        # Concatenate FSL and FreeSurfer environment variables
+        concat_env = concat_environment(fs_env, fsl_env)
+        # Update the current environment with the FSL and FreeSurfer
+        # environment variables
+        self.environment.update(concat_env)
+
+    def __call__(self, cmd):
+        """ Run the HCP command.
+
+        Parameters
+        ----------
+        cmd: list of str (mandatory)
+            the HCP command to execute.
+        """
+
+        print(self.environment)
+
+        # Check HCP pipelines has been configured so the command can be
+        # found
+        process = subprocess.Popen(
+            ["which", cmd[0]],
+            env=self.environment,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
+        self.stdout, self.stderr = process.communicate()
+        self.exitcode = process.returncode
+        if self.exitcode != 0:
+            raise HCPConfigurationError(cmd[0])
+
+        # Format the command
+        fcmd = [cmd[0]]
+        for indx, key in enumerate(cmd[1::2]):
+            value = cmd[2 * indx + 2]
+            fcmd.append("{0}={1}".format(key, value))
+
+        print(" ".join(fcmd))
+
+        # Execute the command
+        process = subprocess.Popen(
+            fcmd,
+            env=self.environment,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
+        self.stdout, self.stderr = process.communicate()
+        self.exitcode = process.returncode
+        if self.exitcode != 0:
+            error_message = ["STDOUT", "----", self.stdout, "STDERR", "----",
+                             self.stderr]
+            error_message = "\n".join(error_message)
+            raise HCPRuntimeError(cmd[0], cmd, error_message)

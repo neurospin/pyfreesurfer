@@ -33,7 +33,7 @@ def environment(sh_file=None, env={}):
     """
     # Use sh commands and a string instead of a list since
     # we're using shell=True
-    # Pass empty environment to get only the prgram variables
+    # Pass empty environment to get only the program variables
     command = ["bash", "-c", ". '{0}' ; /usr/bin/printenv".format(sh_file)]
     process = subprocess.Popen(command, env=env,
                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -57,3 +57,32 @@ def environment(sh_file=None, env={}):
                 environment[name] = value
 
     return environment
+
+
+def concat_environment(env1, env2):
+    """ Concatenate two environments.
+
+    1 - Check duplicated keys and concatenate their values.
+    2 - Update the concatenated environment.
+
+    Parameters
+    ----------
+    env1: dict (mandatory)
+        First environment.
+    env2: dict (mandatory)
+        Second environment.
+
+    Returns
+    -------
+    concat_env: dict
+        Updated environment where the duplicated keys values are concatenated
+        with ':'.
+    """
+    concat_env = env1
+    for key, value in env2.items():
+        if key in concat_env.keys():
+            if value != concat_env[key]:
+                concat_env[key] += ":" + env2[key]
+        else:
+            concat_env[key] = env2[key]
+    return concat_env

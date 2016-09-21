@@ -30,7 +30,8 @@ scripts = [
     "pyfreesurfer/scripts/pyfreesurfer_qualitycheck",
     "pyfreesurfer/scripts/pyfreesurfer_reconall",
     "pyfreesurfer/scripts/pyfreesurfer_stats",
-    "pyfreesurfer/scripts/pyfreesurfer_textures"
+    "pyfreesurfer/scripts/pyfreesurfer_textures",
+    "pyfreesurfer/scripts/pyfreesurfer_hcp"
 ]
 
 setup(
