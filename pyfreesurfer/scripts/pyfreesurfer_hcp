@@ -7,54 +7,58 @@
 # for details.
 ##########################################################################
 
-# Requirements for this script:
-# installed versions of:
-#    - FSL (version 5.0.6),
-#    - FreeSurfer (version 5.3.0-HCP),
-#    - gradunwarp (HCP version 1.0.2) if doing gradient distortion correction
-#
-# environment:
-#    - FSLDIR
-#    - FREESURFER_HOME
-#    - HCPPIPEDIR
-#    - CARET7DIR
-#    - PYTHONPATH (for gradient_unwarp.py)
-
 # System import
 from __future__ import print_function
 import os
 import json
-import pprint
+from pprint import pprint
 import argparse
 from datetime import datetime
+import shutil
 
 # Bredala import
 try:
     import bredala
     bredala.USE_PROFILER = False
-    bredala.register("pyfreesurfer.wrapper",
-                     names=["HCPWrapper"])
+    bredala.register("pyfreesurfer.hcp",
+                     names=["prefreesurfer_hcp", "freesurfer_hcp",
+                            "postfreesurfer_hcp"])
+    # bredala.register("pyfreesurfer.wrapper",
+    #                  names=["HCPWrapper.__init__"])
 except:
     pass
 
 # Pyfreesurfer import
 from pyfreesurfer import __version__ as version
-from pyfreesurfer.wrapper import FSWrapper
+from pyfreesurfer.wrapper import HCPWrapper
 from pyfreesurfer import DEFAULT_FREESURFER_PATH
 from pyfreesurfer import DEFAULT_FSL_PATH
 from pyfreesurfer import DEFAULT_WORKBENCH_PATH
-from pyfreesurfer import DEFAULT_GRADUNWARP_PATH
-
 from pyfreesurfer.hcp import prefreesurfer_hcp
 from pyfreesurfer.hcp import freesurfer_hcp
 from pyfreesurfer.hcp import postfreesurfer_hcp
+
 
 # Parameters to keep trace
 __hopla__ = ["runtime", "inputs", "outputs"]
 
 
 # Script documentation
-doc = """
+doc = """ Run the HCP prefreesurfer, freesurfer and postfreesurfer
+scripts.
+
+Requirements for this module:
+  installed versions of:
+    - FSL (version 5.0.6),
+    - FreeSurfer (version 5.3.0-HCP),
+    - gradunwarp (HCP version 1.0.2) if doing gradient distortion correction
+
+  environment:
+    - FSLDIR
+    - FREESURFER_HOME
+    - HCPPIPEDIR
+    - CARET7DIR
+    - PATH (to be able to find gradient_unwarp.py)
 
 The primary purposes of the PreFreeSurfer Pipeline
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -95,6 +99,21 @@ The primary purposes of the PostFreeSurfer Pipeline
 2. Create FreeSurfer ribbon file at full resolution
 3. Myelin Mapping
 
+
+Command
+~~~~~~~
+
+python $HOME/git/pyfreesurfer/pyfreesurfer/scripts/pyfreesurfer_hcp \
+    --path /volatile/nsap/hcp \
+    --subject 994273 \
+    --t1 /neurospin/tmp/slefranc/tests_fs_hcp/unprocessed/3T/T1w_MPR1/994273_3T_T1w_MPR1.nii.gz \
+    --t2 /neurospin/tmp/slefranc/tests_fs_hcp/unprocessed/3T/T2w_SPC1/994273_3T_T2w_SPC1.nii.gz \
+    --fmapmag /neurospin/tmp/slefranc/tests_fs_hcp/unprocessed/3T/T1w_MPR1/994273_3T_FieldMap_Magnitude.nii.gz \
+    --fmapphase /neurospin/tmp/slefranc/tests_fs_hcp/unprocessed/3T/T1w_MPR1/994273_3T_FieldMap_Phase.nii.gz \
+    --gdcoeffs /neurospin/tmp/slefranc/coeff_SC72C_Skyra.grad \
+    --hcpdir /volatile/git/Pipelines \
+    --wbcommand /usr/bin \
+    --verbose 1
 """
 
 
@@ -119,24 +138,28 @@ def is_directory(dirarg):
 parser = argparse.ArgumentParser(description=doc)
 parser.add_argument(
     "--path", dest="path", required=True, type=is_directory,
-    help="Path to study data folder (~ to FreeSurfer home directory). Used "
+    help="path to study data folder (~ to FreeSurfer home directory). Used "
     "with --subject input to create full path to root directory for all"
     " outputs generated as /path/subject.")
 parser.add_argument(
-    "--subject", dest="subject", required=True, type=str,
-    help="Subject ID. Used with --path input to create full path to root"
+    "--subject", dest="subject", required=True,
+    help="subject ID. Used with --path input to create full path to root"
+         " directory for all outputs generated as path/subject.")
+parser.add_argument(
+    "--field", dest="field", choices=("3T", "7T"), default="3T",
+    help="subject ID. Used with --path input to create full path to root"
          " directory for all outputs generated as path/subject.")
 parser.add_argument(
     "--t1", dest="t1", required=True, type=is_file,  nargs="+",
-    help="List of full paths to T1-weighted structural images for the "
+    help="list of full paths to T1-weighted structural images for the "
          "subject.")
 parser.add_argument(
     "--t2", dest="t2", required=True, type=is_file, nargs="+",
-    help="List of full paths to T2-weighted structural images for the "
+    help="list of full paths to T2-weighted structural images for the "
          "subject.")
 parser.add_argument(
     "--brainsize", dest="brainsize", type=int, default=150,
-    help="Brain size estimate in mm, 150 for humans.")
+    help="brain size estimate in mm, 150 for humans.")
 parser.add_argument(
     "--fmapmag", dest="fmapmag", type=is_file,
     help="Siemens Gradient Echo Fieldmap magnitude file.")
@@ -144,30 +167,29 @@ parser.add_argument(
     "--fmapphase", dest="fmapphase", type=is_file,
     help="Siemens Gradient Echo Fieldmap phase file.")
 parser.add_argument(
-    "--fmapgeneralelectric", dest="fmapgeneralelectric", type=str,
-    default="NONE",
+    "--fmapgeneralelectric", dest="fmapgeneralelectric", default="NONE",
     help="General Electric Gradient Echo Field Map file."
          "Two volumes in one file: 1. field map in deg, 2. magnitude.")
 parser.add_argument(
-    "--echodiff", dest="echodiff", type=str, default=2.46,
-    help="Delta TE in ms for field map or 'NONE' if not used.")
+    "--echodiff", dest="echodiff", default=2.46,
+    help="delta TE in ms for field map or 'NONE' if not used.")
 parser.add_argument(
     "--SEPhaseNeg", dest="SEPhaseNeg", default="NONE",
-    help="For spin echo field map, path to volume with a negative phase"
+    help="for spin echo field map, path to volume with a negative phase"
          "encoding direction (LR in HCP data), set to 'NONE' if not using Spin"
          "Echo Field Maps.")
 parser.add_argument(
     "--SEPhasePos", dest="SEPhasePos", default="NONE",
-    help="For spin echo field map, path to volume with a positive phase"
+    help="for spin echo field map, path to volume with a positive phase"
          "encoding direction (RL in HCP data), set to 'NONE' if not using Spin"
          "Echo Field Maps.")
 parser.add_argument(
     "--echospacing", dest="echospacing", default="NONE",
-    help="Echo Spacing or Dwelltime of Spin Echo Field Map or 'NONE' if not"
+    help="echo Spacing or Dwelltime of Spin Echo Field Map or 'NONE' if not"
          "used.")
 parser.add_argument(
     "--seunwarpdir", dest="seunwarpdir", default="NONE",
-    help="Phase encoding direction of the spin echo field map. (Only applies"
+    help="phase encoding direction of the spin echo field map. (Only applies"
          "when using a spin echo field map.).")
 parser.add_argument(
     "--t1samplespacing", dest="t1samplespacing", default=0.0000074,
@@ -176,128 +198,191 @@ parser.add_argument(
     "--t2samplespacing", dest="t2samplespacing", default=0.0000021,
     help="T2 image sample spacing, 'NONE' if not used.")
 parser.add_argument(
-    "--unwarpdir", dest="unwarpdir", default="z",
-    help="Readout direction of the T1w and T2w images (Used with either a"
+    "--unwarpdir", dest="unwarpdir", choices=("z", "y", "x"), default="z",
+    help="readout direction of the T1w and T2w images (Used with either a"
          "gradient echo field map or a spin echo field map).")
 parser.add_argument(
-    "--gdcoeffs", dest="gdcoeffs", default="NONE",
-    help="File containing gradient distortion coefficients."
+    "--gdcoeffs", dest="gdcoeffs", default="NONE", type=is_file,
+    help="file containing gradient distortion coefficients."
          "Set to 'NONE' to turn off.")
 parser.add_argument(
     "--avgrdcmethod", dest="avgrdcmethod", default="SiemensFieldMap",
-    help="Averaging and readout distortion correction method. See below for"
-         "supported values.")
+    help="averaging and readout distortion correction method.")
 parser.add_argument(
     "--topupconfig", dest="topupconfig", default="NONE",
-    help="Configuration file for topup or 'NONE' if not used")
+    help="configuration file for topup or 'NONE' if not used")
 parser.add_argument(
     "--hcpdir", dest="hcpdir", required=True,
-    help="Set up specific environment variable for the HCP Pipeline.")
+    help="the path to the HCP project containing the HCP scripts.")
 parser.add_argument(
-    "--fsldir", dest="fsldir", required=True,
-    help="FreeSurfer uses FSL_DIR instead of FSLDIR to determine the "
-    "FSL version.")
+    "--fsldir", dest="fsldir", default=DEFAULT_FSL_PATH,
+    help="the path to the FSL 'fsl.sh' configuration file.", type=is_file)
 parser.add_argument(
-    "--fsconfig", dest="fsconfig", required=True,
-    help="Set up specific environment variable for the FreeSurfer Software.")
+    "--fsconfig", dest="fsconfig", default=DEFAULT_FREESURFER_PATH,
+    help="the path to the FreeSurfer configuration file.", type=is_file)
 parser.add_argument(
-    "--wbcommand", dest="wbcommand", required=True,
-    default=DEFAULT_WORKBENCH_PATH,
-    help="Set up specific environment variable for the Workbench Software.")
+    "--wbcommand", dest="wbcommand", default=DEFAULT_WORKBENCH_PATH,
+    help="the path containing the wbcommand.",
+    type=is_directory)
 parser.add_argument(
-    "--gradunwarpdir", dest="gradunwarpdir", required=True,
-    default=DEFAULT_GRADUNWARP_PATH,
-    help="Set up specific environment variable for the gradun_warp module.")
-parser.add_argument(
-    "-v", "--verbose", dest="verbose", type=int, choices=[0, 1, 2], default=0,
+    "--verbose", dest="verbose", type=int, choices=[0, 1, 2], default=0,
     help="increase the verbosity level: 0 silent, [1, 2] verbose.")
+parser.add_argument(
+    "--erase", dest="erase", action="store_true",
+    help="if activated, clean the result folder.")
 args = parser.parse_args()
 
 
-#------------------------------------------------------------------------------
-# First check if the subject FreeSurfer directory exists on the file system,
-# and clean it if requested.
-#------------------------------------------------------------------------------
-# runtime
+"""
+Check MRI field.
+"""
+if args.field != "3T":
+    raise ValueError("{0} field not yet supported.".format(args.field))
+
+"""
+First check if the subject FreeSurfer directory exists on the file system,
+and clean it if requested.
+"""
 tool = "pyfreesurfer_hcp"
 timestamp = datetime.now().isoformat()
 tool_version = version
-freesurfer_config = args.fsconfig or DEFAULT_FREESURFER_PATH
-fsl_config = args.fsldir or DEFAULT_FSL_PATH
-freesurfer_version = FSWrapper([], freesurfer_config).version
+freesurfer_config = args.fsconfig
+fsl_config = args.fsldir
+wrapper = HCPWrapper(
+    env={"PATH": os.environ["PATH"],
+         "HCPPIPEDIR": args.hcpdir,
+         "CARET7DIR": args.wbcommand},
+    fslconfig=fsl_config,
+    fsconfig=freesurfer_config)
+freesurfer_version = wrapper.freesurfer_version()
+fsl_version = wrapper.fsl_version()
+gradunwarp_version = wrapper.gradunwarp_version()
+wbcommand_version = wrapper.wbcommand_version()
+hcp_version = wrapper.hcp_version()
 runtime = dict([(name, locals()[name])
                for name in ("freesurfer_config", "fsl_config", "tool",
                             "tool_version", "freesurfer_version",
-                            "timestamp")])
+                            "fsl_version", "gradunwarp_version",
+                            "wbcommand_version", "hcp_version", "timestamp")])
 if args.verbose > 0:
+    version_error = "<NOT INSTALLED>"
     print("[info] Start FreeSurfer HCP recon_all...")
-    print("[info] Directory: {0}.".format(args.fsconfig))
-    print("[info] Subject: {0}.".format(args.subjectid))
-    print("[info] Anatomy: {0}.".format(args.anatfile))
-
-# inputs
+    print("[info] Directory: {0}.".format(args.path))
+    print("[info] Subject: {0}.".format(args.subject))
+    print("[info] T1w: {0}.".format(args.t1))
+    print("[info] T2w: {0}.".format(args.t2))
+    print("[info] FSL version: {0}.".format(fsl_version or version_error))
+    print("[info] FreeSurfer version: {0}.".format(
+        freesurfer_version or version_error))
+    print("[info] GradUnWarp version: {0}.".format(
+        gradunwarp_version or version_error))
+    print("[info] WBCommand version: {0}.".format(
+        wbcommand_version or version_error))
+    print("[info] HCP version: {0}.".format(hcp_version or version_error))
 workdir = args.path
-print(workdir)
 subject = args.subject
-t1file = args.t1
 t1w_folder = os.path.join(workdir, subject)
-print(t1w_folder)
-t2file = args.t2
+t1files = args.t1
+t2files = args.t2
+magfile = args.fmapmag or []
+phasefile = args.fmapphase or []
 inputs = dict([(name, locals()[name])
-               for name in ("subject", "t1file", "t1w_folder", "t2file",
+               for name in ("subject", "t1files", "t1w_folder", "t2files",
                             "workdir")])
-
-# outputs
 outputs = None
+if args.erase and os.path.isdir(t1w_folder):
+    shutil.rmtree(t1w_folder)
+if not os.path.isdir(t1w_folder):
+    os.mkdir(t1w_folder)
 
 
-#------------------------------------------------------------------------------
-#                           PreFreeSurfer Pipeline
-#------------------------------------------------------------------------------
+"""
+Copy/rename the input images in the HCP working directory.
+"""
+t1_basename = "{0}_{1}_T1w_MPR{2}"
+t2_basename = "{0}_{1}_T2w_SPC{2}"
+mag_basename = "{0}_{1}_FieldMap_Magnitude"
+phase_basename = "{0}_{1}_T1w_FieldMap_Phase"
+for files, basename in [(t1files, t1_basename), (t2files, t2_basename),
+                        (magfile, mag_basename), (phasefile, phase_basename)]:
+    if not isinstance(files, list):
+        files = [files]
+    for cnt, path in enumerate(files):
+        extensions = os.path.basename(path).split(".")[1:]
+        extension = "." + ".".join(extensions)
+        out_file = os.path.join(
+            t1w_folder,
+            basename.format(subject, args.field, cnt + 1) + extension)
+        shutil.copy2(path, out_file)
 
+
+"""
+PreFreeSurfer Pipeline.
+"""
 
 t1w_folder, t1_img, t1_img_brain, t2_img = prefreesurfer_hcp(
-    args.path, args.subject, args.t1, args.t2, args.fmapmag, args.fmapphase,
-    args.brainsize, args.fmapgeneralelectric, args.echodiff, args.SEPhaseNeg,
-    args.SEPhasePos, args.echospacing, args.seunwarpdir, args.t1samplespacing,
-    args.t2samplespacing, args.unwarpdir, args.gdcoeffs, args.avgrdcmethod,
-    args.topupconfig, args.hcpdir, args.wbcommand)
+    path=args.path,
+    subject=args.subject,
+    t1=args.t1,
+    t2=args.t2,
+    fmapmag=args.fmapmag,
+    fmapphase=args.fmapphase,
+    hcpdir=args.hcpdir,
+    brainsize=args.brainsize,
+    fmapgeneralelectric=args.fmapgeneralelectric,
+    echodiff=args.echodiff,
+    SEPhaseNeg=args.SEPhaseNeg,
+    SEPhasePos=args.SEPhasePos,
+    echospacing=args.echospacing,
+    seunwarpdir=args.seunwarpdir,
+    t1samplespacing=args.t1samplespacing,
+    t2samplespacing=args.t2samplespacing,
+    unwarpdir=args.unwarpdir,
+    gdcoeffs=args.gdcoeffs,
+    avgrdcmethod=args.avgrdcmethod,
+    topupconfig=args.topupconfig,
+    wbcommand=args.wbcommand,
+    fslconfig=fsl_config,
+    fsconfig=freesurfer_config)
 
 
-#------------------------------------------------------------------------------
-#                           FreeSurfer Pipeline
-#------------------------------------------------------------------------------
+"""
+FreeSurfer Pipeline
+"""
+
+freesurfer_hcp(
+    subject=args.subject,
+    t1w_folder=t1w_folder,
+    t1_img=t1_img,
+    t1_img_brain=t1_img_brain,
+    t2_img=t2_img,
+    hcpdir=args.hcpdir,
+    wbcommand=args.wbcommand,
+    fslconfig=fsl_config,
+    fsconfig=freesurfer_config)
 
 
-freesurfer_hcp(args.subject,
-               t1w_folder,
-               t1_img,
-               t1_img_brain,
-               t2_img,
-               args.hcpdir,
-               args.wbcommand)
+"""
+PostFreeSurfer Pipeline
+"""
+
+postfreesurfer_hcp(
+    path=args.path,
+    subject=args.subject,
+    hcpdir=args.hcpdir,
+    wbcommand=args.wbcommand,
+    fslconfig=fsl_config,
+    fsconfig=freesurfer_config)
 
 
-#------------------------------------------------------------------------------
-#                           PostFreeSurfer Pipeline
-#------------------------------------------------------------------------------
+"""
+Update the outputs and save them and the inputs in a 'logs' directory.
+"""
 
-
-postfreesurfer_hcp(args.path,
-                   args.subject,
-                   args.hcpdir,
-                   args.wbcommand)
-
-
-#------------------------------------------------------------------------------
-# Update the outputs and save them and the inputs in a 'logs' directory.
-#------------------------------------------------------------------------------
 logdir = os.path.join(workdir, "logs")
 if not os.path.isdir(logdir):
     os.mkdir(logdir)
-# update outputs
 outputs = dict([(name, locals()[name]) for name in ("t1w_folder", )])
-# save in json
 for name, final_struct in [("inputs", inputs), ("outputs", outputs),
                            ("runtime", runtime)]:
     log_file = os.path.join(logdir, "{0}.json".format(name))
