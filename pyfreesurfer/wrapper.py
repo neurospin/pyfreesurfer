@@ -227,3 +227,101 @@ class HCPWrapper(object):
                              self.stderr]
             error_message = "\n".join(error_message)
             raise HCPRuntimeError(cmd[0], cmd, error_message)
+
+    def freesurfer_version(self):
+        """ Check for FreeSurfer version on system.
+
+        Returns
+        -------
+        version : str
+           version number as string or None if FreeSurfer not found.
+        """
+        try:
+            fs_home = self.environment["FREESURFER_HOME"]
+        except KeyError:
+            return None
+        version_file = os.path.join(fs_home, "build-stamp.txt")
+        if not os.path.exists(version_file):
+            return None
+        with open(version_file, "rt") as fopen:
+            version = fopen.readline()
+        version_regex = "\d.\d.\d"
+        version = re.findall(version_regex, version)[0]
+        return version
+
+    def fsl_version(self):
+        """ Check for FSL version on system.
+
+        Returns
+        -------
+        version : str
+           version number as string or None if FSL not found.
+        """
+        try:
+            basedir = self.environment["FSLDIR"]
+        except KeyError:
+            return None
+        version_file = os.path.join(basedir, "etc", "fslversion")
+        if not os.path.exists(version_file):
+            return None
+        out = open(version_file).read()
+        return out.strip("\n")
+
+    def gradunwarp_version(self):
+        """ Check for gradunwarp version on system.
+
+        Returns
+        -------
+        version : str
+           version number as string or None if gradunwarp not found.
+        """
+        cmd = ["gradient_unwarp.py", "-v"]
+        process = subprocess.Popen(
+            cmd,
+            env=self.environment,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
+        stdout, stderr = process.communicate()
+        exitcode = process.returncode
+        if exitcode != 0:
+            return None
+        return stderr.strip("\n")
+
+    def wbcommand_version(self):
+        """ Check for wbcommand version on system.
+
+        Returns
+        -------
+        version : str
+           version number as string or None if wbcommand not found.
+        """
+        cmd = ["wb_command", "-version"]
+        process = subprocess.Popen(
+            cmd,
+            env=self.environment,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
+        stdout, stderr = process.communicate()
+        exitcode = process.returncode
+        if exitcode != 0:
+            return None
+        version_regex = "Version: \d.\d.\d"
+        version = re.findall(version_regex, stdout)[0].replace("Version: ", "")
+        return version
+
+    def hcp_version(self):
+        """ Check for HCP version on system.
+
+        Returns
+        -------
+        version : str
+           version number as string or None if HCP not found.
+        """
+        try:
+            basedir = self.environment["HCPPIPEDIR"]
+        except KeyError:
+            return None
+        version_file = os.path.join(basedir, "version.txt")
+        if not os.path.exists(version_file):
+            return None
+        return open(version_file).read().strip("\n")
