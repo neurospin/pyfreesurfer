@@ -164,7 +164,7 @@ def prefreesurfer_hcp(path, subject, t1, t2, fmapmag, fmapphase, hcpdir,
     topupconfig: str (optional, default 'NONE')
         configuration file for topup or 'NONE' if not used.
     wbcommand: str (optional, default DEFAULT_WORKBENCH_PATH)
-        set up specific environment variable for the Workbench command.
+        the path containing the wbcommand.
     fslconfig: str (optional, default NeuroSpin path)
         the path to the FSL 'fsl.sh' configuration file.
     fsconfig: str (optional, default NeuroSpin path)
@@ -320,7 +320,7 @@ def freesurfer_hcp(subject, t1w_folder, t1_img, t1_img_brain, t2_img, hcpdir,
     hcpdir: str (mandatory)
         the path to the HCP project containing the script of interest.
     wbcommand: str (optional, default DEFAULT_WORKBENCH_PATH)
-        set up specific environment variable for the Workbench command.
+        the path containing the wbcommand.
     fslconfig: str (optional, default NeuroSpin path)
         the path to the FSL 'fsl.sh' configuration file.
     fsconfig: str (optional, default NeuroSpin path)
@@ -383,7 +383,7 @@ def postfreesurfer_hcp(path, subject, hcpdir,
     hcpdir: str (mandatory)
         the path to the HCP project containing the script of interest.
     wbcommand: str (optional, default DEFAULT_WORKBENCH_PATH)
-        set up specific environment variable for the Workbench command.
+        the path containing the wbcommand.
     fslconfig: str (optional, default NeuroSpin path)
         the path to the FSL 'fsl.sh' configuration file.
     fsconfig: str (optional, default NeuroSpin path)
