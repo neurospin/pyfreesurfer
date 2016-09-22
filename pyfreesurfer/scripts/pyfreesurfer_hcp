@@ -106,11 +106,11 @@ Command
 python $HOME/git/pyfreesurfer/pyfreesurfer/scripts/pyfreesurfer_hcp \
     --path /volatile/nsap/hcp \
     --subject 994273 \
-    --t1 /neurospin/tmp/slefranc/tests_fs_hcp/unprocessed/3T/T1w_MPR1/994273_3T_T1w_MPR1.nii.gz \
-    --t2 /neurospin/tmp/slefranc/tests_fs_hcp/unprocessed/3T/T2w_SPC1/994273_3T_T2w_SPC1.nii.gz \
-    --fmapmag /neurospin/tmp/slefranc/tests_fs_hcp/unprocessed/3T/T1w_MPR1/994273_3T_FieldMap_Magnitude.nii.gz \
-    --fmapphase /neurospin/tmp/slefranc/tests_fs_hcp/unprocessed/3T/T1w_MPR1/994273_3T_FieldMap_Phase.nii.gz \
-    --gdcoeffs /neurospin/tmp/slefranc/coeff_SC72C_Skyra.grad \
+    --t1 /tmp/T1w_MPR1/994273_3T_T1w_MPR1.nii.gz \
+    --t2 /tmp/T2w_SPC1/994273_3T_T2w_SPC1.nii.gz \
+    --fmapmag /tmp/T1w_MPR1/994273_3T_FieldMap_Magnitude.nii.gz \
+    --fmapphase /tmp/T1w_MPR1/994273_3T_FieldMap_Phase.nii.gz \
+    --gdcoeffs /tmp/coeff_SC72C_Skyra.grad \
     --hcpdir /volatile/git/Pipelines \
     --wbcommand /usr/bin \
     --verbose 1
@@ -120,7 +120,9 @@ python $HOME/git/pyfreesurfer/pyfreesurfer/scripts/pyfreesurfer_hcp \
 def is_file(filearg):
     """ Type for argparse - checks that file exists but does not open.
     """
-    if not os.path.isfile(filearg):
+    if filearg == "NONE":
+        return filearg
+    elif not os.path.isfile(filearg):
         raise argparse.ArgumentError(
             "The file '{0}' does not exist!".format(filearg))
     return filearg
@@ -161,10 +163,10 @@ parser.add_argument(
     "--brainsize", dest="brainsize", type=int, default=150,
     help="brain size estimate in mm, 150 for humans.")
 parser.add_argument(
-    "--fmapmag", dest="fmapmag", type=is_file,
+    "--fmapmag", dest="fmapmag", type=is_file, default="NONE",
     help="Siemens Gradient Echo Fieldmap magnitude file.")
 parser.add_argument(
-    "--fmapphase", dest="fmapphase", type=is_file,
+    "--fmapphase", dest="fmapphase", type=is_file, default="NONE",
     help="Siemens Gradient Echo Fieldmap phase file.")
 parser.add_argument(
     "--fmapgeneralelectric", dest="fmapgeneralelectric", default="NONE",
@@ -284,8 +286,8 @@ subject = args.subject
 t1w_folder = os.path.join(workdir, subject)
 t1files = args.t1
 t2files = args.t2
-magfile = args.fmapmag or []
-phasefile = args.fmapphase or []
+magfile = args.fmapmag
+phasefile = args.fmapphase
 inputs = dict([(name, locals()[name])
                for name in ("subject", "t1files", "t1w_folder", "t2files",
                             "workdir")])
@@ -308,6 +310,8 @@ for files, basename in [(t1files, t1_basename), (t2files, t2_basename),
     if not isinstance(files, list):
         files = [files]
     for cnt, path in enumerate(files):
+        if path == "NONE":
+            continue
         extensions = os.path.basename(path).split(".")[1:]
         extension = "." + ".".join(extensions)
         out_file = os.path.join(
