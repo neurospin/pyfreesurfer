@@ -188,7 +188,11 @@ def prefreesurfer_hcp(path, subject, t1, t2, fmapmag, fmapphase, hcpdir,
                 "'{0}' is not a valid directory.".format(directory))
 
     # Check input parameters: filenames
-    filenames = t1 + t2 + [fmapmag, fmapphase]
+    filenames = t1 + t2
+    if fmapmag != "NONE":
+        filenames.append(fmapmag)
+    if fmapphase != "NONE":
+        filenames.append(fmapphase)
     for filename in filenames:
         if not os.path.isfile(filename):
             raise ValueError("'{0}' is not a valid file.".format(filename))
