@@ -7,18 +7,23 @@
 # for details.
 ##########################################################################
 
-# Requirements for this script:
-# installed versions of:
-#    - FSL (version 5.0.6),
-#    - FreeSurfer (version 5.3.0-HCP),
-#    - gradunwarp (HCP version 1.0.2) if doing gradient distortion correction
-#
-# environment:
-#    - FSLDIR
-#    - FREESURFER_HOME
-#    - HCPPIPEDIR
-#    - CARET7DIR
-#    - PATH (to be able to find gradient_unwarp.py)
+"""
+Wrapper around the HCP prefreesurfer, freesurfer and postfreesurfer
+scripts.
+
+Requirements for this module:
+  installed versions of:
+    - FSL (version 5.0.6),
+    - FreeSurfer (version 5.3.0-HCP),
+    - gradunwarp (HCP version 1.0.2) if doing gradient distortion correction
+
+  environment:
+    - FSLDIR
+    - FREESURFER_HOME
+    - HCPPIPEDIR
+    - CARET7DIR
+    - PATH (to be able to find gradient_unwarp.py)
+"""
 
 # System import
 from __future__ import print_function
@@ -27,16 +32,19 @@ import os
 # Pyfreesurfer import
 from pyfreesurfer.wrapper import HCPWrapper
 from .info import DEFAULT_WORKBENCH_PATH
+from .info import DEFAULT_FREESURFER_PATH
+from .info import DEFAULT_FSL_PATH
 
 
-def prefreesurfer_hcp(path, subject, t1, t2, fmapmag, fmapphase, brainsize=150,
-                      fmapgeneralelectric="NONE", echodiff=2.46,
+def prefreesurfer_hcp(path, subject, t1, t2, fmapmag, fmapphase, hcpdir,
+                      brainsize=150, fmapgeneralelectric="NONE", echodiff=2.46,
                       SEPhaseNeg="NONE", SEPhasePos="NONE", echospacing="NONE",
                       seunwarpdir="NONE", t1samplespacing=0.0000074,
                       t2samplespacing=0.0000021, unwarpdir="z",
                       gdcoeffs="NONE", avgrdcmethod="SiemensFieldMap",
-                      topupconfig="NONE", hcpdir="NONE",
-                      wbcommand=DEFAULT_WORKBENCH_PATH):
+                      topupconfig="NONE", wbcommand=DEFAULT_WORKBENCH_PATH,
+                      fslconfig=DEFAULT_FSL_PATH,
+                      fsconfig=DEFAULT_FREESURFER_PATH):
     """ Performs all the HCP PreFreeSurfer steps.
 
     1. To average any image repeats (i.e. multiple T1w or T2w images
@@ -91,50 +99,52 @@ def prefreesurfer_hcp(path, subject, t1, t2, fmapmag, fmapphase, brainsize=150,
              t2samplespacing=0.0000021,
              unwarpdir="z".
 
-    <!-- References -->
-    # [HCP]: http://www.humanconnectome.org
-    # [GlasserEtAl]: http://www.ncbi.nlm.nih.gov/pubmed/23668970
-    # [FSL]: http://fsl.fmrib.ox.ac.uk
+    References:
+    [HCP]: http://www.humanconnectome.org
+    [GlasserEtAl]: http://www.ncbi.nlm.nih.gov/pubmed/23668970
+    [FSL]: http://fsl.fmrib.ox.ac.uk
 
     Parameters
     ----------
     path: str (mandatory)
-        Path to study data folder (~ to FreeSurfer home directory). Used with
+        path to study data folder (~ to FreeSurfer home directory). Used with
         --subject input to create full path to root directory for all outputs
         generated as path/subject.
     subject: str (mandatory)
-        Subject ID. Used with --path input to create full path to root
+        subject ID. Used with --path input to create full path to root
         directory for all outputs generated as path/subject.
-    t1: str (mandatory)
-        List of full paths to T1-weighted structural images for the subject.
-    t2: str (mandatory)
-        List of full paths to T2-weighted structural images for the subject.
+    t1: list of str (mandatory)
+        list of full paths to T1-weighted structural images for the subject.
+    t2: list of str (mandatory)
+        list of full paths to T2-weighted structural images for the subject.
     brainsize: int (optional, default 150)
-        Brain size estimate in mm, 150 for humans.
+        brain size estimate in mm, 150 for humans.
     fmapmag: str (mandatory)
         Siemens Gradient Echo Fieldmap magnitude file.
     fmapphase: str (mandatory)
         Siemens Gradient Echo Fieldmap phase file.
+    hcpdir: str (mandatory)
+        the path to the HCP project containing the script of interest.
     fmapgeneralelectric: str (optional, default 'NONE')
-        General Electric Gradient Echo Field Map file.
+        general Electric Gradient Echo Field Map file.
         Two volumes in one file:
             1. field map in deg,
             2. magnitude.
     echodiff: float (optional, default 2.46)
-        Delta TE in ms for field map or 'NONE' if not used.
+        delta TE in ms for field map or 'NONE' if not used.
         2.46 for 3T scanner or 1.02ms for 7T.
     SEPhaseNeg: str (optional, default 'NONE')
-        For spin echo field map, path to volume with a negative phase encoding
+        for spin echo field map, path to volume with a negative phase encoding
         direction (LR in HCP data), set to 'NONE' if not using Spin Echo Field
         Maps.
     SEPhasePos: str (optional, default 'NONE')
-        For spin echo field map, path to volume with a positive phase encoding
+        for spin echo field map, path to volume with a positive phase encoding
         direction (RL in HCP data), set to 'NONE' if not using Spin Echo Field
         Maps.
     echospacing: str (optional, default 'NONE')
-        Echo Spacing or Dwelltime of Spin Echo Field Map or 'NONE' if not used.
+        echo Spacing or Dwelltime of Spin Echo Field Map or 'NONE' if not used.
     seunwarpdir: str (optional, default 'NONE')
-        Phase encoding direction of the spin echo field map.
+        phase encoding direction of the spin echo field map.
         (Only applies when using a spin echo field map.)
     t1samplespacing: float (optional, default 0.0000074)
         T1 image sample spacing.
@@ -143,88 +153,78 @@ def prefreesurfer_hcp(path, subject, t1, t2, fmapmag, fmapphase, brainsize=150,
         T2 image sample spacing, 'NONE' if not used.
         Set to NONE if not doing readout distortion correction.
     unwarpdir: str (optional, default 'z')
-        Readout direction of the T1w and T2w images (Used with either a
+        readout direction of the T1w and T2w images (Used with either a
         gradient echo field map or a spin echo field map).
         Set NONE if not doing readout distortion correction.
     gdcoeffs: str (optional, default 'NONE')
-        File containing gradient distortion coefficients.
+        file containing gradient distortion coefficients.
         Set to NONE to skip gradient distortion correction.
     avgrdcmethod: str (optional, default "SiemensFieldMap")
-        Averaging and readout distortion correction method.
+        averaging and readout distortion correction method.
     topupconfig: str (optional, default 'NONE')
-        Configuration file for topup or 'NONE' if not used.
-    hcpdir: str (optional, default DEFAULT_HCP_PATH)
-        Set up specific environment variable for the HCP Pipeline.
+        configuration file for topup or 'NONE' if not used.
     wbcommand: str (optional, default DEFAULT_WORKBENCH_PATH)
-        Set up specific environment variable for the Workbench command.
+        set up specific environment variable for the Workbench command.
+    fslconfig: str (optional, default NeuroSpin path)
+        the path to the FSL 'fsl.sh' configuration file.
+    fsconfig: str (optional, default NeuroSpin path)
+        the path to the FreeSurfer configuration file.
 
     Returns
     -------
     t1w_folder: str
+        the destination folder.
     t1_img: str
+        the preprocessed T1w image.
     t1_img_brain: str
+        the preprocessed T1w image brain.
     t2_img: str
+        the preprocessed T2w image.
     """
     # Check input parameters: directories
     for directory in (path, hcpdir, wbcommand):
         if not os.path.isdir(directory):
-            raise ValueError("'{0}' is not a valid directory.".format(
-                             directory))
+            raise ValueError(
+                "'{0}' is not a valid directory.".format(directory))
 
     # Check input parameters: filenames
-    for filename in t1:
+    filenames = t1 + t2 + [fmapmag, fmapphase]
+    for filename in filenames:
         if not os.path.isfile(filename):
-            raise ValueError("'{0}' is not a valid file.".format(
-                             filename))
-    for filename in t2:
-        if not os.path.isfile(filename):
-            raise ValueError("'{0}' is not a valid file.".format(
-                             filename))
-    for filename in (fmapmag, fmapphase):
-        if not os.path.isfile(filename):
-            raise ValueError("'{0}' is not a valid file.".format(
-                             filename))
+            raise ValueError("'{0}' is not a valid file.".format(filename))
 
     # High resolution T1w MNI template
     t1w_template = os.path.join(
-        hcpdir,
-        "global/templates/MNI152_T1_0.7mm.nii.gz")
+        hcpdir, "global", "templates", "MNI152_T1_0.7mm.nii.gz")
     # High resolution brain extracted MNI template
     t1w_template_brain = os.path.join(
-        hcpdir,
-        "global/templates/MNI152_T1_0.7mm_brain.nii.gz")
+        hcpdir, "global", "templates", "MNI152_T1_0.7mm_brain.nii.gz")
     # High resolution MNI brain mask template
     template_mask = os.path.join(
-        hcpdir,
-        "global/templates/MNI152_T1_0.7mm_brain_mask.nii.gz")
+        hcpdir, "global", "templates", "MNI152_T1_0.7mm_brain_mask.nii.gz")
     # Low resolution T1w MNI template
     t1w_template_2mm = os.path.join(
-        hcpdir,
-        "global/templates/MNI152_T1_2mm.nii.gz")
+        hcpdir, "global", "templates", "MNI152_T1_2mm.nii.gz")
     # Low resolution MNI brain mask template
     template_2mm_mask = os.path.join(
-        hcpdir,
-        "global/templates/MNI152_T1_2mm_brain_mask_dil.nii.gz")
+        hcpdir, "global", "templates", "MNI152_T1_2mm_brain_mask_dil.nii.gz")
     # High resolution T2w MNI Template
     t2w_template = os.path.join(
-        hcpdir,
-        "global/templates/MNI152_T2_0.7mm.nii.gz")
+        hcpdir, "global", "templates", "MNI152_T2_0.7mm.nii.gz")
     # High resolution T2w brain extracted MNI Template
     t2w_template_brain = os.path.join(
-        hcpdir,
-        "global/templates/MNI152_T2_0.7mm_brain.nii.gz")
+        hcpdir, "global", "templates", "MNI152_T2_0.7mm_brain.nii.gz")
     # Low resolution T2w MNI Template
     t2w_template_2mm = os.path.join(
-        hcpdir,
-        "global/templates/MNI152_T2_2mm.nii.gz")
+        hcpdir, "global", "templates", "MNI152_T2_2mm.nii.gz")
     # FNIRT 2mm T1w configuration
     fnirtconfig = os.path.join(
         hcpdir,
-        "global/config/T1_2_MNI152_2mm.cnf")
+        "global", "config", "T1_2_MNI152_2mm.cnf")
 
+    # Command path
     prefs_pipeline = os.path.join(
-        hcpdir,
-        "PreFreeSurfer/PreFreeSurferPipeline.sh")
+        hcpdir, "PreFreeSurfer", "PreFreeSurferPipeline.sh")
 
     # Define HCP command
     prefs_cmd = [prefs_pipeline,
@@ -257,29 +257,28 @@ def prefreesurfer_hcp(path, subject, t1, t2, fmapmag, fmapphase, brainsize=150,
                  "--avgrdcmethod", avgrdcmethod,
                  "--topupconfig", topupconfig]
 
+    # Define the HCP environment variable
     process = HCPWrapper(
         env={
             "HCPPIPEDIR": hcpdir,
-            "HCPPIPEDIR_PreFS": os.path.join(hcpdir, "PreFreeSurfer/scripts"),
-            "HCPPIPEDIR_Global": os.path.join(hcpdir, "global/scripts"),
-            "HCPPIPEDIR_Templates": os.path.join(hcpdir, "global/templates"),
-            "HCPPIPEDIR_Config": os.path.join(hcpdir, "global/config"),
-            "CARET7DIR": wbcommand
-            },
-        )
+            "HCPPIPEDIR_PreFS": os.path.join(hcpdir, "PreFreeSurfer",
+                                             "scripts"),
+            "HCPPIPEDIR_Global": os.path.join(hcpdir, "global", "scripts"),
+            "HCPPIPEDIR_Templates": os.path.join(hcpdir, "global" "templates"),
+            "HCPPIPEDIR_Config": os.path.join(hcpdir, "global", "config"),
+            "CARET7DIR": wbcommand},
+        fslconfig=fslconfig,
+        fsconfig=fsconfig)
 
     # Execute the HCP command
     process(prefs_cmd)
 
     # T1w folder
-    t1w_folder = os.path.join(path, subject + "/T1w")
-
+    t1w_folder = os.path.join(path, subject, "T1w")
     # T1w FreeSurfer Input (Full Resolution)
     t1_img = os.path.join(t1w_folder, "T1w_acpc_dc_restore.nii.gz")
-
     # T1w FreeSurfer Input (Full Resolution)
     t1_img_brain = os.path.join(t1w_folder, "T1w_acpc_dc_restore_brain.nii.gz")
-
     # T2w FreeSurfer Input (Full Resolution)
     t2_img = os.path.join(t1w_folder, "T2w_acpc_dc_restore.nii.gz")
 
@@ -287,39 +286,45 @@ def prefreesurfer_hcp(path, subject, t1, t2, fmapmag, fmapphase, brainsize=150,
 
 
 def freesurfer_hcp(subject, t1w_folder, t1_img, t1_img_brain, t2_img, hcpdir,
-                   wbcommand=DEFAULT_WORKBENCH_PATH):
+                   wbcommand=DEFAULT_WORKBENCH_PATH,
+                   fslconfig=DEFAULT_FSL_PATH,
+                   fsconfig=DEFAULT_FREESURFER_PATH):
     """ Performs all the HCP FreeSurfer steps.
 
-    1. Make Spline Interpolated Downsample to 1mm
+    1. Make Spline Interpolated Downsample to 1mm.
     2. Initial recon-all steps (with flags that are part of "-autorecon1", with
-       the exception of -skullstrip)
-    3. Generate brain mask
+       the exception of -skullstrip).
+    3. Generate brain mask.
     4. Call recon-all to run most of the "-autorecon2" stages, but turning off
        smooth2, inflate2, curvstats, and segstats stages.
     5. High resolution white matter and fine tune T2w to T1w registration.
-    6. Intermediate Recon-all Steps
+    6. Intermediate Recon-all Steps.
     7. High resolution pial matter (adjusts the pial surface based on the the
-       T2w image)
-    8. Final recon-all steps
+       T2w image).
+    8. Final recon-all steps.
 
     Parameters
     ----------
     subject: str (mandatory)
-        The current subject identifier.
+        the current subject identifier.
     t1w_folder: str (mandatory)
-        The FreeSurfer working directory with all the subjects.
+        the FreeSurfer working directory with all the subjects.
     t1_img: str (mandatory)
-        The input anatomical image to be segmented with FreeSurfer
+        the input anatomical image to be segmented with FreeSurfer
         (Full Resolution).
     t1_img_brain: str (mandatory)
-        The input anatomical brain image to be segmented with FreeSurfer
+        the input anatomical brain image to be segmented with FreeSurfer
         (Full Resolution).
     t2_img: str (mandatory)
-        The input T2 image (Full Resolution).
-    hcpdir: str (optional, default DEFAULT_HCP_PATH)
-        Set up specific environment variable for the HCP Pipeline.
+        the input T2 image (Full Resolution).
+    hcpdir: str (mandatory)
+        the path to the HCP project containing the script of interest.
     wbcommand: str (optional, default DEFAULT_WORKBENCH_PATH)
-        Set up specific environment variable for the Workbench command.
+        set up specific environment variable for the Workbench command.
+    fslconfig: str (optional, default NeuroSpin path)
+        the path to the FSL 'fsl.sh' configuration file.
+    fsconfig: str (optional, default NeuroSpin path)
+        the path to the FreeSurfer configuration file.
     """
     # Check input parameters: directories
     for directory in (t1w_folder, hcpdir, wbcommand):
@@ -335,7 +340,7 @@ def freesurfer_hcp(subject, t1w_folder, t1_img, t1_img_brain, t2_img, hcpdir,
 
     # Command path
     fs_pipeline = os.path.join(
-        hcpdir, "FreeSurfer/FreeSurferPipeline.sh")
+        hcpdir, "FreeSurfer", "FreeSurferPipeline.sh")
 
     # Define HCP command
     fs_cmd = [fs_pipeline,
@@ -349,34 +354,40 @@ def freesurfer_hcp(subject, t1w_folder, t1_img, t1_img_brain, t2_img, hcpdir,
     process = HCPWrapper(
         env={
             "HCPPIPEDIR": hcpdir,
-            "HCPPIPEDIR_FS": os.path.join(hcpdir, "FreeSurfer/scripts"),
-            "CARET7DIR": wbcommand
-            }
-        )
+            "HCPPIPEDIR_FS": os.path.join(hcpdir, "FreeSurfer", "scripts"),
+            "CARET7DIR": wbcommand},
+        fslconfig=fslconfig,
+        fsconfig=fsconfig)
 
     # Execute the HCP command
     process(fs_cmd)
 
 
 def postfreesurfer_hcp(path, subject, hcpdir,
-                       wbcommand=DEFAULT_WORKBENCH_PATH):
+                       wbcommand=DEFAULT_WORKBENCH_PATH,
+                       fslconfig=DEFAULT_FSL_PATH,
+                       fsconfig=DEFAULT_FREESURFER_PATH):
     """ Performs all the HCP PostFreeSurfer steps.
 
     1. Conversion of FreeSurfer Volumes and Surfaces to NIFTI and GIFTI and
-       Create Caret Files and Registration
-    2. Create FreeSurfer ribbon file at full resolution
-    3. Myelin Mapping
+       Create Caret Files and Registration.
+    2. Create FreeSurfer ribbon file at full resolution.
+    3. Myelin Mapping.
 
     Parameters
     ----------
     path: str (mandatory)
-         The FreeSurfer working directory with all the subjects.
+        the FreeSurfer working directory with all the subjects.
     subject: str (mandatory)
-        The current subject identifier.
-    hcpdir: str (optional)
-        Set up specific environment variable for the HCP Pipeline.
+        the current subject identifier.
+    hcpdir: str (mandatory)
+        the path to the HCP project containing the script of interest.
     wbcommand: str (optional, default DEFAULT_WORKBENCH_PATH)
-        Set up specific environment variable for the Workbench command.
+        set up specific environment variable for the Workbench command.
+    fslconfig: str (optional, default NeuroSpin path)
+        the path to the FSL 'fsl.sh' configuration file.
+    fsconfig: str (optional, default NeuroSpin path)
+        the path to the FreeSurfer configuration file.
     """
     for directory in (path, hcpdir, wbcommand):
         if not os.path.isdir(directory):
@@ -384,21 +395,20 @@ def postfreesurfer_hcp(path, subject, hcpdir,
                              directory))
 
     surf_atlas_dir = os.path.join(
-        hcpdir, "global/templates/standard_mesh_atlases")
+        hcpdir, "global", "templates", "standard_mesh_atlases")
     grayordinates_space_dir = os.path.join(
-        hcpdir, "global/templates/91282_Greyordinates")
+        hcpdir, "global", "templates", "91282_Greyordinates")
     subcortical_gray_labels = os.path.join(
-        hcpdir, "global/config/FreeSurferSubcorticalLabelTableLut.txt")
+        hcpdir, "global", "config", "FreeSurferSubcorticalLabelTableLut.txt")
     freeSurfer_labels = os.path.join(
-        hcpdir, "global/config/FreeSurferAllLut.txt")
+        hcpdir, "global", "config", "FreeSurferAllLut.txt")
     reference_myelin_maps = os.path.join(
-        hcpdir,
-        ("global/templates/standard_mesh_atlases/"
-         "Conte69.MyelinMap_BC.164k_fs_LR.dscalar.nii"))
+        hcpdir, "global", "templates", "standard_mesh_atlases",
+        "Conte69.MyelinMap_BC.164k_fs_LR.dscalar.nii")
 
     # Command path
     postfs_pipeline = os.path.join(
-        hcpdir, "PostFreeSurfer/PostFreeSurferPipeline.sh")
+        hcpdir, "PostFreeSurfer", "PostFreeSurferPipeline.sh")
 
     # Define HCP command
     postfs_cmd = [postfs_pipeline,
@@ -418,11 +428,11 @@ def postfreesurfer_hcp(path, subject, hcpdir,
     process = HCPWrapper(
         env={
             "HCPPIPEDIR": hcpdir,
-            "HCPPIPEDIR_PostFS": os.path.join(hcpdir,
-                                              "PostFreeSurfer/scripts"),
-            "CARET7DIR": wbcommand
-            }
-        )
+            "HCPPIPEDIR_PostFS": os.path.join(hcpdir, "PostFreeSurfer",
+                                              "scripts"),
+            "CARET7DIR": wbcommand},
+        fslconfig=fslconfig,
+        fsconfig=fsconfig)
 
     # Execute the HCP command
     process(postfs_cmd)

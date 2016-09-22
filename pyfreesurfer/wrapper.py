@@ -174,22 +174,19 @@ class HCPWrapper(object):
         self.fslconfig = fslconfig
         self.fsconfig = fsconfig
 
-        # Add the HCP environment variables
-        self.environment = env
-
-        # Check if FreeSurfer has already been configures
-        fs_env = os.environ.get("FREESURFER_CONFIGURED", None)
         # Load FreeSurfer configuration
-        fs_env = json.loads(fs_env)
+        fs_home = os.environ.get("FREESURFER_HOME", None)
+        fs_env = {}
+        if fs_home is not None:
+            fs_env["FREESURFER_HOME"] = fs_home
+        fs_env = environment(self.fsconfig, fs_env)
 
         # Load FSL configuration
         fsl_env = environment(self.fslconfig)
 
-        # Concatenate FSL and FreeSurfer environment variables
+        # Concatenate FSL, FreeSurfer and current environment variables
         concat_env = concat_environment(fs_env, fsl_env)
-        # Update the current environment with the FSL and FreeSurfer
-        # environment variables
-        self.environment.update(concat_env)
+        self.environment = concat_environment(concat_env, env)
 
     def __call__(self, cmd):
         """ Run the HCP command.
@@ -199,9 +196,6 @@ class HCPWrapper(object):
         cmd: list of str (mandatory)
             the HCP command to execute.
         """
-
-        print(self.environment)
-
         # Check HCP pipelines has been configured so the command can be
         # found
         process = subprocess.Popen(
@@ -219,8 +213,6 @@ class HCPWrapper(object):
         for indx, key in enumerate(cmd[1::2]):
             value = cmd[2 * indx + 2]
             fcmd.append("{0}={1}".format(key, value))
-
-        print(" ".join(fcmd))
 
         # Execute the command
         process = subprocess.Popen(
