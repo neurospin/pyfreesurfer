@@ -209,10 +209,11 @@ parser.add_argument(
          "Set to 'NONE' to turn off.")
 parser.add_argument(
     "--avgrdcmethod", dest="avgrdcmethod", default="SiemensFieldMap",
-    help="averaging and readout distortion correction method.")
+    help="averaging and readout distortion correction method or 'NONE' if "
+         "not used.")
 parser.add_argument(
     "--topupconfig", dest="topupconfig", default="NONE",
-    help="configuration file for topup or 'NONE' if not used")
+    help="configuration file for topup or 'NONE' if not used.")
 parser.add_argument(
     "--hcpdir", dest="hcpdir", required=True,
     help="the path to the HCP project containing the HCP scripts.")
@@ -283,19 +284,19 @@ if args.verbose > 0:
     print("[info] HCP version: {0}.".format(hcp_version or version_error))
 workdir = args.path
 subject = args.subject
-t1w_folder = os.path.join(workdir, subject)
+subjectdir = os.path.join(workdir, subject)
 t1files = args.t1
 t2files = args.t2
 magfile = args.fmapmag
 phasefile = args.fmapphase
 inputs = dict([(name, locals()[name])
-               for name in ("subject", "t1files", "t1w_folder", "t2files",
+               for name in ("subject", "t1files", "subjectdir", "t2files",
                             "workdir")])
 outputs = None
-if args.erase and os.path.isdir(t1w_folder):
-    shutil.rmtree(t1w_folder)
-if not os.path.isdir(t1w_folder):
-    os.mkdir(t1w_folder)
+if args.erase and os.path.isdir(subjectdir):
+    shutil.rmtree(subjectdir)
+if not os.path.isdir(subjectdir):
+    os.mkdir(subjectdir)
 
 
 """
@@ -315,7 +316,7 @@ for files, basename in [(t1files, t1_basename), (t2files, t2_basename),
         extensions = os.path.basename(path).split(".")[1:]
         extension = "." + ".".join(extensions)
         out_file = os.path.join(
-            t1w_folder,
+            subjectdir,
             basename.format(subject, args.field, cnt + 1) + extension)
         shutil.copy2(path, out_file)
 
@@ -383,7 +384,7 @@ postfreesurfer_hcp(
 Update the outputs and save them and the inputs in a 'logs' directory.
 """
 
-logdir = os.path.join(workdir, "logs")
+logdir = os.path.join(subjectdir, "logs")
 if not os.path.isdir(logdir):
     os.mkdir(logdir)
 outputs = dict([(name, locals()[name]) for name in ("t1w_folder", )])
