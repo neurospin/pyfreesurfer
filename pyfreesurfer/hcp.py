@@ -270,7 +270,8 @@ def prefreesurfer_hcp(path, subject, t1, t2, fmapmag, fmapphase, hcpdir,
             "HCPPIPEDIR_Global": os.path.join(hcpdir, "global", "scripts"),
             "HCPPIPEDIR_Templates": os.path.join(hcpdir, "global" "templates"),
             "HCPPIPEDIR_Config": os.path.join(hcpdir, "global", "config"),
-            "CARET7DIR": wbcommand},
+            "CARET7DIR": wbcommand,
+            "PATH": os.environ["PATH"]},
         fslconfig=fslconfig,
         fsconfig=fsconfig)
 
