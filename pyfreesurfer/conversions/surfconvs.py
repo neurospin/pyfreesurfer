@@ -25,6 +25,62 @@ from pyfreesurfer.wrapper import FSWrapper
 from pyfreesurfer.utils.surftools import TriSurface
 
 
+def midgray_surface(
+        hemi,
+        outdir,
+        fsdir,
+        sid,
+        fsconfig=DEFAULT_FREESURFER_PATH):
+    """ Create a mid-thickness gray surface.
+
+    Binding over the FreeSurfer's 'mris_expand' command.
+
+    Parameters
+    ----------
+    hemi: str (mandatory)
+        hemisphere ('lh' or 'rh').
+    outdir: str (mandatory)
+        the destination folder.
+    fsdir: str (mandatory)
+        FreeSurfer subjects directory 'SUBJECTS_DIR'.
+    sid: str (mandatory)
+        FreeSurfer subject identifier.
+    fsconfig: str (optional)
+        The FreeSurfer '.sh' config file.
+
+    Returns
+    -------
+    midgray_file: str
+        the mid-thickness gray surface.
+    """
+    # Check input parameters
+    white_file = os.path.join(fsdir, sid, "surf", "{0}.white".format(hemi))
+    for path in (white_file, ):
+        if not os.path.isfile(path):
+            raise ValueError("'{0}' is not a valid input file.".format(path))
+    for path in (fsdir, ):
+        if not os.path.isdir(path):
+            raise ValueError("'{0}' is not a valid directory.".format(path))
+    if hemi not in ["lh", "rh"]:
+        raise ValueError("'{0}' is not a valid hemisphere value which must be "
+                         "in ['lh', 'rh']".format(hemi))
+
+    # Define FreeSurfer command
+    midgray_file = os.path.join(outdir, "{0}.graymid".format(hemi))
+    cmd = ["mris_expand", "-thickness", white_file, "0.5", midgray_file]
+
+    # Execute the FreeSurfer command
+    recon = FSWrapper(cmd, shfile=fsconfig)
+    recon()
+
+    # Create a symlink to the 'surf' FreeSurfer subject folder
+    surf_file = os.path.join(fsdir, sid, "surf", "{0}.graymid".format(hemi))
+    if not os.path.islink(surf_file):
+        os.symlink(midgray_file, surf_file)
+
+    return midgray_file
+
+
 def mri_surf2surf(
         hemi,
         input_surface_file,
@@ -139,7 +195,7 @@ def resample_cortical_surface(
     for path in (fsdir, outdir):
         if not os.path.isdir(path):
             raise ValueError("'{0}' is not a valid directory.".format(path))
-    if surface_name not in ["white", "pial"]:
+    if surface_name not in ["white", "pial", "graymid"]:
         raise ValueError("'{0}' is not a valid surface value which must be in "
                          "['white', 'pial']".format(surface_name))
     norders = numpy.asarray(orders)

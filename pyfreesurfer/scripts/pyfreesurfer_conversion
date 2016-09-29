@@ -15,6 +15,8 @@ import argparse
 from datetime import datetime
 import json
 from pprint import pprint
+import nibabel
+import numpy
 
 # Bredala import
 try:
@@ -23,7 +25,8 @@ try:
     bredala.register("pyfreesurfer.conversions.volconvs",
                      names=["mri_convert"])
     bredala.register("pyfreesurfer.conversions.surfconvs",
-                     names=["resample_cortical_surface", "surf_convert"])
+                     names=["resample_cortical_surface", "surf_convert",
+                            "midgray_surface"])
     bredala.register("pyfreesurfer.utils.regtools",
                      names=["conformed_to_native_space"])
 except:
@@ -36,6 +39,7 @@ from pyfreesurfer import DEFAULT_FREESURFER_PATH
 from pyfreesurfer.conversions.volconvs import mri_convert
 from pyfreesurfer.conversions.surfconvs import surf_convert
 from pyfreesurfer.conversions.surfconvs import resample_cortical_surface
+from pyfreesurfer.conversions.surfconvs import midgray_surface
 from pyfreesurfer.utils.regtools import conformed_to_native_space
 
 
@@ -61,7 +65,11 @@ Steps:
 2- Registration matrix: between the conformed space (orig.mgz)
    and the native anatomical (rawavg.mgz).
 
-3- Surface conversions: resample the white or pial FreeSurfer
+3- Create the ribbon right and left hemispheres masks.
+
+4- Create the mid thickness right and left hemispheres surfaces.
+
+5- Surface conversions: resample the white or pial FreeSurfer
    surfaces at different resolutions (impacts the number of vertex)
    with common mesh that can be directly used in a longitudinal
    setting. The results are also stored in a 'convert' folder with
@@ -129,7 +137,8 @@ timestamp = datetime.now().isoformat()
 tool_version = version
 freesurfer_config = args.fsconfig or DEFAULT_FREESURFER_PATH
 freesurfer_version = FSWrapper([], freesurfer_config).version
-runtime = dict([(name, locals()[name])
+params = locals()
+runtime = dict([(name, params[name])
                for name in ("freesurfer_config", "tool", "tool_version",
                             "freesurfer_version", "timestamp")])
 if args.verbose > 0:
@@ -141,7 +150,8 @@ subjdir = os.path.join(args.fsdir, subjectid)
 convertdir = os.path.join(args.outdir, args.subjectid, "convert")
 imagedir = os.path.join(convertdir, "images")
 surfacedir = os.path.join(convertdir, "surfaces")
-inputs = dict([(name, locals()[name])
+params = locals()
+inputs = dict([(name, params[name])
                for name in ("subjectid", "subjdir", "convertdir", "imagedir",
                             "surfacedir")])
 outputs = None
@@ -161,7 +171,8 @@ Step 1: Nifti conversions.
 if args.verbose > 0:
     print("[info] Start Nifti conversions...")
 niftifiles = {}
-for modality in ["aparc+aseg", "aparc.a2009s+aseg", "aseg", "wm", "rawavg"]:
+for modality in ["aparc+aseg", "aparc.a2009s+aseg", "aseg", "wm", "rawavg",
+                 "ribbon"]:
     regex = os.path.join(args.subjectid, "mri", "{0}.mgz".format(modality))
     niftifiles[modality] = mri_convert(
         args.fsdir,
@@ -191,13 +202,41 @@ if args.verbose > 1:
 
 
 """
-Step 3: Surface conversions.
+Step 3: Create the ribbon right and left hemispheres masks.
+"""
+ribbon_file = niftifiles["ribbon"][0]
+image = nibabel.load(ribbon_file)
+data = image.get_data()
+for hemi, label in [("lh", 3), ("rh", 42)]:
+    indices = numpy.where((data > (label - 0.01)) & (data < (label + 0.01)))
+    mask = numpy.zeros(data.shape, dtype=int)
+    mask[indices] = 1
+    mask_image = nibabel.Nifti1Image(mask, image.get_affine())
+    mask_file = os.path.join(imagedir, "{0}.ribbon.nii.gz".format(hemi))
+    nibabel.save(mask_image, mask_file)
+    niftifiles["ribbon"].append(mask_file)
+
+
+"""
+Step 4: Create the mid thickness right and left hemispheres surfaces
+"""
+for hemi in ["lh", "rh"]:
+    surf = midgray_surface(
+        hemi,
+        surfacedir,
+        args.fsdir,
+        subjectid,
+        fsconfig=freesurfer_config)
+
+
+"""
+Step 5: Surface conversions.
 """
 if args.verbose > 0:
     print("[info] Start surface conversions...")
 surfaces = {}
 annotations = []
-for modality in ["pial", "white"]:
+for modality in ["pial", "white", "graymid"]:
     for hemi in ["lh", "rh"]:
         name = "{0}.{1}".format(hemi, modality)
         regex = os.path.join(args.subjectid, "surf", name)
@@ -230,7 +269,8 @@ Update the outputs and save them and the inputs in a 'logs' directory.
 logdir = os.path.join(convertdir, "logs")
 if not os.path.isdir(logdir):
     os.mkdir(logdir)
-outputs = dict([(name, locals()[name])
+params = locals()
+outputs = dict([(name, params[name])
                for name in ("niftifiles", "trffile", "surfaces",
                             "annotations")])
 for name, final_struct in [("inputs", inputs), ("outputs", outputs),
