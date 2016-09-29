@@ -38,6 +38,8 @@ def environment(sh_file=None, env={}):
     process = subprocess.Popen(command, env=env,
                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = process.communicate()
+    if not isinstance(stdout, str):
+        stdout = stdout.decode("utf8")
     if process.returncode != 0:
         raise Exception(
             "Could not parse 'sh_file' {0}. Maybe you should check if all "

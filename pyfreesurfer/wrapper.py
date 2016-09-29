@@ -282,6 +282,8 @@ class HCPWrapper(object):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE)
         stdout, stderr = process.communicate()
+        stdout = stdout.decode("utf8")
+        stderr = stderr.decode("utf8")
         exitcode = process.returncode
         if exitcode != 0:
             return None
@@ -302,6 +304,8 @@ class HCPWrapper(object):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE)
         stdout, stderr = process.communicate()
+        stdout = stdout.decode("utf8")
+        stderr = stderr.decode("utf8")
         exitcode = process.returncode
         if exitcode != 0:
             return None

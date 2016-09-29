@@ -144,7 +144,8 @@ timestamp = datetime.now().isoformat()
 tool_version = version
 freesurfer_config = args.fsconfig or DEFAULT_FREESURFER_PATH
 freesurfer_version = FSWrapper([], freesurfer_config).version
-runtime = dict([(name, locals()[name])
+params = locals()
+runtime = dict([(name, params[name])
                for name in ("freesurfer_config", "tool", "tool_version",
                             "freesurfer_version", "timestamp")])
 if args.verbose > 0:
@@ -158,7 +159,8 @@ anatfile = args.anatfile
 subjdir = os.path.join(fsdir, subjectid)
 t2file = args.t2file
 flairfile = args.flairfile
-inputs = dict([(name, locals()[name])
+params = locals()
+inputs = dict([(name, params[name])
                for name in ("subjectid", "anatfile", "subjdir", "t2file",
                             "flairfile")])
 outputs = None
@@ -187,7 +189,8 @@ Update the outputs and save them and the inputs in a 'logs' directory.
 logdir = os.path.join(subjdir, "logs")
 if not os.path.isdir(logdir):
     os.mkdir(logdir)
-outputs = dict([(name, locals()[name]) for name in ("subjdir", )])
+params = locals()
+outputs = dict([(name, params[name]) for name in ("subjdir", )])
 for name, final_struct in [("inputs", inputs), ("outputs", outputs),
                            ("runtime", runtime)]:
     log_file = os.path.join(logdir, "{0}.json".format(name))

@@ -152,7 +152,8 @@ timestamp = datetime.now().isoformat()
 tool_version = version
 freesurfer_config = args.fsconfig or DEFAULT_FREESURFER_PATH
 freesurfer_version = FSWrapper([], freesurfer_config).version
-runtime = dict([(name, locals()[name])
+params = locals()
+runtime = dict([(name, params[name])
                for name in ("freesurfer_config", "tool", "tool_version",
                             "freesurfer_version", "timestamp")])
 if args.verbose > 0:
@@ -171,7 +172,8 @@ statdir = args.statdir
 increment = args.incr
 cut_axis = args.cutaxis
 qcdir = os.path.join(outdir, args.subjectid, "qc")
-inputs = dict([(name, locals()[name])
+params = locals()
+inputs = dict([(name, params[name])
                for name in ("sid", "subjdir", "outdir", "statdir", "increment",
                             "qcdir", "cut_axis", "clientname", "projectname",
                             "timepoint")])
@@ -278,7 +280,8 @@ Update the outputs and save them and the inputs in a 'logs' directory.
 logdir = os.path.join(qcdir, "logs")
 if not os.path.isdir(logdir):
     os.mkdir(logdir)
-outputs = dict([(name, locals()[name])
+params = locals()
+outputs = dict([(name, params[name])
                for name in ("polars", "surfaces", "slices", "reportfile")])
 for name, final_struct in [("inputs", inputs), ("outputs", outputs),
                            ("runtime", runtime)]:

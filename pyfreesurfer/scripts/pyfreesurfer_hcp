@@ -218,13 +218,13 @@ parser.add_argument(
     "--hcpdir", dest="hcpdir", required=True,
     help="the path to the HCP project containing the HCP scripts.")
 parser.add_argument(
-    "--fsldir", dest="fsldir", default=DEFAULT_FSL_PATH,
+    "--fsldir", dest="fsldir",
     help="the path to the FSL 'fsl.sh' configuration file.", type=is_file)
 parser.add_argument(
-    "--fsconfig", dest="fsconfig", default=DEFAULT_FREESURFER_PATH,
+    "--fsconfig", dest="fsconfig",
     help="the path to the FreeSurfer configuration file.", type=is_file)
 parser.add_argument(
-    "--wbcommand", dest="wbcommand", default=DEFAULT_WORKBENCH_PATH,
+    "--wbcommand", dest="wbcommand",
     help="the path containing the wbcommand.",
     type=is_directory)
 parser.add_argument(
@@ -249,12 +249,13 @@ and clean it if requested.
 tool = "pyfreesurfer_hcp"
 timestamp = datetime.now().isoformat()
 tool_version = version
-freesurfer_config = args.fsconfig
-fsl_config = args.fsldir
+freesurfer_config = args.fsconfig or DEFAULT_FREESURFER_PATH
+fsl_config = args.fsldir or DEFAULT_FSL_PATH
+wbcommand = args.wbcommand or DEFAULT_WORKBENCH_PATH
 wrapper = HCPWrapper(
     env={"PATH": os.environ["PATH"],
          "HCPPIPEDIR": args.hcpdir,
-         "CARET7DIR": args.wbcommand},
+         "CARET7DIR": wbcommand},
     fslconfig=fsl_config,
     fsconfig=freesurfer_config)
 freesurfer_version = wrapper.freesurfer_version()
@@ -262,7 +263,8 @@ fsl_version = wrapper.fsl_version()
 gradunwarp_version = wrapper.gradunwarp_version()
 wbcommand_version = wrapper.wbcommand_version()
 hcp_version = wrapper.hcp_version()
-runtime = dict([(name, locals()[name])
+params = locals()
+runtime = dict([(name, params[name])
                for name in ("freesurfer_config", "fsl_config", "tool",
                             "tool_version", "freesurfer_version",
                             "fsl_version", "gradunwarp_version",
@@ -289,7 +291,8 @@ t1files = args.t1
 t2files = args.t2
 magfile = args.fmapmag
 phasefile = args.fmapphase
-inputs = dict([(name, locals()[name])
+params = locals()
+inputs = dict([(name, params[name])
                for name in ("subject", "t1files", "subjectdir", "t2files",
                             "workdir")])
 outputs = None
@@ -346,7 +349,7 @@ t1w_folder, t1_img, t1_img_brain, t2_img = prefreesurfer_hcp(
     gdcoeffs=args.gdcoeffs,
     avgrdcmethod=args.avgrdcmethod,
     topupconfig=args.topupconfig,
-    wbcommand=args.wbcommand,
+    wbcommand=wbcommand,
     fslconfig=fsl_config,
     fsconfig=freesurfer_config)
 
@@ -362,7 +365,7 @@ freesurfer_hcp(
     t1_img_brain=t1_img_brain,
     t2_img=t2_img,
     hcpdir=args.hcpdir,
-    wbcommand=args.wbcommand,
+    wbcommand=wbcommand,
     fslconfig=fsl_config,
     fsconfig=freesurfer_config)
 
@@ -387,7 +390,8 @@ Update the outputs and save them and the inputs in a 'logs' directory.
 logdir = os.path.join(subjectdir, "logs")
 if not os.path.isdir(logdir):
     os.mkdir(logdir)
-outputs = dict([(name, locals()[name]) for name in ("t1w_folder", )])
+params = locals()
+outputs = dict([(name, params[name]) for name in ("t1w_folder", )])
 for name, final_struct in [("inputs", inputs), ("outputs", outputs),
                            ("runtime", runtime)]:
     log_file = os.path.join(logdir, "{0}.json".format(name))
