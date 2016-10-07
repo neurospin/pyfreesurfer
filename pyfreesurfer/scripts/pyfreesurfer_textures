@@ -171,6 +171,8 @@ Summarize all the subjects' textures
 """
 textures_files = []
 textures_regex = [
+    os.path.join("*", "surf", "lh.thickness"),
+    os.path.join("*", "surf", "rh.thickness"),
     os.path.join("*", "surf", "lh.sulc"),
     os.path.join("*", "surf", "rh.sulc"),
     os.path.join("*", "surf", "lh.curv"),

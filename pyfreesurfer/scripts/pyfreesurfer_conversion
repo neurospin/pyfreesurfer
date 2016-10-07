@@ -162,7 +162,7 @@ if args.erase and os.path.isdir(convertdir):
     shutil.rmtree(convertdir)
 for directory in (convertdir, imagedir, surfacedir):
     if not os.path.isdir(directory):
-        os.mkdir(directory)
+        os.makedirs(directory)
 
 
 """

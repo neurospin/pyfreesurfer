@@ -28,7 +28,7 @@ from .info import FREESURFER_RELEASE
 class FSWrapper(object):
     """ Parent class for the wrapping of FreeSurfer functions.
     """
-    def __init__(self, cmd, shfile=DEFAULT_FREESURFER_PATH):
+    def __init__(self, cmd, shfile=DEFAULT_FREESURFER_PATH, env=None):
         """ Initialize the FSWrapper class by setting properly the
         environment.
 
@@ -38,11 +38,15 @@ class FSWrapper(object):
             the FreeSurfer command to execute.
         shfile: str (optional, default NeuroSpin path)
             the path to the FreeSurfer 'SetUpFreeSurfer.sh' configuration file.
+        env: dict (optional, default None)
+            the subprocess default environment.
         """
         self.cmd = cmd
         self.shfile = shfile
         self.version = None
         self.environment = self._freesurfer_version_check()
+        if env is not None:
+            self.environment = concat_environment(self.environment, env)
 
         # Update the environment variables
         if "SUBJECTS_DIR" in os.environ:

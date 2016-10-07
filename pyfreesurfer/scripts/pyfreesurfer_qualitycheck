@@ -182,7 +182,7 @@ if not os.path.isdir(subjdir):
     raise ValueError(
         "'{0}' is not a FreeSurfer subject folder.".format(subjdir))
 if not os.path.isdir(qcdir):
-    os.mkdir(qcdir)
+    os.makedirs(qcdir)
 elif args.erase:
     shutil.rmtree(qcdir)
     os.mkdir(qcdir)
