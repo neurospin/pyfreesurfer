@@ -152,11 +152,11 @@ parser.add_argument(
     help="subject ID. Used with --path input to create full path to root"
          " directory for all outputs generated as path/subject.")
 parser.add_argument(
-    "--t1", dest="t1", required=True, type=is_file,  nargs="+",
+    "--t1", dest="t1", type=is_file,  nargs="+",
     help="list of full paths to T1-weighted structural images for the "
          "subject.")
 parser.add_argument(
-    "--t2", dest="t2", required=True, type=is_file, nargs="+",
+    "--t2", dest="t2", type=is_file, nargs="+",
     help="list of full paths to T2-weighted structural images for the "
          "subject.")
 parser.add_argument(
@@ -233,6 +233,12 @@ parser.add_argument(
 parser.add_argument(
     "--erase", dest="erase", action="store_true",
     help="if activated, clean the result folder.")
+parser.add_argument(
+    "--nopre", dest="nopre", action="store_true",
+    help="if activated, do not perform the prefreesurfer step.")
+parser.add_argument(
+    "--t1wdir", dest="t1wdir", type=is_directory,
+    help="if nopre, the prefreesurfer T1w folder.")
 args = parser.parse_args()
 
 
@@ -291,10 +297,12 @@ t1files = args.t1
 t2files = args.t2
 magfile = args.fmapmag
 phasefile = args.fmapphase
+nopre = args.nopre
+t1wdir = args.t1wdir
 params = locals()
 inputs = dict([(name, params[name])
                for name in ("subject", "t1files", "subjectdir", "t2files",
-                            "workdir")])
+                            "workdir", "nopre", "t1wdir")])
 outputs = None
 if args.erase and os.path.isdir(subjectdir):
     shutil.rmtree(subjectdir)
@@ -303,55 +311,89 @@ if not os.path.isdir(subjectdir):
 
 
 """
-Copy/rename the input images in the HCP working directory.
+Perform or not the PreFreeSurfer pipeline.
 """
-t1_basename = "{0}_{1}_T1w_MPR{2}"
-t2_basename = "{0}_{1}_T2w_SPC{2}"
-mag_basename = "{0}_{1}_FieldMap_Magnitude"
-phase_basename = "{0}_{1}_T1w_FieldMap_Phase"
-for files, basename in [(t1files, t1_basename), (t2files, t2_basename),
-                        (magfile, mag_basename), (phasefile, phase_basename)]:
-    if not isinstance(files, list):
-        files = [files]
-    for cnt, path in enumerate(files):
-        if path == "NONE":
-            continue
-        extensions = os.path.basename(path).split(".")[1:]
-        extension = "." + ".".join(extensions)
-        out_file = os.path.join(
-            subjectdir,
-            basename.format(subject, args.field, cnt + 1) + extension)
-        shutil.copy2(path, out_file)
+if nopre:
+
+    """
+    Copy the input T1w/MNINonLinear PreFreeSurfer output directories.
+    """
+    t1w_folder = os.path.join(subjectdir, "T1w")
+    if not os.path.isdir(t1w_folder):
+        shutil.copytree(t1wdir, t1w_folder)
+    mninonlinear_folder = os.path.join(subjectdir, "MNINonLinear")
+    mninonlineardir = os.path.join(os.path.dirname(t1wdir), "MNINonLinear")
+    if not os.path.isdir(mninonlinear_folder):
+        shutil.copytree(mninonlineardir, mninonlinear_folder)
 
 
-"""
-PreFreeSurfer Pipeline.
-"""
+    """
+    Restore the PreFreeSurfer pipeline outputs.
+    """
+    t1_img = os.path.join(t1w_folder, "T1w_acpc_dc_restore.nii.gz")
+    t1_img_brain = os.path.join(t1w_folder, "T1w_acpc_dc_restore_brain.nii.gz")
+    t2_img = os.path.join(t1w_folder, "T2w_acpc_dc_restore.nii.gz")
 
-t1w_folder, t1_img, t1_img_brain, t2_img = prefreesurfer_hcp(
-    path=args.path,
-    subject=args.subject,
-    t1=args.t1,
-    t2=args.t2,
-    fmapmag=args.fmapmag,
-    fmapphase=args.fmapphase,
-    hcpdir=args.hcpdir,
-    brainsize=args.brainsize,
-    fmapgeneralelectric=args.fmapgeneralelectric,
-    echodiff=args.echodiff,
-    SEPhaseNeg=args.SEPhaseNeg,
-    SEPhasePos=args.SEPhasePos,
-    echospacing=args.echospacing,
-    seunwarpdir=args.seunwarpdir,
-    t1samplespacing=args.t1samplespacing,
-    t2samplespacing=args.t2samplespacing,
-    unwarpdir=args.unwarpdir,
-    gdcoeffs=args.gdcoeffs,
-    avgrdcmethod=args.avgrdcmethod,
-    topupconfig=args.topupconfig,
-    wbcommand=wbcommand,
-    fslconfig=fsl_config,
-    fsconfig=freesurfer_config)
+    
+    """
+    Remove FreeSurfer folder if created.
+    """
+    fssubjdir = os.path.join(t1w_folder, subject)
+    if os.path.isdir(fssubjdir):
+        shutil.rmtree(fssubjdir)
+
+else:
+
+    """
+    Copy/rename the input images in the HCP working directory.
+    """
+    t1_basename = "{0}_{1}_T1w_MPR{2}"
+    t2_basename = "{0}_{1}_T2w_SPC{2}"
+    mag_basename = "{0}_{1}_FieldMap_Magnitude"
+    phase_basename = "{0}_{1}_T1w_FieldMap_Phase"
+    for files, basename in [(t1files, t1_basename), (t2files, t2_basename),
+                            (magfile, mag_basename), (phasefile, phase_basename)]:
+        if not isinstance(files, list):
+            files = [files]
+        for cnt, path in enumerate(files):
+            if path == "NONE":
+                continue
+            extensions = os.path.basename(path).split(".")[1:]
+            extension = "." + ".".join(extensions)
+            out_file = os.path.join(
+                subjectdir,
+                basename.format(subject, args.field, cnt + 1) + extension)
+            shutil.copy2(path, out_file)
+
+
+    """
+    PreFreeSurfer Pipeline.
+    """
+
+    t1w_folder, t1_img, t1_img_brain, t2_img = prefreesurfer_hcp(
+        path=args.path,
+        subject=args.subject,
+        t1=args.t1,
+        t2=args.t2,
+        fmapmag=args.fmapmag,
+        fmapphase=args.fmapphase,
+        hcpdir=args.hcpdir,
+        brainsize=args.brainsize,
+        fmapgeneralelectric=args.fmapgeneralelectric,
+        echodiff=args.echodiff,
+        SEPhaseNeg=args.SEPhaseNeg,
+        SEPhasePos=args.SEPhasePos,
+        echospacing=args.echospacing,
+        seunwarpdir=args.seunwarpdir,
+        t1samplespacing=args.t1samplespacing,
+        t2samplespacing=args.t2samplespacing,
+        unwarpdir=args.unwarpdir,
+        gdcoeffs=args.gdcoeffs,
+        avgrdcmethod=args.avgrdcmethod,
+        topupconfig=args.topupconfig,
+        wbcommand=wbcommand,
+        fslconfig=fsl_config,
+        fsconfig=freesurfer_config)
 
 
 """
