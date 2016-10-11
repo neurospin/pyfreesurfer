@@ -323,7 +323,8 @@ def textures2table(
     # Save textures in CSV or in Numpy
     textures_files = []
     if save_mode in ["csv", "all"]:
-        textures_file = os.path.join(fsoutdir, basename + ".csv")
+        textures_file = os.path.join(fsoutdir, basename + "." +
+                                     str(ico_order) + ".csv")
         with open(textures_file, "wb") as open_file:
             csv_writer = csv.writer(open_file, delimiter=",")
             for sid in sorted(textures_map.keys()):
@@ -333,7 +334,8 @@ def textures2table(
                 csv_writer.writerow(row)
         textures_files.append(textures_file)
     if save_mode in ["numpy", "all"]:
-        textures_file = os.path.join(fsoutdir, basename + ".npz")
+        textures_file = os.path.join(fsoutdir, basename + "." +
+                                     str(ico_order) + ".npz")
         numpy.savez(textures_file, **textures_map)
         textures_files.append(textures_file)
 

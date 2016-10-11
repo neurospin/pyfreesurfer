@@ -308,8 +308,10 @@ class FreeSurferTextures2Table(unittest.TestCase):
         basename = os.path.basename(self.kwargs["regex"])
         fsoutdir = os.path.join(self.kwargs["outdir"], "textures")
         expected_textures_files = [
-            os.path.join(fsoutdir, basename + ".csv"),
-            os.path.join(fsoutdir, basename + ".npz")]
+            os.path.join(fsoutdir, basename + "." +
+                         str(self.kwargs["ico_order"]) + ".csv"),
+            os.path.join(fsoutdir, basename + "." +
+                         str(self.kwargs["ico_order"]) + ".npz")]
         self.assertEqual([
             mock.call(self.kwargs["fsdir"]),
             mock.call(self.kwargs["outdir"]),
@@ -329,7 +331,9 @@ class FreeSurferTextures2Table(unittest.TestCase):
             mock_rmtree.call_args_list)
         self.assertEqual(len(mock_savez.call_args_list), 1)
         self.assertEqual([
-            mock.call(os.path.join(fsoutdir, basename + ".csv"), "wb")],
+            mock.call(os.path.join(
+                fsoutdir, basename + "." + str(self.kwargs["ico_order"]) +
+                ".csv"), "wb")],
             mock_open.call_args_list)
         self.assertEqual(textures_files, expected_textures_files)
 
