@@ -125,6 +125,9 @@ parser.add_argument(
 parser.add_argument(
     "-s", "--subjectid", dest="subjectid", required=True,
     help="the subject identifier.")
+parser.add_argument(
+    "-m", "--midgray", dest="midgray",  action="store_true",
+    help=("if activated, compute the mid thickness surfaces."))
 args = parser.parse_args()
 
 
@@ -150,10 +153,11 @@ subjdir = os.path.join(args.fsdir, subjectid)
 convertdir = os.path.join(args.outdir, args.subjectid, "convert")
 imagedir = os.path.join(convertdir, "images")
 surfacedir = os.path.join(convertdir, "surfaces")
+addmidgray = args.midgray
 params = locals()
 inputs = dict([(name, params[name])
                for name in ("subjectid", "subjdir", "convertdir", "imagedir",
-                            "surfacedir")])
+                            "surfacedir", "addmidgray")])
 outputs = None
 if not os.path.isdir(subjdir):
     raise ValueError(
@@ -220,13 +224,14 @@ for hemi, label in [("lh", 3), ("rh", 42)]:
 """
 Step 4: Create the mid thickness right and left hemispheres surfaces
 """
-for hemi in ["lh", "rh"]:
-    surf = midgray_surface(
-        hemi,
-        surfacedir,
-        args.fsdir,
-        subjectid,
-        fsconfig=freesurfer_config)
+if addmidgray:
+    for hemi in ["lh", "rh"]:
+        surf = midgray_surface(
+            hemi,
+            surfacedir,
+            args.fsdir,
+            subjectid,
+            fsconfig=freesurfer_config)
 
 
 """
@@ -236,7 +241,10 @@ if args.verbose > 0:
     print("[info] Start surface conversions...")
 surfaces = {}
 annotations = []
-for modality in ["pial", "white", "graymid"]:
+modalities = ["pial", "white"]
+if addmidgray:
+    modalities.appedn("graymid")
+for modality in modalities:
     for hemi in ["lh", "rh"]:
         name = "{0}.{1}".format(hemi, modality)
         regex = os.path.join(args.subjectid, "surf", name)
