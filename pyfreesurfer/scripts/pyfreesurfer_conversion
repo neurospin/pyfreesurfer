@@ -26,7 +26,7 @@ try:
                      names=["mri_convert"])
     bredala.register("pyfreesurfer.conversions.surfconvs",
                      names=["resample_cortical_surface", "surf_convert",
-                            "midgray_surface"])
+                            "midgray_surface", "interhemi_surfreg"])
     bredala.register("pyfreesurfer.utils.regtools",
                      names=["conformed_to_native_space"])
 except:
@@ -40,6 +40,7 @@ from pyfreesurfer.conversions.volconvs import mri_convert
 from pyfreesurfer.conversions.surfconvs import surf_convert
 from pyfreesurfer.conversions.surfconvs import resample_cortical_surface
 from pyfreesurfer.conversions.surfconvs import midgray_surface
+from pyfreesurfer.conversions.surfconvs import interhemi_surfreg
 from pyfreesurfer.utils.regtools import conformed_to_native_space
 
 
@@ -68,6 +69,7 @@ Steps:
 3- Create the ribbon right and left hemispheres masks.
 
 4- Create the mid thickness right and left hemispheres surfaces.
+   [optional 10-30 min]
 
 5- Surface conversions: resample the white or pial FreeSurfer
    surfaces at different resolutions (impacts the number of vertex)
@@ -76,6 +78,9 @@ Steps:
    a '.native' suffix and the considered level in the file name. Vetex
    are expressed in the index coordinate system.
 
+6- Align the interhemispheric surface vertices by aplying an existing atlas.
+   [optional 1-2 hours]
+
 Command:
 
 python $HOME/git/pyfreesurfer/pyfreesurfer/scripts/pyfreesurfer_conversion \
@@ -83,7 +88,8 @@ python $HOME/git/pyfreesurfer/pyfreesurfer/scripts/pyfreesurfer_conversion \
     -c /i2bm/local/freesurfer/SetUpFreeSurfer.sh \
     -d /neurospin/senior/nsap/data/V4/freesurfer \
     -s ag110371 \
-    -o /neurospin/senior/nsap/data/V4/qc/freesurfer \
+    -o /tmp \
+    -r lhrh \
     -e
 """
 
@@ -128,6 +134,10 @@ parser.add_argument(
 parser.add_argument(
     "-m", "--midgray", dest="midgray",  action="store_true",
     help=("if activated, compute the mid thickness surfaces."))
+parser.add_argument(
+    "-r", "--surfreg", dest="surfreg", choices=["lh", "rh", "lhrh"],
+    help=("if set, surface-based interhemispheric registration using the "
+          "specified hemisphere."))
 args = parser.parse_args()
 
 
@@ -146,18 +156,21 @@ runtime = dict([(name, params[name])
                             "freesurfer_version", "timestamp")])
 if args.verbose > 0:
     print("[info] Start FreeSurfer conversions...")
-    print("[info] Directory: {0}.".format(args.fsdir))
+    print("[info] FreeSurfer home directory: {0}.".format(args.fsdir))
+    print("[info] Output directory: {0}.".format(args.outdir))
     print("[info] Subject: {0}.".format(args.subjectid))
+    print("[info] FreeSurfer version: {0}.".format(freesurfer_version))
 subjectid = args.subjectid
 subjdir = os.path.join(args.fsdir, subjectid)
 convertdir = os.path.join(args.outdir, args.subjectid, "convert")
 imagedir = os.path.join(convertdir, "images")
 surfacedir = os.path.join(convertdir, "surfaces")
 addmidgray = args.midgray
+surfreg = args.surfreg
 params = locals()
 inputs = dict([(name, params[name])
                for name in ("subjectid", "subjdir", "convertdir", "imagedir",
-                            "surfacedir", "addmidgray")])
+                            "surfacedir", "addmidgray", "surfreg")])
 outputs = None
 if not os.path.isdir(subjdir):
     raise ValueError(
@@ -272,6 +285,31 @@ if args.verbose > 1:
 
 
 """
+Step 6: Surface-based interhemispheric registration.
+"""
+xhemidirs = {}
+spherefiles = {}
+if surfreg is not None:
+    if surfreg == "lhrh":
+        hemis = ["lh", "rh"]
+    else:
+        hemis = [surfreg]
+    for hemi in hemis:
+        xhemidir, spherefile = interhemi_surfreg(
+                hemi=hemi,
+                outdir=args.outdir,
+                fsdir=args.fsdir,
+                sid=subjectid,
+                destname="{0}_surfreg".format(hemi),
+                fsconfig=freesurfer_config)
+        xhemidirs[hemi] = xhemidir
+        spherefiles[hemi] = spherefile
+        if args.verbose > 1:
+            print("[result] xhemidir: {0}.".format(xhemidir))
+            print("[result] spherefile: {0}.".format(spherefile))
+
+
+"""
 Update the outputs and save them and the inputs in a 'logs' directory.
 """
 logdir = os.path.join(convertdir, "logs")
@@ -280,7 +318,7 @@ if not os.path.isdir(logdir):
 params = locals()
 outputs = dict([(name, params[name])
                for name in ("niftifiles", "trffile", "surfaces",
-                            "annotations")])
+                            "annotations", "xhemidirs", "spherefiles")])
 for name, final_struct in [("inputs", inputs), ("outputs", outputs),
                            ("runtime", runtime)]:
     log_file = os.path.join(logdir, "{0}.json".format(name))

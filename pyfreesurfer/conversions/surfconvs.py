@@ -15,6 +15,7 @@ import os
 import glob
 import numpy
 import nibabel
+import shutil
 from nibabel import freesurfer
 
 # Pyfreesurfer import
@@ -23,6 +24,99 @@ from pyfreesurfer.utils.surftools import apply_affine_on_mesh
 from pyfreesurfer import DEFAULT_FREESURFER_PATH
 from pyfreesurfer.wrapper import FSWrapper
 from pyfreesurfer.utils.surftools import TriSurface
+
+
+def interhemi_surfreg(
+        hemi,
+        outdir,
+        fsdir,
+        sid,
+        destname="surfreg",
+        fsconfig=DEFAULT_FREESURFER_PATH):
+    """ Surface-based interhemispheric registration by aplying an existing
+    atlas, the 'fsaverage_sym'.
+
+    Reference
+    Greve, Douglas N., Lise Van der Haegen, Qing Cai, Steven Stufflebeam,
+    Mert R. Sabuncu, Bruce Fischl, and Marc Bysbaert.
+    "A surface-based analysis of language lateralization and cortical
+    asymmetry." (2013). Journal of Cognitive Neuroscience 25.9: 1477-1492.
+
+    Parameters
+    ----------
+    hemi: str (mandatory)
+        hemisphere ('lh' or 'rh').
+    outdir: str (mandatory)
+        the destination folder.
+    fsdir: str (mandatory)
+        FreeSurfer subjects directory 'SUBJECTS_DIR'.
+    sid: str (mandatory)
+        FreeSurfer subject identifier.
+    destname: str (optional, default 'destname')
+        the name of the folder where the results will be stored.
+    fsconfig: str (optional, default DEFAULT_FREESURFER_PATH)
+        The FreeSurfer '.sh' config file.
+
+    Returns
+    -------
+    xhemidir: str
+    spherefile: str
+    """
+    # Check input parameters
+    if hemi not in ["lh", "rh"]:
+        raise ValueError("'{0}' is not a valid hemisphere value which must be "
+                         "in ['lh', 'rh']".format(hemi))
+    subjfsdir = os.path.join(fsdir, sid)
+    for path in (subjfsdir, outdir):
+        if not os.path.isdir(path):
+            raise ValueError("'{0}' is not a valid directory.".format(path))
+    subjoutdir = os.path.join(outdir, sid)
+    if not os.path.isdir(subjoutdir):
+        os.mkdir(subjoutdir)
+
+    # Symlink input data in destination foler
+    wdir = os.path.join(subjoutdir, destname)
+    symlinks = []
+    template_file = os.path.join(os.path.dirname(fsconfig), "subjects",
+                                 "fsaverage_sym")
+    dest_template_file = os.path.join(subjoutdir, "fsaverage_sym")
+    os.symlink(template_file, dest_template_file)
+    symlinks.append(dest_template_file)
+    if os.path.isdir(wdir):
+        shutil.rmtree(wdir)
+    os.mkdir(wdir)
+    for basename in os.listdir(subjfsdir):
+        if basename == "scripts":
+            continue
+        path = os.path.join(subjfsdir, basename)
+        destpath = os.path.join(wdir, basename)
+        symlinks.append(destpath)
+        os.symlink(path, destpath)
+
+    # Create the commands
+    os.environ["SUBJECTS_DIR"] = subjoutdir
+    cmds = [
+        ["surfreg", "--s", destname, "--t", "fsaverage_sym",
+         "--{0}".format(hemi)],
+        ["xhemireg", "--s", destname],
+        ["surfreg", "--s", destname, "--t", "fsaverage_sym",
+         "--{0}".format(hemi), "--xhemi"]
+    ]
+
+    # Execute the FS commands
+    for cmd in cmds:
+        recon = FSWrapper(cmd, shfile=fsconfig)
+        recon()
+
+    # Remove symliks
+    for path in symlinks:
+        os.unlink(path)
+
+    # Get outputs
+    xhemidir = os.path.join(wdir, "xhemi")
+    spherefile = os.path.join(wdir, "lh.fsaverage_sym.sphere.reg")
+
+    return xhemidir, spherefile
 
 
 def midgray_surface(
