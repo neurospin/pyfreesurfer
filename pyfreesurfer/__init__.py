@@ -18,3 +18,4 @@ from .info import __version__
 from .info import DEFAULT_FREESURFER_PATH
 from .info import DEFAULT_FSL_PATH
 from .info import DEFAULT_WORKBENCH_PATH
+from .info import DEFAULT_TEMPLATE_SYM_PATH

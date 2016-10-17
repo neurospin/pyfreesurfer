@@ -36,6 +36,7 @@ except:
 from pyfreesurfer import __version__ as version
 from pyfreesurfer.wrapper import FSWrapper
 from pyfreesurfer import DEFAULT_FREESURFER_PATH
+from pyfreesurfer import DEFAULT_TEMPLATE_SYM_PATH
 from pyfreesurfer.conversions.volconvs import mri_convert
 from pyfreesurfer.conversions.surfconvs import surf_convert
 from pyfreesurfer.conversions.surfconvs import resample_cortical_surface
@@ -138,6 +139,9 @@ parser.add_argument(
     "-r", "--surfreg", dest="surfreg", choices=["lh", "rh", "lhrh"],
     help=("if set, surface-based interhemispheric registration using the "
           "specified hemisphere."))
+parser.add_argument(
+    "-t", "--templatesym", dest="templatesym", type=is_directory,
+    help=("path to the 'fsaverage_sym' template."))
 args = parser.parse_args()
 
 
@@ -161,6 +165,7 @@ if args.verbose > 0:
     print("[info] Subject: {0}.".format(args.subjectid))
     print("[info] FreeSurfer version: {0}.".format(freesurfer_version))
 subjectid = args.subjectid
+templatesym = args.templatesym or DEFAULT_TEMPLATE_SYM_PATH
 subjdir = os.path.join(args.fsdir, subjectid)
 convertdir = os.path.join(args.outdir, args.subjectid, "convert")
 imagedir = os.path.join(convertdir, "images")
@@ -170,7 +175,8 @@ surfreg = args.surfreg
 params = locals()
 inputs = dict([(name, params[name])
                for name in ("subjectid", "subjdir", "convertdir", "imagedir",
-                            "surfacedir", "addmidgray", "surfreg")])
+                            "surfacedir", "addmidgray", "surfreg",
+                            "templatesym")])
 outputs = None
 if not os.path.isdir(subjdir):
     raise ValueError(
@@ -297,9 +303,10 @@ if surfreg is not None:
     for hemi in hemis:
         xhemidir, spherefile = interhemi_surfreg(
                 hemi=hemi,
-                outdir=args.outdir,
+                outdir=convertdir,
                 fsdir=args.fsdir,
                 sid=subjectid,
+                template_file=templatesym,
                 destname="{0}_surfreg".format(hemi),
                 fsconfig=freesurfer_config)
         xhemidirs[hemi] = xhemidir

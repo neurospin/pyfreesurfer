@@ -22,6 +22,7 @@ from nibabel import freesurfer
 from pyfreesurfer.utils.regtools import tkregister_translation
 from pyfreesurfer.utils.surftools import apply_affine_on_mesh
 from pyfreesurfer import DEFAULT_FREESURFER_PATH
+from pyfreesurfer import DEFAULT_TEMPLATE_SYM_PATH
 from pyfreesurfer.wrapper import FSWrapper
 from pyfreesurfer.utils.surftools import TriSurface
 
@@ -31,6 +32,7 @@ def interhemi_surfreg(
         outdir,
         fsdir,
         sid,
+        template_file=DEFAULT_TEMPLATE_SYM_PATH,
         destname="surfreg",
         fsconfig=DEFAULT_FREESURFER_PATH):
     """ Surface-based interhemispheric registration by aplying an existing
@@ -52,6 +54,8 @@ def interhemi_surfreg(
         FreeSurfer subjects directory 'SUBJECTS_DIR'.
     sid: str (mandatory)
         FreeSurfer subject identifier.
+    template_file: str (optional, default DEFAULT_TEMPLATE_SYM_PATH)
+        path to the 'fsaverage_sym' template.
     destname: str (optional, default 'destname')
         the name of the folder where the results will be stored.
     fsconfig: str (optional, default DEFAULT_FREESURFER_PATH)
@@ -60,7 +64,9 @@ def interhemi_surfreg(
     Returns
     -------
     xhemidir: str
+        the symetrized hemispheres.
     spherefile: str
+        the registration file to the template.
     """
     # Check input parameters
     if hemi not in ["lh", "rh"]:
@@ -70,16 +76,11 @@ def interhemi_surfreg(
     for path in (subjfsdir, outdir):
         if not os.path.isdir(path):
             raise ValueError("'{0}' is not a valid directory.".format(path))
-    subjoutdir = os.path.join(outdir, sid)
-    if not os.path.isdir(subjoutdir):
-        os.mkdir(subjoutdir)
 
     # Symlink input data in destination foler
-    wdir = os.path.join(subjoutdir, destname)
+    wdir = os.path.join(outdir, destname)
     symlinks = []
-    template_file = os.path.join(os.path.dirname(fsconfig), "subjects",
-                                 "fsaverage_sym")
-    dest_template_file = os.path.join(subjoutdir, "fsaverage_sym")
+    dest_template_file = os.path.join(outdir, "fsaverage_sym")
     os.symlink(template_file, dest_template_file)
     symlinks.append(dest_template_file)
     if os.path.isdir(wdir):
@@ -94,7 +95,7 @@ def interhemi_surfreg(
         os.symlink(path, destpath)
 
     # Create the commands
-    os.environ["SUBJECTS_DIR"] = subjoutdir
+    os.environ["SUBJECTS_DIR"] = outdir
     cmds = [
         ["surfreg", "--s", destname, "--t", "fsaverage_sym",
          "--{0}".format(hemi)],
@@ -114,7 +115,8 @@ def interhemi_surfreg(
 
     # Get outputs
     xhemidir = os.path.join(wdir, "xhemi")
-    spherefile = os.path.join(wdir, "lh.fsaverage_sym.sphere.reg")
+    spherefile = os.path.join(
+        subjfsdir, "surf", "{0}.fsaverage_sym.sphere.reg".format(hemi))
 
     return xhemidir, spherefile
 
