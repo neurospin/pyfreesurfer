@@ -28,7 +28,8 @@ from .info import FREESURFER_RELEASE
 class FSWrapper(object):
     """ Parent class for the wrapping of FreeSurfer functions.
     """
-    def __init__(self, cmd, shfile=DEFAULT_FREESURFER_PATH, env=None):
+    def __init__(self, cmd, shfile=DEFAULT_FREESURFER_PATH, env=None,
+                 subjects_dir=None, add_fsl_env=False, fsl_sh=None):
         """ Initialize the FSWrapper class by setting properly the
         environment.
 
@@ -39,18 +40,41 @@ class FSWrapper(object):
         shfile: str (optional, default NeuroSpin path)
             the path to the FreeSurfer 'SetUpFreeSurfer.sh' configuration file.
         env: dict (optional, default None)
-            the subprocess default environment.
+            An environment to add to the FreeSurfer environment,
+            e.g. os.environ to maintain current env in the FreeSurfer env.
+        subjects_dir: str, default None.
+            To set the $SUBJECTS_DIR environment variable.
+        add_fsl_env:  bool, default False
+            To activate the FSL environment, required for commands like
+            bbregister.
+        fsl_sh: str, default NeuroSpin path
+            Path to the Bash script setting the FSL environment, if needed.
         """
         self.cmd = cmd
         self.shfile = shfile
         self.version = None
         self.environment = self._freesurfer_version_check()
+
         if env is not None:
             self.environment = concat_environment(self.environment, env)
 
+        # If requested add FSL environment
+        if add_fsl_env:
+            # Import here so that the dependency is not mandatory for
+            # the rest of the package
+            from pyfsl.wrapper import FSLWrapper
+            if fsl_sh is None:
+                fsl_sh = DEFAULT_FSL_PATH
+            fsl_env = FSLWrapper([], shfile=fsl_sh).environment
+            self.environment = concat_environment(self.environment, fsl_env)
+
         # Update the environment variables
-        if "SUBJECTS_DIR" in os.environ:
-            self.environment["SUBJECTS_DIR"] = os.environ["SUBJECTS_DIR"]
+        if subjects_dir is not None:
+            self.environment["SUBJECTS_DIR"] = subjects_dir
+        else:
+            if "SUBJECTS_DIR" in os.environ:
+                self.environment["SUBJECTS_DIR"] = os.environ["SUBJECTS_DIR"]
+
         if (len(self.cmd) > 0 and self.cmd[0] == "tkmedit" and
                 "DISPLAY" in os.environ):
             self.environment["DISPLAY"] = os.environ["DISPLAY"]
