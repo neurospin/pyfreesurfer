@@ -62,7 +62,7 @@ class FSWrapper(object):
         if add_fsl_env:
             # Import here so that the dependency is not mandatory for
             # the rest of the package
-            from pyfsl.wrapper import FSLWrapper
+            from pyconnectome.wrapper import FSLWrapper
             if fsl_sh is None:
                 fsl_sh = DEFAULT_FSL_PATH
             fsl_env = FSLWrapper([], shfile=fsl_sh).environment
