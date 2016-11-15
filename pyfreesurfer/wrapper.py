@@ -101,7 +101,7 @@ class FSWrapper(object):
         self.stdout, self.stderr = process.communicate()
         self.exitcode = process.returncode
 
-        # Raise exception of exitcode is not zero
+        # Raise exception if exitcode is not zero
         if self.exitcode != 0:
             raise FreeSurferRuntimeError(
                 self.cmd[0], " ".join(self.cmd[1:]), self.stderr + self.stdout)
