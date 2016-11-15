@@ -11,10 +11,15 @@ import os
 import ctypes
 import numpy
 import sys
+import warnings
 
-# Pyfreesurfer import
+# Package import
 from .surftools import TriSurface
-from pyfreesurfer.utils import openctm
+try:
+    from pyfreesurfer.utils import openctm
+    openctm_imported = True
+except:
+    openctm_imported = False
 
 
 def make_blob(verts, ctype):
@@ -53,6 +58,10 @@ def surf2ctm(fsdir, outdir):
     paths_ctm: dict of list of str
         the converted surfaces for each hemisphere.
     """
+    # Test if openctm has been properly imported
+    if not openctm_imported:
+        raise ImportError("OpenCtm not installed.")
+
     # COMPATIBILITIES: Python 3 string encoding compatibilities.
     python_version = sys.version_info
     if python_version[:1] < (3, ):
@@ -146,11 +155,55 @@ def parse_fs_lut(path_lut):
     return fs_lut_names, fs_lut_colors
 
 
-def get_or_check_freesurfer_subjects_dir(subjects_dir=None):
+def load_look_up_table(path_lut):
+    """ Load a Look Up Table, provided in the FreeSurfer LUT format,
+    as 3 ordered lists: labels (ints), names, colors (RGBA tuples)
+    Structure:
+        [.., 55, ..], [.., 'Right-Insula', .. ], [.., (80, 196, 98, 0), ..]
+
+    Use dict(zip(<list1>, <list2>)) to get a map from one list to the other.
+
+    Parameters
+    ----------
+    path_lut: str (mandatory)
+        the path to the lookup table in FreeSurfer format.
+
+    Returns
+    -------
+    labels: list of int
+        the integer labels.
+    names: list of str
+        the region names.
+    colors: list of 4-uplet
+        the region colors.
     """
-    If 'subjects_dir' is passed, check whether the directory exists, otherwise
-    look for the $SUBJECTS_DIR environment variable. If 'subjects_dir' is not
-    passed and $SUBJECTS_DIR not in the environment, raise an Exception.
+    # Load the Look Up Table and create 3 ordered lists
+    try:
+        table = numpy.loadtxt(path_lut, dtype=str)
+        labels = table[:, 0].astype(dtype=int).tolist()
+        names = table[:, 1].tolist()
+        colors = [tuple(x) for x in table[:, 2:].astype(dtype=int)]
+    except:
+        raise Exception("Failed to load the Look Up Table: %s" % path_lut)
+
+    return labels, names, colors
+
+
+def get_or_check_freesurfer_subjects_dir(subjects_dir=None):
+    """ If 'subjects_dir' is passed, check whether the directory exists,
+    otherwise look for the $SUBJECTS_DIR environment variable. If
+    'subjects_dir' is not passed and $SUBJECTS_DIR not in the environment,
+    raise an Exception.
+
+    Parameters
+    ----------
+    subjects_dir: str (optional, default None)
+        the FreeSurfer subjects' directory.
+
+    Returns
+    -------
+    subjects_dir: str
+        the validated FreeSurfer subjects' directory.
     """
     if subjects_dir is not None:
         if not os.path.isdir(subjects_dir):
@@ -168,12 +221,21 @@ def get_or_check_freesurfer_subjects_dir(subjects_dir=None):
 
 
 def get_or_check_path_of_freesurfer_lut(freesurfer_lut=None):
-    """
-    Return the path to an existing FreeSurfer Look Up Table.
+    """ Return the path to an existing FreeSurfer Look Up Table.
 
     If freesurfer_lut is given, check that the file exists, otherwise
     look for the FREESURFER_HOME environment variable.
     If the FreeSurfer LUT could not be found raise an Exception.
+
+    Parameters
+    ----------
+    freesurfer_lut: str (optional, default None)
+        path to the FreeSurfer lookup table.
+
+    Returns
+    -------
+    freesurfer_lut: str
+        path to the validated FreeSurfer lookup table.
     """
     if freesurfer_lut is None:
         # If path not given look for the FreeSurfer environment variable
@@ -189,24 +251,3 @@ def get_or_check_path_of_freesurfer_lut(freesurfer_lut=None):
         raise ValueError("File does not exist: %s" % freesurfer_lut)
 
     return freesurfer_lut
-
-
-def load_look_up_table(path_lut):
-    """
-    Load a Look Up Table, provided in the FreeSurfer LUT format,
-    as 3 ordered lists: labels (ints), names, colors (RGBA tuples)
-    Structure:
-        [.., 55, ..], [.., 'Right-Insula', .. ], [.., (80, 196, 98, 0), ..]
-
-    Use dict(zip(<list1>, <list2>)) to get a map from one list to the other.
-    """
-    # Load the Look Up Table and create 3 ordered lists
-    try:
-        table = numpy.loadtxt(path_lut, dtype=str)
-        labels = table[:, 0].astype(dtype=int).tolist()
-        names = table[:, 1].tolist()
-        colors = [tuple(x) for x in table[:, 2:].astype(dtype=int)]
-    except:
-        raise Exception("Failed to load the Look Up Table: %s" % path_lut)
-
-    return labels, names, colors
