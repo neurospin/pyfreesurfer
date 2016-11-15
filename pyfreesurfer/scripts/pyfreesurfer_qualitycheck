@@ -119,7 +119,7 @@ parser.add_argument(
     "-T", "--timestep", dest="timestep", required=True,
     help="the time step assocaited to the diffusion dataset.")
 parser.add_argument(
-    "-c", "--fsconfig", dest="fsconfig", metavar="FILE", required=True,
+    "-c", "--fsconfig", dest="fsconfig", metavar="FILE",
     help="the FreeSurfer configuration file.", type=is_file)
 parser.add_argument(
     "-m", "--statdir", dest="statdir", required=True, metavar="PATH",
