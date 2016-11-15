@@ -65,6 +65,9 @@ parser.add_argument(
     "-q", "--qc", dest="qc_count", type=int,
     help="the number of files expected in the qc folder.")
 parser.add_argument(
+    "-l", "--log", dest="log_count", type=int,
+    help="the number of files expected in the log folder.")
+parser.add_argument(
     "-r", "--regex", dest="regex", required=True,
     help=("the expression to be applied on the 'fsdir' subfolders in order to"
           "retrieve the subjects only."), type=str)
@@ -99,6 +102,8 @@ if args.conversion_count is not None:
     fsstruct["convert"] = args.conversion_count
 if args.qc_count is not None:
     fsstruct[os.path.join("convert", "qc")] = args.qc_count
+if args.log_count is not None:
+    fsstruct["logs"] = args.log_count
 
 
 """
