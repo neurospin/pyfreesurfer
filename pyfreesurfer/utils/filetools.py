@@ -144,3 +144,69 @@ def parse_fs_lut(path_lut):
                                      "table file.".format(path_lut))
 
     return fs_lut_names, fs_lut_colors
+
+
+def get_or_check_freesurfer_subjects_dir(subjects_dir=None):
+    """
+    If 'subjects_dir' is passed, check whether the directory exists, otherwise
+    look for the $SUBJECTS_DIR environment variable. If 'subjects_dir' is not
+    passed and $SUBJECTS_DIR not in the environment, raise an Exception.
+    """
+    if subjects_dir is not None:
+        if not os.path.isdir(subjects_dir):
+            raise ValueError("Argument 'subjects_dir' refers to non existing "
+                             "directory: {}.".format(subjects_dir))
+    elif "SUBJECTS_DIR" in os.environ:
+        subjects_dir = os.environ["SUBJECTS_DIR"]
+        if not os.path.isdir(subjects_dir):
+            raise ValueError("Environment variable 'SUBJECTS_DIR' refers to "
+                             "non existing directory: {}".format(subjects_dir))
+    else:
+        raise ValueError("Either set the FreeSurfer SUBJECTS_DIR environment "
+                         "variable or set the 'subjects_dir' argument.")
+    return subjects_dir
+
+
+def get_or_check_path_of_freesurfer_lut(freesurfer_lut=None):
+    """
+    Return the path to an existing FreeSurfer Look Up Table.
+
+    If freesurfer_lut is given, check that the file exists, otherwise
+    look for the FREESURFER_HOME environment variable.
+    If the FreeSurfer LUT could not be found raise an Exception.
+    """
+    if freesurfer_lut is None:
+        # If path not given look for the FreeSurfer environment variable
+        if "FREESURFER_HOME" in os.environ:
+            FS_home = os.environ["FREESURFER_HOME"]
+            freesurfer_lut = os.path.join(FS_home, "FreeSurferColorLUT.txt")
+        else:
+            raise Exception("Could not find FreeSurfer Look Up Table, either "
+                            "set the 'freesurfer_lut' argument or the "
+                            "'FREESURFER_HOME' environment variable.")
+
+    if not os.path.isfile(freesurfer_lut):
+        raise ValueError("File does not exist: %s" % freesurfer_lut)
+
+    return freesurfer_lut
+
+
+def load_look_up_table(path_lut):
+    """
+    Load a Look Up Table, provided in the FreeSurfer LUT format,
+    as 3 ordered lists: labels (ints), names, colors (RGBA tuples)
+    Structure:
+        [.., 55, ..], [.., 'Right-Insula', .. ], [.., (80, 196, 98, 0), ..]
+
+    Use dict(zip(<list1>, <list2>)) to get a map from one list to the other.
+    """
+    # Load the Look Up Table and create 3 ordered lists
+    try:
+        table = numpy.loadtxt(path_lut, dtype=str)
+        labels = table[:, 0].astype(dtype=int).tolist()
+        names = table[:, 1].tolist()
+        colors = [tuple(x) for x in table[:, 2:].astype(dtype=int)]
+    except:
+        raise Exception("Failed to load the Look Up Table: %s" % path_lut)
+
+    return labels, names, colors
