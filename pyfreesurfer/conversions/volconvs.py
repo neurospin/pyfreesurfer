@@ -24,6 +24,7 @@ def mri_binarize(
         outputfile,
         match=None,
         wm=False,
+        inv=False,
         fsconfig=DEFAULT_FREESURFER_PATH):
     """ Binarize a FreeSurfer label map.
 
@@ -39,6 +40,8 @@ def mri_binarize(
         match labels instead of threshold.
     wm: bool (optional)
         set match vals to 2 and 41 (aseg for cerebral WM).
+    inv: bool (optional)
+        inverse the result.
     fsconfig: str (optional)
         The freesurfer configuration batch.
     """
@@ -54,6 +57,8 @@ def mri_binarize(
         cmd.extend(match)
     if wm:
         cmd.append("--wm")
+    if inv:
+        cmd.append("--inv")
     recon = FSWrapper(cmd, shfile=fsconfig)
     recon()
 
