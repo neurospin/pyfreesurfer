@@ -108,3 +108,78 @@ def recon_all(fsdir, anatfile, sid, reconstruction_stage="all", resume=False,
     subjfsdir = os.path.join(fsdir, sid)
 
     return subjfsdir
+
+
+def recon_all_longitudinal(outdir, subject_id, subjects_dirs, timepoints=None,
+                           fsconfig=DEFAULT_FREESURFER_PATH):
+    """
+    Assuming you have run recon-all for all timepoints of a given subject,
+    and that the results are stored in one SUBJECTS_DIR per timepoint, this
+    function will:
+    - create a template for the subject and process it with recon-all
+    - rerun recon-all for all timepoints of the subject using the template
+
+    Parameters
+    ----------
+    outdir: str
+        Directory where to output. Created if not already existing.
+    subject_id: str
+        Identifier of subject, used for all timepoints.
+    subjects_dirs: list of str
+        The FreeSurfer SUBJECTS_DIRs of timepoints.
+    timepoints: list of str, default None
+        The timepoint names in the same order as the SUBJECTS_DIRs.
+        Used to create the subject longitudinal IDs.
+        By default timepoints are "1", "2"...
+    fsconfig: str, default <pyfreesurfer.DEFAULT_FREESURFER_PATH>
+        The FreeSurfer configuration batch.
+
+    Return
+    ------
+    subject_template_id: str
+        ID of the subject template.
+    subject_long_ids: list of str
+        Longitudinal IDs of the subject for all the timepoints.
+    """
+    # Check existence of FreeSurfer subject directories
+    for subjects_dir in subjects_dirs:
+        subject_dir = os.path.join(subjects_dir, subject_id)
+        if not os.path.isdir(subject_dir):
+            raise ValueError("Directory does not exist: %s" % subject_dir)
+
+    # If 'timepoints' not passed, used defaults, else check validity
+    if timepoints is None:
+        timepoints = [str(n) for n in range(1, len(subjects_dirs)+1)]
+    elif len(timepoints) != len(subjects_dirs):
+        raise ValueError("There should be as many timepoints as subjects_dirs")
+
+    # If <outdir> does not exist, create it
+    if not os.path.isdir(outdir):
+        os.mkdir(outdir)
+
+    # FreeSurfer requires a unique SUBJECTS_DIR will all the timepoints to
+    # compute the template: create symbolic links in <outdir> to all timepoints
+    subject_tp_ids = []  # To accumulate all the timepoint IDs
+    for tp, subjects_dir in zip(timepoints, subjects_dirs):
+        subject_tp_id = "%s_%s" % (subject_id, tp)  # subject timepoint ID
+        src_path = os.path.join(subjects_dir, subject_id)
+        dst_path = os.path.join(outdir, subject_tp_id)
+        os.symlink(src_path, dst_path)
+        subject_tp_ids.append(subject_tp_id)
+
+    # STEP 1 - create and process template
+    subject_template_id = "%s_template_%s" % (subject_id, "_".join(timepoints))
+    cmd = ["recon-all", "-base", subject_template_id]
+    for subj_tp_id in subject_tp_ids:
+        cmd += ["-tp", subj_tp_id]
+    cmd += ["-all"]
+    FSWrapper(cmd, shfile=fsconfig, subjects_dir=outdir)()
+
+    # STEP 2 - rerun recon-all for all timepoints using the template
+    subject_long_ids = []
+    for subj_tp_id in subject_tp_ids:
+        cmd = ["recon-all", "-long", subj_tp_id, subject_template_id, "-all"]
+        FSWrapper(cmd, shfile=fsconfig, subjects_dir=outdir)()
+        subject_long_ids += ["%s.long.%s" % (subj_tp_id, subject_template_id)]
+
+    return subject_template_id, subject_long_ids
