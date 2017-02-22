@@ -12,10 +12,13 @@ Wrapper for the FreeSurfer's cortical reconstruction steps.
 
 # System import
 import os
+import tempfile
+import shutil
 
 # Pyfreesurfer import
 from pyfreesurfer.wrapper import FSWrapper
 from pyfreesurfer import DEFAULT_FREESURFER_PATH
+from pyfreesurfer.utils.filetools import get_or_check_freesurfer_subjects_dir
 
 
 def recon_all(fsdir, anatfile, sid, reconstruction_stage="all", resume=False,
@@ -108,6 +111,73 @@ def recon_all(fsdir, anatfile, sid, reconstruction_stage="all", resume=False,
     subjfsdir = os.path.join(fsdir, sid)
 
     return subjfsdir
+
+
+def recon_all_custom_wm_mask(subject_id, wm_mask, keep_orig=True,
+                             subjects_dir=None, temp_dir=None,
+                             fsconfig=DEFAULT_FREESURFER_PATH):
+    """
+    Assuming you have run recon-all (at least upto wm.mgz creation), this
+    function allows to rerun recon-all using a custom white matter mask. The
+    mask has to be in the subject's FreeSurfer space (1mm iso + aligned with
+    brain.mgz) with values in [0; 1] (i.e. probability of being white matter).
+
+    Parameters
+    ----------
+    subject_id: str
+        Identifier of subject.
+    wm_mask: str
+        Path to the custom white matter mask. It has to be in the subject's
+        FreeSurfer space (1mm iso + aligned with brain.mgz) with values in
+        [0; 1] (i.e. probability of being white matter).
+        For example, tt can be the 'brain_pve_2.nii.gz" white matter
+        probability map created by FSL Fast.
+    keep_orig: bool, default True
+        Save original 'wm.seg.mgz' as 'wm.seg.orig.mgz' instead of overwriting
+        it.
+    subjects_dir: str, default None
+        Path to the FreeSurfer subjects directory. Required if the environment
+        variable $SUBJECTS_DIR is not set.
+    temp_dir: str, default None
+        Directory to use to store temporary files. By default OS tmp dir.
+    fsconfig: str, default <pyfreesurfer.DEFAULT_FREESURFER_PATH>
+        The FreeSurfer configuration batch.
+    """
+    # FreeSurfer $SUBJECTS_DIR has to be passed or set as an env variable
+    subjects_dir = get_or_check_freesurfer_subjects_dir(subjects_dir)
+
+    # Check existence of the subject's directory
+    subject_dir = os.path.join(subjects_dir, subject_id)
+    if not os.path.isdir(subject_dir):
+        ValueError("Directory does not exist: %s" % subject_dir)
+
+    # Create temporary directory to store intermediate files
+    temp_dir = tempfile.mkdtemp(prefix="recon_all_custom_wm_mask_",
+                                dir=temp_dir)
+
+    # Change input mask range of values: [0-1] to [0-110]
+    wm_mask_0_110 = os.path.join(temp_dir, "wm_mask_0_110.nii.gz")
+    cmd_1 = ["mris_calc", "-o", wm_mask_0_110, wm_mask, "mul", "110"]
+    FSWrapper(cmd_1, shfile=fsconfig)()
+
+    # If requested save original wm.seg.mgz as wm.seg.orig.mgz
+    wm_seg_mgz = os.path.join(subject_dir, "mri", "wm.seg.mgz")
+    if keep_orig:
+        save_as = os.path.join(subject_dir, "mri", "wm.seg.orig.mgz")
+        shutil.move(wm_seg_mgz, save_as)
+
+    # Write the new wm.seg.mgz, FreeSurfer requires MRI_UCHAR type
+    cmd_2 = ["mri_convert", wm_mask_0_110, wm_seg_mgz, "-odt", "uchar"]
+    FSWrapper(cmd_2, shfile=fsconfig)()
+
+    # Clean tmp dir
+    shutil.rmtree(temp_dir)
+
+    # Rerun recon-all
+    cmd_3 = ["recon-all", "-autorecon2-wm", "-autorecon3", "-s", subject_id]
+    FSWrapper(cmd_3, shfile=fsconfig, subjects_dir=subjects_dir)()
+
+    return subject_dir
 
 
 def recon_all_longitudinal(outdir, subject_id, subjects_dirs, timepoints=None,
