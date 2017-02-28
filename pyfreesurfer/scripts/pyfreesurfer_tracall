@@ -61,18 +61,19 @@ def get_cmd_line_args():
     # Required arguments
     parser.add_argument("-o", "--outdir", required=True, metavar="<path>",
                         help="Root directory where to create the subject "
-                             "output directory.")
+                             "output directory. Created if not existing.")
     parser.add_argument("-s", "--subject-id", required=True, metavar="<id>",
                         help="Identifier of subject.")
     parser.add_argument("-i", "--dwi", required=True, type=is_file,
                         metavar="<path>",
-                        help="The preprocessed diffusion-weighted volumes.")
+                        help="The preprocessed (at least for susceptilibity) "
+                             "Nifti diffusion-weighted volumes.")
     parser.add_argument("-b", "--bvals", required=True, type=is_file,
                         metavar="<path>",
-                        help="B-values of diffusion-weighted volumes.")
+                        help="Path to b-values of diffusion-weighted volumes.")
     parser.add_argument("-r", "--bvecs", required=True, type=is_file,
                         metavar="<path>",
-                        help="Diffusion-sensitized directions.")
+                        help="Path to diffusion-sensitized directions.")
     parser.add_argument("-d", "--bedpostx-dir", required=True, type=is_dir,
                         metavar="<path>",
                         help="BedpostX output directory.")
@@ -86,14 +87,14 @@ def get_cmd_line_args():
                         help="Apply FSL eddy-current correction.")
     parser.add_argument("-K", "--dont-rotate-bvecs", action="store_false",
                         dest="do_rotate_bvecs", default=True,
-                        help="If set, do not rotate bvecs to match eddy-cur"
-                             "rent correction.")
+                        help="Do NOT rotate bvecs to match eddy-current "
+                             "correction.")
     parser.add_argument("-G", "--dont-bbregister", action="store_false",
                         dest="do_bbregister", default=True,
-                        help="If set, do not apply bbregister. ")
+                        help="Do NOT apply bbregister. ")
     parser.add_argument("-N", "--dont-register-mni", action="store_false",
                         dest="do_register_mni", default=True,
-                        help="If set, do not register T1 to MNI.")
+                        help="Do NOT register T1 to MNI.")
     parser.add_argument("-c", "--config", type=is_file, metavar="<path>",
                         dest="fsconfig",
                         help="the FreeSurfer configuration file. "

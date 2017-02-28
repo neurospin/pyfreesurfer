@@ -81,22 +81,35 @@ def trac_all(outdir, subject_id, dwi, bvals, bvecs, bedpostx_dir,
 
     Parameters
     ----------
-    outdir
-    subject_id
-    dwi
-    bvals
-    bvecs
-    freesurfer_home
-    subjects_dir
-    do_eddy
-    do_rotate_bvecs
-    do_bbregister
-    do_register_mni
-    fsconfig
+    outdir: str
+        Root directory where to create the subject's output directory.
+        Created if not existing.
+    subject_id: str
+        Identifier of subject.
+    dwi: str
+        Path to input Nifti diffusion-weighted volumes.
+    bvals: str
+        Path to b-values of diffusion-weighted volumes.
+    bvecs: str
+        Path to diffusion-sensitized directions.
+    subjects_dir: str, default None
+        Path to the FreeSurfer subjects directory. Required if the
+        environment variable $SUBJECTS_DIR is not set.
+    do_eddy: bool, default False
+        Apply FSL eddy-current correction.
+    do_rotate_bvecs: bool, default True
+        Rotate bvecs to match eddy-current correction.
+    do_bbregister: bool, default True
+        Register diffusion to T1 using bbregister.
+    do_register_mni:
+        Register T1 to MNI.
+    fsconfig: str, default <pyfreesurfer.DEFAULT_FREESURFER_PATH>
+        Path to the FreeSurfer configuration file.
 
     Returns
     -------
-
+    subject_outdir: str
+        Path to subject's output directory.
     """
     # FreeSurfer $SUBJECTS_DIR has to be passed or set as an env variable
     subjects_dir = get_or_check_freesurfer_subjects_dir(subjects_dir)
