@@ -18,7 +18,7 @@ from pprint import pprint
 # Package
 import pyfreesurfer
 from pyfreesurfer import DEFAULT_FREESURFER_PATH
-from pyfreesurfer.diffusion.tracula import trac_all
+from pyfreesurfer.diffusion.tracula import trac_all_longitudinal
 from pyfreesurfer.wrapper import FSWrapper
 
 
@@ -26,10 +26,11 @@ from pyfreesurfer.wrapper import FSWrapper
 __hopla__ = ["runtime", "inputs", "outputs"]
 
 DOC = """
-Assuming you have a preprocessed DWI (at least for susceptibility and brain
-extracted) with bedpostX done, this script runs the Tracula pipeline.
-It can correct for Eddy currents and register the diffusion to the
-FreeSurfer space if it is not already done.
+Assuming you have preprocessed DWIs (at least for susceptibility and brain
+extracted) with bedpostX done for a subject at multiple timepoints, this script
+runs the Tracula longitudinal pipeline.
+It can correct for Eddy currents and register the diffusion to the FreeSurfer
+space, if it is not already done.
 """
 
 
@@ -54,9 +55,11 @@ def get_cmd_line_args():
     Create a command line argument parser and return a dict mapping
     <argument name> -> <argument value>.
     """
-    usage = ("%(prog)s -o <outdir> -s <subject id> -i <path dwi> "
-             "-b <path bvals> -r <path bvecs> -d <bedpostX dir> [-S <dir>] "
-             "[-E] [-K] |-G] [-N] [-c <path>] [-v <int>]")
+    usage = ("%(prog)s -o <outdir> -p <sid template> "
+             "-t <sid tp1> <sid tp2> ... -i <path tp1> <path tp2> ... "
+             "-b <path tp1> <path tp2> ... -r <path tp1> <path tp2> ... "
+             "-d <path tp1> <path tp2> ...  [-S <path>] [-E] [-K] |-G] [-N] "
+             "[-T <path>] [-c <path>] [-v <int>]")
     prog = "python pyfreesurfer_tracall"
     parser = argparse.ArgumentParser(prog=prog, usage=usage, description=DOC)
 
@@ -64,21 +67,30 @@ def get_cmd_line_args():
     parser.add_argument("-o", "--outdir", required=True, metavar="<path>",
                         help="Root directory where to create the subject "
                              "output directory. Created if not existing.")
-    parser.add_argument("-s", "--subject-id", required=True, metavar="<id>",
-                        help="Identifier of subject.")
-    parser.add_argument("-i", "--dwi", required=True, type=is_file,
-                        metavar="<path>",
-                        help="The preprocessed (at least for susceptilibity) "
-                             "Nifti diffusion-weighted volumes.")
-    parser.add_argument("-b", "--bvals", required=True, type=is_file,
-                        metavar="<path>",
-                        help="Path to b-values of diffusion-weighted volumes.")
-    parser.add_argument("-r", "--bvecs", required=True, type=is_file,
-                        metavar="<path>",
-                        help="Path to diffusion-sensitized directions.")
-    parser.add_argument("-d", "--bedpostx-dir", required=True, type=is_dir,
-                        metavar="<path>",
-                        help="BedpostX output directory.")
+    parser.add_argument("-p", "--subject-template-id", required=True,
+                        metavar="<id>",
+                        help="Identifier of the subject template.")
+    parser.add_argument("-t", "--subject-timepoint-ids", required=True,
+                        nargs="+", metavar="<sid tp1> <sid tp2> ...",
+                        help="Identifiers of the subject for all the "
+                             "timepoints.")
+    parser.add_argument("-i", "--dwis", required=True, nargs="+",
+                        metavar="<path tp1> <path tp2> ...",
+                        help="Paths to Nifti diffusion series. In the order "
+                             "corresponding to <subject_timepoint_ids>.")
+    parser.add_argument("-b", "--bvalss", required=True, nargs="+",
+                        metavar="<path tp1> <path tp2> ...",
+                        help="Paths to b-values of diffusion series. In the "
+                              "order corresponding to <dwis>.")
+    parser.add_argument("-r", "--bvecss", required=True, nargs="+",
+                        metavar="<path tp1> <path tp2> ...",
+                        help="Paths to diffusion-sensitized directions of "
+                             "diffusion series. In the order corresponding "
+                             "to <dwis>.")
+    parser.add_argument("-d", "--bedpostx-dirs", required=True, nargs="+",
+                        metavar="<path tp1> <path tp2> ...",
+                        help="BedpostX output directories. In the order "
+                             "corresponding to <dwis>.")
 
     # Optional arguments
     parser.add_argument("-S", "--subjects-dir", metavar="<path>",
@@ -121,27 +133,28 @@ def get_cmd_line_args():
 inputs, verbose = get_cmd_line_args()
 
 # Runtime informations
-runtime = dict(tool="pyfreesurfer_tracall",
+runtime = dict(tool="pyfreesurfer_tracall_longitudinal",
                tool_version=pyfreesurfer.__version__,
                fs_version=FSWrapper([], shfile=inputs["fsconfig"]).version,
                timestamp=datetime.datetime.now().isoformat())
 
 if verbose > 0:
-    pprint("[info] Starting trac-all")
+    pprint("[info] Starting trac-all longitudinal")
     pprint("[info] Runtime:")
     pprint(runtime)
     pprint("[info] Inputs:")
     pprint(inputs)
 
 # Run
-subject_dir = trac_all(**inputs)
-outputs = dict(subject_dir=subject_dir)
+subject_long_outdirs = trac_all_longitudinal(**inputs)
+outputs = dict(subject_long_outdirs=subject_long_outdirs)
 
-# Store inputs, runtime and outputs as JSONs in a 'logs' dir in the subject_dir
-logs_dir = os.path.join(subject_dir, "logs")
-if not os.path.isdir(logs_dir):
-    os.mkdir(logs_dir)
-for k, v in dict(inputs=inputs, outputs=outputs, runtime=runtime).items():
-    path_json = os.path.join(logs_dir, "%s_trac-all.json" % k)
-    with open(path_json, "w") as f:
-        json.dump(v, f, sort_keys=True, check_circular=True, indent=4)
+# Store inputs, runtime and outputs as JSONs in a 'logs' dir in each long dir
+for subject_long_dir in subject_long_outdirs:
+    logs_dir = os.path.join(subject_long_dir, "logs")
+    if not os.path.isdir(logs_dir):
+        os.mkdir(logs_dir)
+    for k, v in dict(inputs=inputs, outputs=outputs, runtime=runtime).items():
+        path_json = os.path.join(logs_dir, "%s_trac-all_longitudinal.json" % k)
+        with open(path_json, "w") as f:
+            json.dump(v, f, sort_keys=True, check_circular=True, indent=4)

@@ -7,6 +7,7 @@
 # http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html for details.
 ##########################################################################
 
+# Standard
 import os
 import argparse
 import datetime
@@ -14,6 +15,7 @@ import json
 
 from pprint import pprint
 
+# Package
 import pyfreesurfer
 from pyfreesurfer import DEFAULT_FREESURFER_PATH
 from pyfreesurfer.segmentation.cortical import recon_all_custom_wm_mask
