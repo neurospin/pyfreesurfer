@@ -115,7 +115,7 @@ template_logs_dir = os.path.join(subject_template_dir, "logs")
 if not os.path.isdir(template_logs_dir):
     os.mkdir(template_logs_dir)
 # Write JSONs
-for k, v in dict(inputs=inputs, outputs=dict(), runtime=runtime):
+for k, v in dict(inputs=inputs, outputs=dict(), runtime=runtime).items():
     path_json = os.path.join(template_logs_dir, "%s.json" % k)
     with open(path_json, "w") as f:
         json.dump(v, f, sort_keys=True, check_circular=True, indent=4)
