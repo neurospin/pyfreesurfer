@@ -24,6 +24,7 @@ def mri_binarize(
         outputfile,
         match=None,
         wm=False,
+        ventricles=False,
         inv=False,
         fsconfig=DEFAULT_FREESURFER_PATH):
     """ Binarize a FreeSurfer label map.
@@ -57,6 +58,8 @@ def mri_binarize(
         cmd.extend(match)
     if wm:
         cmd.append("--wm")
+    if ventricles:
+        cmd.append("--ventricles")
     if inv:
         cmd.append("--inv")
     recon = FSWrapper(cmd, shfile=fsconfig)
@@ -90,7 +93,7 @@ def mri_convert(
         The conversion destination folder.
     destdirname: str (optional, default 'convert')
         The name of the folder where each subject converted volumes will be
-        saved.
+        saved. If None, don't create a sub folder.
     reslice: bool (optional default False)
         If True reslice the input images like the raw image.
     interpolation: str (optional default interpolate)
@@ -123,7 +126,10 @@ def mri_convert(
         # Create the output directory
         subject = input_file.replace(fsdir, "")
         subject = subject.lstrip(os.sep).split(os.sep)[0]
-        subjoutdir = os.path.join(outdir, subject, destdirname)
+        if destdirname is not None:
+            subjoutdir = os.path.join(outdir, subject, destdirname)
+        else:
+            subjoutdir = outdir
         if not os.path.isdir(subjoutdir):
             os.makedirs(subjoutdir)
 
