@@ -115,7 +115,7 @@ parser.add_argument(
     "-e", "--erase", dest="erase", action="store_true",
     help="if activated, clean the subject folder.")
 parser.add_argument(
-    "-c", "--config", dest="fsconfig", metavar="FILE", required=True,
+    "-c", "--config", dest="fsconfig", metavar="FILE",
     help="the FreeSurfer configuration file.", type=is_file)
 parser.add_argument(
     "-d", "--fsdir", dest="fsdir", required=True, metavar="PATH",
