@@ -134,7 +134,7 @@ for subject_long_id, timepoint, subjects_dir in zip(subject_long_ids,
                        outdir=inputs["outdir"],
                        subject_template_id=subject_template_id,
                        subject_template_dir=subject_template_dir)
-    for k, v in dict(inputs=long_inputs, outputs=dict(), runtime=runtime):
+    for k, v in dict(inputs=long_inputs, outputs=dict(), runtime=runtime).items():
         path_json = os.path.join(template_logs_dir, "%s.json" % k)
         with open(path_json, "w") as f:
             json.dump(v, f, sort_keys=True, check_circular=True, indent=4)
