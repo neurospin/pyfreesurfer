@@ -81,7 +81,8 @@ def interhemi_surfreg(
     wdir = os.path.join(outdir, destname)
     symlinks = []
     dest_template_file = os.path.join(outdir, "fsaverage_sym")
-    os.symlink(template_file, dest_template_file)
+    if not os.path.islink(dest_template_file):
+        os.symlink(template_file, dest_template_file)
     symlinks.append(dest_template_file)
     if os.path.isdir(wdir):
         shutil.rmtree(wdir)
@@ -96,13 +97,17 @@ def interhemi_surfreg(
 
     # Create the commands
     os.environ["SUBJECTS_DIR"] = outdir
-    cmds = [
+    cmds = []
+    sym_template_file = os.path.join(
+        wdir, "surf", "{0}.fsaverage_sym.sphere.reg".format(hemi))
+    if not os.path.isfile(sym_template_file):
+        os.unlink(sym_template_file)
+    cmds += [
         ["surfreg", "--s", destname, "--t", "fsaverage_sym",
          "--{0}".format(hemi)],
         ["xhemireg", "--s", destname],
         ["surfreg", "--s", destname, "--t", "fsaverage_sym",
-         "--{0}".format(hemi), "--xhemi"]
-    ]
+         "--{0}".format(hemi), "--xhemi"]]
 
     # Execute the FS commands
     for cmd in cmds:
