@@ -262,7 +262,7 @@ surfaces = {}
 annotations = []
 modalities = ["pial", "white"]
 if addmidgray:
-    modalities.appedn("graymid")
+    modalities.append("graymid")
 for modality in modalities:
     for hemi in ["lh", "rh"]:
         name = "{0}.{1}".format(hemi, modality)
