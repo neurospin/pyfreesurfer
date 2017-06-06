@@ -195,7 +195,7 @@ if args.verbose > 0:
     print("[info] Start Nifti conversions...")
 niftifiles = {}
 for modality in ["aparc+aseg", "aparc.a2009s+aseg", "aseg", "wm", "rawavg",
-                 "ribbon"]:
+                 "ribbon", "brain"]:
     regex = os.path.join(args.subjectid, "mri", "{0}.mgz".format(modality))
     niftifiles[modality] = mri_convert(
         args.fsdir,
