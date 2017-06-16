@@ -10,6 +10,9 @@ python:
 before_install:
     - sudo apt-get update
     - sudo apt-get install -y python-vtk
+    - sudo apt-get install -y xvfb
+    - sudo apt-get install -y python-tk
+    - sudo apt-get install -y python-imaging
     - sudo apt-get install libopenctm1
     - if [ ${TRAVIS_PYTHON_VERSION:0:1} == "2" ]; then 
         wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh; 
@@ -27,6 +30,7 @@ install:
     - source activate testenv
     - if [ ${TRAVIS_PYTHON_VERSION:0:1} == "2" ]; then pip install mock; fi
     - conda install --yes numpy matplotlib
+    - pip install xvfbwrapper
     - pip install nose
     - pip install nose-exclude
     - pip install coverage
