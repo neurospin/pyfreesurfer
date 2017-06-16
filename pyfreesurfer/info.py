@@ -9,7 +9,7 @@
 
 # pyConnectomist current version
 version_major = 1
-version_minor = 1
+version_minor = 2
 version_micro = 0
 
 # Expected by setup.py: string of form "X.Y.Z"
@@ -78,6 +78,7 @@ PROVIDES = ["pyfreesurfer"]
 REQUIRES = [
     "numpy>=1.6.1",
     "nibabel>=1.1.0",
-    "matplotlib>=1.3.1"
+    "matplotlib>=1.3.1",
+    "packaging"
 ]
 EXTRA_REQUIRES = {}

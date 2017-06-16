@@ -26,6 +26,9 @@ from pyfreesurfer import DEFAULT_TEMPLATE_SYM_PATH
 from pyfreesurfer.wrapper import FSWrapper
 from pyfreesurfer.utils.surftools import TriSurface
 
+# Third party
+from packaging import version
+
 
 def interhemi_surfreg(
         hemi,
@@ -100,8 +103,8 @@ def interhemi_surfreg(
     cmds = []
     sym_template_file = os.path.join(
         wdir, "surf", "{0}.fsaverage_sym.sphere.reg".format(hemi))
-    if not os.path.isfile(sym_template_file):
-        os.unlink(sym_template_file)
+    if os.path.isfile(sym_template_file):
+        os.remove(sym_template_file)
     cmds += [
         ["surfreg", "--s", destname, "--t", "fsaverage_sym",
          "--{0}".format(hemi)],
@@ -326,13 +329,21 @@ def resample_cortical_surface(
             convertfile = os.path.join(convertdir, "{0}.{1}.{2}".format(
                 hemi, surface_name, level))
             resamplefiles.append(convertfile)
-            cmd = ["mri_surf2surf", "--sval-xyz", surface_name,
-                   "--srcsubject", subject_id, "--trgsubject", "ico",
-                   "--trgicoorder", str(level), "--tval", convertfile,
-                   "--tval-xyz", "--hemi", hemi, "--sd", fsdir]
+            recon = FSWrapper([], shfile=fsconfig)
+            if version.parse(recon.version or "") >= version.parse("6.0.0"):
+                origfile = os.path.join(fsdir, subject_id, "mri", "orig.mgz")
+                cmd = ["mri_surf2surf", "--sval-xyz", surface_name,
+                       "--srcsubject", subject_id, "--trgsubject", "ico",
+                       "--trgicoorder", str(level), "--tval", convertfile,
+                       "--tval-xyz",  origfile, "--hemi", hemi, "--sd", fsdir]
+            else:
+                cmd = ["mri_surf2surf", "--sval-xyz", surface_name,
+                       "--srcsubject", subject_id, "--trgsubject", "ico",
+                       "--trgicoorder", str(level), "--tval", convertfile,
+                       "--tval-xyz", "--hemi", hemi, "--sd", fsdir]
 
             # Execute the FS command
-            recon = FSWrapper(cmd, shfile=fsconfig)
+            recon.cmd = cmd
             recon()
 
             # Construct the FS label map command

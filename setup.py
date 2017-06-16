@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 ##########################################################################
-# NSAp - Copyright (C) CEA, 2016
+# NSAp - Copyright (C) CEA, 2016 - 2017
 # Distributed under the terms of the CeCILL-B license, as published by
 # the CEA-CNRS-INRIA. Refer to the LICENSE file or to
 # http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
@@ -27,11 +27,16 @@ pkgdata = {
 scripts = [
     "pyfreesurfer/scripts/pyfreesurfer_conversion",
     "pyfreesurfer/scripts/pyfreesurfer_datacheck",
+    "pyfreesurfer/scripts/pyfreesurfer_fmri",
+    "pyfreesurfer/scripts/pyfreesurfer_hcp",
     "pyfreesurfer/scripts/pyfreesurfer_qualitycheck",
     "pyfreesurfer/scripts/pyfreesurfer_reconall",
+    "pyfreesurfer/scripts/pyfreesurfer_reconall_custom_wm_mask",
+    "pyfreesurfer/scripts/pyfreesurfer_reconall_longitudinal",
     "pyfreesurfer/scripts/pyfreesurfer_stats",
     "pyfreesurfer/scripts/pyfreesurfer_textures",
-    "pyfreesurfer/scripts/pyfreesurfer_hcp"
+    "pyfreesurfer/scripts/pyfreesurfer_tracall",
+    "pyfreesurfer/scripts/pyfreesurfer_tracall_longitudinal"
 ]
 
 setup(

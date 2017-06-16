@@ -153,8 +153,8 @@ class FreeSurferSlicer(unittest.TestCase):
     @mock.patch("{0}.open".format(mock_builtin))
     @mock.patch("pyfreesurfer.plots.slicer.os.path.isdir")
     @mock.patch("pyfreesurfer.plots.slicer.os.path.isfile")
-    def test_normal_execution(self, mock_isfile, mock_isdir, mock_open,
-                              mock_glob, mock_remove):
+    def test_normal_execution_edges(self, mock_isfile, mock_isdir, mock_open,
+                                    mock_glob, mock_remove):
         """ Test the normal behaviour of the function.
         """
         # Set the mocked functions returned values
@@ -164,6 +164,38 @@ class FreeSurferSlicer(unittest.TestCase):
 
         # Test execution
         slices = tkmedit_slice(**self.kwargs)
+        path_script = os.path.join(
+            self.kwargs["outdir"],
+            "tkmedit_slicer_{0}.tcl".format(self.kwargs["cut_axis"]))
+        self.assertEqual(
+            slices,
+            [item.replace(".rgb", ".png") for item in mock_glob.return_value])
+        self.assertEqual([
+            mock.call(mock_glob.return_value[0])],
+            mock_remove.call_args_list)
+        self.assertEqual(len(self.mock_popen.call_args_list), 4)
+        self.assertEqual(len(self.mock_env.call_args_list), 2)
+
+    @mock.patch("pyfreesurfer.plots.slicer.parse_fs_lut")
+    @mock.patch("pyfreesurfer.plots.slicer.os.remove")
+    @mock.patch("pyfreesurfer.plots.slicer.glob.glob")
+    @mock.patch("{0}.open".format(mock_builtin))
+    @mock.patch("pyfreesurfer.plots.slicer.os.path.isdir")
+    @mock.patch("pyfreesurfer.plots.slicer.os.path.isfile")
+    def test_normal_execution_aparc(self, mock_isfile, mock_isdir, mock_open,
+                                    mock_glob, mock_remove, mock_parselut):
+        """ Test the normal behaviour of the function.
+        """
+        # Set the mocked functions returned values
+        mock_isfile.side_effect = [True, True, False]
+        mock_isdir.side_effect = [True, True, False]
+        mock_glob.return_value = ["/my/path/mock_snap.rgb"]
+        mock_parselut.return_value = ({0: "unknown"}, {0: (0, 0, 0)})
+
+        # Test execution
+        kwargs = copy.copy(self.kwargs)
+        kwargs["stype"] = "aparc"
+        slices = tkmedit_slice(**kwargs)
         path_script = os.path.join(
             self.kwargs["outdir"],
             "tkmedit_slicer_{0}.tcl".format(self.kwargs["cut_axis"]))

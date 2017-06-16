@@ -53,13 +53,16 @@ class FreeSurferTriSurface(unittest.TestCase):
             (5, 2, 3),
             (5, 3, 4),
             (5, 4, 1)]
-        labels = range(6)
-        meta = dict((index, {"color": (1, 1, 1, 1)}) for index in labels)
+        self.ctab = [
+            numpy.array([255, 0, 0, 1])] * 6
+        self.labels = numpy.asarray(range(6))
+        meta = dict((index, {"color": (1, 1, 1, 1)}) for index in self.labels)
 
         self.kwargs = {
             "vertices": numpy.asarray(verts),
             "triangles": numpy.asarray(faces),
-            "inflated_vertices": numpy.asarray(verts)
+            "inflated_vertices": numpy.asarray(verts),
+            "labels": self.labels
         }
 
     def test_normal_execution(self):
@@ -74,6 +77,85 @@ class FreeSurferTriSurface(unittest.TestCase):
         self.assertTrue(numpy.allclose(self.kwargs["inflated_vertices"],
                                        surf.inflated_vertices))
         self.assertEqual(surf.shape(), (6, 18, 8))
+
+    @mock.patch("nibabel.freesurfer.write_geometry")
+    def test_save(self, mock_writegeo):
+        """ Test the save method.
+        """
+        # Test execution
+        surf = TriSurface(**self.kwargs)
+        out_file = "/my/path/mock_destination"
+        surf.save(out_file)
+
+    @mock.patch("nibabel.freesurfer.read_annot")
+    @mock.patch("nibabel.freesurfer.read_geometry")
+    def test_load(self, mock_readgeo, mock_readannot):
+        """ Test the load method.
+        """
+        # Set the mocked functions returned values
+        mock_readgeo.side_effect = [
+            (self.kwargs["vertices"], self.kwargs["triangles"]),
+            (self.kwargs["inflated_vertices"], self.kwargs["triangles"])]
+        mock_readannot.return_value = [
+            self.labels, self.ctab, self.labels]
+
+        # Test execution
+        meshfile = "/my/path/mock_mesh"
+        inflatedmeshpath = "/my/path/mock_infmesh"
+        annotfile = "/my/path/mock_annot"
+        surf = TriSurface.load(meshfile, inflatedmeshpath=inflatedmeshpath,
+                               annotfile=annotfile)
+        self.assertTrue(numpy.allclose(self.kwargs["vertices"],
+                                       surf.vertices))
+        self.assertTrue(numpy.allclose(self.kwargs["triangles"],
+                                       surf.triangles))
+        self.assertTrue(numpy.allclose(self.kwargs["inflated_vertices"],
+                                       surf.inflated_vertices))
+        self.assertEqual(surf.shape(), (6, 18, 8))
+
+    @mock.patch("vtk.vtkPolyDataWriter")
+    @mock.patch("vtk.vtkPolyData")
+    @mock.patch("vtk.vtkTriangle")
+    @mock.patch("vtk.vtkUnsignedCharArray")
+    @mock.patch("vtk.vtkCellArray")
+    @mock.patch("vtk.vtkPoints")
+    def test_savevtk(self, mock_vtkpoint, mock_vtkcell, mock_vtkuarray,
+                     mock_vtktriangle, mock_vtkpoly, mock_vtkwrite):
+        """ Test the save vtk method.
+        """
+        # Test execution
+        surf = TriSurface(**self.kwargs)
+        out_file = "/my/path/mock_destination"
+        surf.save_vtk(out_file, inflated=True)
+
+    def test_labelize(self):
+        """ Test the labelize method.
+        """
+        # Test execution
+        surf = TriSurface(**self.kwargs)
+        surf.vertices += 1
+        label_array, nb_of_labels = surf.labelize(shape=(3, 3, 3))
+        self.assertEqual(6, nb_of_labels)
+
+    @mock.patch("vtk.vtkPolyDataWriter")
+    @mock.patch("vtk.util.numpy_support.vtk_to_numpy")
+    @mock.patch("vtk.vtkSelectEnclosedPoints")
+    @mock.patch("pyfreesurfer.utils.surftools.TriSurface._polydata")
+    @mock.patch("vtk.vtkPolyData")
+    @mock.patch("vtk.vtkPoints")
+    def test_voxelize(self, mock_vtkpoint, mock_vtkpoly, mock_poly,
+                      mock_vtkslect, mock_vtknp, mock_vtkwrite):
+        """ Test the voxelize vtk method.
+        """
+        # Set the mocked functions returned values
+        mock_poly.return_value = object()
+        mock_vtknp.return_value = numpy.ones((3, 3, 3), dtype=int)
+
+        # Test execution
+        surf = TriSurface(**self.kwargs)
+        out_file = "/my/path/mock_destination"
+        inside_array = surf.voxelize(shape=(3, 3, 3), tol=0)
+        self.assertTrue(numpy.allclose(inside_array, mock_vtknp.return_value))
 
 
 class FreeSurferApplyAffine(unittest.TestCase):

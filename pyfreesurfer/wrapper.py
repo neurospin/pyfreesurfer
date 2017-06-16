@@ -71,9 +71,8 @@ class FSWrapper(object):
         # Update the environment variables
         if subjects_dir is not None:
             self.environment["SUBJECTS_DIR"] = subjects_dir
-        else:
-            if "SUBJECTS_DIR" in os.environ:
-                self.environment["SUBJECTS_DIR"] = os.environ["SUBJECTS_DIR"]
+        elif "SUBJECTS_DIR" in os.environ:
+            self.environment["SUBJECTS_DIR"] = os.environ["SUBJECTS_DIR"]
 
         if (len(self.cmd) > 0 and self.cmd[0] == "tkmedit" and
                 "DISPLAY" in os.environ):
@@ -292,7 +291,8 @@ class HCPWrapper(object):
         version_file = os.path.join(basedir, "etc", "fslversion")
         if not os.path.exists(version_file):
             return None
-        out = open(version_file).read()
+        with open(version_file, "rt") as fopen:
+            out = fopen.read()
         return out.strip("\n")
 
     def gradunwarp_version(self):
@@ -356,4 +356,6 @@ class HCPWrapper(object):
         version_file = os.path.join(basedir, "version.txt")
         if not os.path.exists(version_file):
             return None
-        return open(version_file).read().strip("\n")
+        with open(version_file, "rt") as open_file:
+            version = open_file.read()
+        return version.strip("\n")

@@ -12,6 +12,8 @@ import unittest
 import sys
 import textwrap
 import math
+import os
+import numpy
 # COMPATIBILITY: since python 3.3 mock is included in unittest module
 python_version = sys.version_info
 if python_version[:2] <= (3, 3):
@@ -26,6 +28,9 @@ else:
 # Pyfreesurfer import
 from pyfreesurfer.utils.filetools import surf2ctm
 from pyfreesurfer.utils.filetools import parse_fs_lut
+from pyfreesurfer.utils.filetools import get_or_check_freesurfer_subjects_dir
+from pyfreesurfer.utils.filetools import get_or_check_path_of_freesurfer_lut
+from pyfreesurfer.utils.filetools import load_look_up_table
 
 
 class FreeSurferCTM(unittest.TestCase):
@@ -190,6 +195,128 @@ class FreeSurferLUT(unittest.TestCase):
                          sorted(fs_lut_colors.keys()))
         self.assertEqual(fs_lut_names[0], "Unknown")
         self.assertEqual(fs_lut_colors[0], (0, 0, 0))
+
+
+class FreeSurferLoadLUT(unittest.TestCase):
+    """ Test the FreeSurfer load LUT function:
+    'pyfreesurfer.utils.filetools.load_look_up_table'
+    """
+    def setUp(self):
+        """ Define function parameters.
+        """
+        self.lut_data = """
+        0 Unknown 0 0 0 0
+        1 Left-Cerebral-Exterior 70 130 180 0
+        2 Left-Cerebral-White-Matter 245 245 245 0
+        3 Left-Cerebral-Cortex 205 62 78 0
+        """
+        self.lut_data = [
+            l.split(" ") for l in textwrap.dedent(self.lut_data).splitlines()
+            if l != ""]
+        self.lut_data = numpy.asarray(self.lut_data)
+
+    def test_badpath(self):
+        """ Wrong path LUT -> raise ValueError.
+        """
+        # Test execution
+        self.assertRaises(Exception, load_look_up_table,
+                          path_lut="/my/path/mock_pathlut")
+
+    @mock.patch("pyfreesurfer.conversions.surfconvs.numpy.loadtxt")
+    def test_normal_execution(self, mock_load):
+        """ Test the normal behaviour of the function.
+        """
+        # Set the mocked functions returned values
+        mock_load.return_value = self.lut_data
+
+        # Test execution
+        labels, names, colors = load_look_up_table(
+            path_lut="/my/path/mock_sdir")
+        self.assertTrue(numpy.allclose(labels, numpy.asarray(range(4))))
+
+
+class FreeSurferSubjectDir(unittest.TestCase):
+    """ Test the FreeSurfer subject dir parameter:
+    'pyfreesurfer.utils.filetools.get_or_check_freesurfer_subjects_dir'
+    """
+    def setUp(self):
+        """ Define function parameters.
+        """
+        pass
+
+    def test_baddir(self):
+        """ No subject dir -> raise ValueError.
+        """
+        # Test execution
+        self.assertRaises(ValueError, get_or_check_freesurfer_subjects_dir,
+                          subjects_dir="/my/path/mock_sdir")
+
+    def test_baddir_env1(self):
+        """ No subject dir -> raise ValueError.
+        """
+        # Test execution
+        os.environ["SUBJECTS_DIR"] = "/my/path/mock_sdir"
+        self.assertRaises(ValueError, get_or_check_freesurfer_subjects_dir,
+                          subjects_dir=None)
+
+    def test_baddir_env2(self):
+        """ No subject dir -> raise ValueError.
+        """
+        # Test execution
+        if "SUBJECTS_DIR" in os.environ:
+            del os.environ["SUBJECTS_DIR"]
+        self.assertRaises(ValueError, get_or_check_freesurfer_subjects_dir,
+                          subjects_dir=None)
+
+    @mock.patch("pyfreesurfer.conversions.surfconvs.os.path.isdir")
+    def test_normal_execution(self, mock_isdir):
+        """ Test the normal behaviour of the function.
+        """
+        # Set the mocked functions returned values
+        mock_isdir.side_effect = [True, False]
+
+        # Test execution
+        subjects_dir = get_or_check_freesurfer_subjects_dir(
+            subjects_dir="/my/path/mock_sdir")
+
+
+class FreeSurferPathLUT(unittest.TestCase):
+    """ Test the FreeSurfer path LUT parameter:
+    'pyfreesurfer.utils.filetools.get_or_check_path_of_freesurfer_lut'
+    """
+    def setUp(self):
+        """ Define function parameters.
+        """
+        pass
+
+    def test_baddir(self):
+        """ Wrong path LUT -> raise ValueError.
+        """
+        # Test execution
+        self.assertRaises(ValueError, get_or_check_path_of_freesurfer_lut,
+                          freesurfer_lut="/my/path/mock_pathlut")
+
+    def test_baddir_env(self):
+        """ No path LUT -> raise ValueError.
+        """
+        # Test execution
+        if "FREESURFER_HOME" in os.environ:
+            del os.environ["FREESURFER_HOME"]
+        self.assertRaises(Exception, get_or_check_path_of_freesurfer_lut,
+                          freesurfer_lut=None)
+
+    @mock.patch("pyfreesurfer.conversions.surfconvs.os.path.isfile")
+    def test_normal_execution(self, mock_isfile):
+        """ Test the normal behaviour of the function.
+        """
+        # Set the mocked functions returned values
+        mock_isfile.side_effect = [True, False]
+
+        # Test execution
+        os.environ["FREESURFER_HOME"] = "/my/path/mock_fshome"
+        freesurfer_lut = get_or_check_path_of_freesurfer_lut(
+            freesurfer_lut="/my/path/mock_sdir")
+
 
 if __name__ == "__main__":
     unittest.main()

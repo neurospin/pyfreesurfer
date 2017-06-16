@@ -176,7 +176,7 @@ class TriSurface(object):
             the number of valid labels.
         """
         label_array = numpy.zeros(shape, dtype=numpy.int16)
-        indices = numpy.round(self.vertices)
+        indices = numpy.round(self.vertices).astype(int)
         nb_of_labels = 0
         for label in set(self.labels):
             if label != -1:

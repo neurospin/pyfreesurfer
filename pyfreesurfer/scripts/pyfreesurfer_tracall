@@ -12,8 +12,9 @@ import os
 import argparse
 import datetime
 import json
-
 from pprint import pprint
+import textwrap
+from argparse import RawTextHelpFormatter
 
 # Package
 import pyfreesurfer
@@ -25,6 +26,8 @@ from pyfreesurfer.wrapper import FSWrapper
 # Parameters to keep trace
 __hopla__ = ["runtime", "inputs", "outputs"]
 
+
+# Script documentation
 DOC = """
 Assuming you have a preprocessed DWI (at least for susceptibility and brain
 extracted) with bedpostX done, this script runs the Tracula pipeline.
@@ -58,7 +61,11 @@ def get_cmd_line_args():
              "-b <path bvals> -r <path bvecs> -d <bedpostX dir> [-S <dir>] "
              "[-E] [-K] |-G] [-N] [-c <path>] [-v <int>]")
     prog = "python pyfreesurfer_tracall"
-    parser = argparse.ArgumentParser(prog=prog, usage=usage, description=DOC)
+    parser = argparse.ArgumentParser(
+        prog=prog,
+        usage=usage,
+        description=textwrap.dedent(DOC),
+        formatter_class=RawTextHelpFormatter)
 
     # Required arguments
     parser.add_argument("-o", "--outdir", required=True, metavar="<path>",

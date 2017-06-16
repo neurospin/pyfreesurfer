@@ -15,6 +15,8 @@ from pprint import pprint
 import argparse
 from datetime import datetime
 import shutil
+import textwrap
+from argparse import RawTextHelpFormatter
 
 # Bredala import
 try:
@@ -44,8 +46,8 @@ __hopla__ = ["runtime", "inputs", "outputs"]
 
 
 # Script documentation
-doc = """ Run the HCP prefreesurfer, freesurfer and postfreesurfer
-scripts.
+DOC = """
+Run the HCP prefreesurfer, freesurfer and postfreesurfer scripts.
 
 Requirements for this module:
   installed versions of:
@@ -137,127 +139,169 @@ def is_directory(dirarg):
     return dirarg
 
 
-parser = argparse.ArgumentParser(description=doc)
-parser.add_argument(
-    "--path", dest="path", required=True, type=is_directory,
-    help="path to study data folder (~ to FreeSurfer home directory). Used "
-    "with --subject input to create full path to root directory for all"
-    " outputs generated as /path/subject.")
-parser.add_argument(
-    "--subject", dest="subject", required=True,
-    help="subject ID. Used with --path input to create full path to root"
-         " directory for all outputs generated as path/subject.")
-parser.add_argument(
-    "--field", dest="field", choices=("3T", "7T"), default="3T",
-    help="subject ID. Used with --path input to create full path to root"
-         " directory for all outputs generated as path/subject.")
-parser.add_argument(
-    "--t1", dest="t1", type=is_file,  nargs="+",
-    help="list of full paths to T1-weighted structural images for the "
-         "subject.")
-parser.add_argument(
-    "--t2", dest="t2", type=is_file, nargs="+",
-    help="list of full paths to T2-weighted structural images for the "
-         "subject.")
-parser.add_argument(
-    "--brainsize", dest="brainsize", type=int, default=150,
-    help="brain size estimate in mm, 150 for humans.")
-parser.add_argument(
-    "--fmapmag", dest="fmapmag", type=is_file, default="NONE",
-    help="Siemens Gradient Echo Fieldmap magnitude file.")
-parser.add_argument(
-    "--fmapphase", dest="fmapphase", type=is_file, default="NONE",
-    help="Siemens Gradient Echo Fieldmap phase file.")
-parser.add_argument(
-    "--fmapgeneralelectric", dest="fmapgeneralelectric", default="NONE",
-    help="General Electric Gradient Echo Field Map file."
-         "Two volumes in one file: 1. field map in deg, 2. magnitude.")
-parser.add_argument(
-    "--echodiff", dest="echodiff", default=2.46,
-    help="delta TE in ms for field map or 'NONE' if not used.")
-parser.add_argument(
-    "--SEPhaseNeg", dest="SEPhaseNeg", default="NONE",
-    help="for spin echo field map, path to volume with a negative phase"
-         "encoding direction (LR in HCP data), set to 'NONE' if not using Spin"
-         "Echo Field Maps.")
-parser.add_argument(
-    "--SEPhasePos", dest="SEPhasePos", default="NONE",
-    help="for spin echo field map, path to volume with a positive phase"
-         "encoding direction (RL in HCP data), set to 'NONE' if not using Spin"
-         "Echo Field Maps.")
-parser.add_argument(
-    "--echospacing", dest="echospacing", default="NONE",
-    help="echo Spacing or Dwelltime of Spin Echo Field Map or 'NONE' if not"
-         "used.")
-parser.add_argument(
-    "--seunwarpdir", dest="seunwarpdir", default="NONE",
-    help="phase encoding direction of the spin echo field map. (Only applies"
-         "when using a spin echo field map.).")
-parser.add_argument(
-    "--t1samplespacing", dest="t1samplespacing", default=0.0000074,
-    help="T1 image sample spacing, 'NONE' if not used.")
-parser.add_argument(
-    "--t2samplespacing", dest="t2samplespacing", default=0.0000021,
-    help="T2 image sample spacing, 'NONE' if not used.")
-parser.add_argument(
-    "--unwarpdir", dest="unwarpdir", choices=("z", "y", "x"), default="z",
-    help="readout direction of the T1w and T2w images (Used with either a"
-         "gradient echo field map or a spin echo field map).")
-parser.add_argument(
-    "--gdcoeffs", dest="gdcoeffs", default="NONE", type=is_file,
-    help="file containing gradient distortion coefficients."
-         "Set to 'NONE' to turn off.")
-parser.add_argument(
-    "--avgrdcmethod", dest="avgrdcmethod", default="SiemensFieldMap",
-    help="averaging and readout distortion correction method or 'NONE' if "
-         "not used.")
-parser.add_argument(
-    "--topupconfig", dest="topupconfig", default="NONE",
-    help="configuration file for topup or 'NONE' if not used.")
-parser.add_argument(
-    "--hcpdir", dest="hcpdir", required=True,
-    help="the path to the HCP project containing the HCP scripts.")
-parser.add_argument(
-    "--fsldir", dest="fsldir",
-    help="the path to the FSL 'fsl.sh' configuration file.", type=is_file)
-parser.add_argument(
-    "--fsconfig", dest="fsconfig",
-    help="the path to the FreeSurfer configuration file.", type=is_file)
-parser.add_argument(
-    "--wbcommand", dest="wbcommand",
-    help="the path containing the wbcommand.",
-    type=is_directory)
-parser.add_argument(
-    "--verbose", dest="verbose", type=int, choices=[0, 1, 2], default=0,
-    help="increase the verbosity level: 0 silent, [1, 2] verbose.")
-parser.add_argument(
-    "--erase", dest="erase", action="store_true",
-    help="if activated, clean the result folder.")
-parser.add_argument(
-    "--nopre", dest="nopre", action="store_true",
-    help="if activated, do not perform the prefreesurfer step.")
-parser.add_argument(
-    "--t1wdir", dest="t1wdir", type=is_directory,
-    help="if nopre, the prefreesurfer T1w folder.")
-args = parser.parse_args()
+def get_cmd_line_args():
+    """
+    Create a command line argument parser and return a dict mapping
+    <argument name> -> <argument value>.
+    """
+    parser = argparse.ArgumentParser(
+        prog="python pyfreesurfer_hcp",
+        description=textwrap.dedent(DOC),
+        formatter_class=RawTextHelpFormatter)
+
+    # Required arguments
+    required = parser.add_argument_group("required arguments")
+    required.add_argument(
+        "--path",
+        required=True, type=is_directory,
+        help="path to study data folder (~ to FreeSurfer home directory). "
+             "Used with --subject input to create full path to root directory "
+             "for all outputs generated as /path/subject.")
+    required.add_argument(
+        "--subject",
+        required=True,
+        help="subject ID. Used with --path input to create full path to root "
+             "directory for all outputs generated as path/subject.")
+    required.add_argument(
+        "--t1",
+        type=is_file,  nargs="+",
+        help="list of full paths to T1-weighted structural images for the "
+             "subject.")
+    required.add_argument(
+        "--t2",
+        type=is_file, nargs="+",
+        help="list of full paths to T2-weighted structural images for the "
+             "subject.")
+    required.add_argument(
+        "--hcpdir",
+        required=True,
+        help="the path to the HCP project containing the HCP scripts.")
+
+    # Optional arguments
+    parser.add_argument(
+        "--field",
+        choices=("3T", "7T"), default="3T",
+        help="subject ID. Used with --path input to create full path to root "
+             "directory for all outputs generated as path/subject.")
+    parser.add_argument(
+        "--brainsize",
+        type=int, default=150,
+        help="brain size estimate in mm, 150 for humans.")
+    parser.add_argument(
+        "--fmapmag",
+        type=is_file, default="NONE",
+        help="Siemens Gradient Echo Fieldmap magnitude file.")
+    parser.add_argument(
+        "--fmapphase",
+        type=is_file, default="NONE",
+        help="Siemens Gradient Echo Fieldmap phase file.")
+    parser.add_argument(
+        "--fmapgeneralelectric",
+        default="NONE",
+        help="General Electric Gradient Echo Field Map file."
+             "Two volumes in one file: 1. field map in deg, 2. magnitude.")
+    parser.add_argument(
+        "--echodiff",
+        default=2.46,
+        help="delta TE in ms for field map or 'NONE' if not used.")
+    parser.add_argument(
+        "--SEPhaseNeg",
+        default="NONE",
+        help="for spin echo field map, path to volume with a negative phase"
+             "encoding direction (LR in HCP data), set to 'NONE' if not using "
+             "Spin Echo Field Maps.")
+    parser.add_argument(
+        "--SEPhasePos",
+        default="NONE",
+        help="for spin echo field map, path to volume with a positive phase"
+             "encoding direction (RL in HCP data), set to 'NONE' if not using "
+             "Spin Echo Field Maps.")
+    parser.add_argument(
+        "--echospacing", dest="echospacing", default="NONE",
+        help="echo Spacing or Dwelltime of Spin Echo Field Map or 'NONE' if not"
+             "used.")
+    parser.add_argument(
+        "--seunwarpdir",
+        default="NONE",
+        help="phase encoding direction of the spin echo field map. (Only "
+             "applies when using a spin echo field map.).")
+    parser.add_argument(
+        "--t1samplespacing", default=0.0000074,
+        help="T1 image sample spacing, 'NONE' if not used.")
+    parser.add_argument(
+        "--t2samplespacing", default=0.0000021,
+        help="T2 image sample spacing, 'NONE' if not used.")
+    parser.add_argument(
+        "--unwarpdir",
+        choices=("z", "y", "x"), default="z",
+        help="readout direction of the T1w and T2w images (Used with either a "
+             "gradient echo field map or a spin echo field map).")
+    parser.add_argument(
+        "--gdcoeffs",
+        default="NONE", type=is_file,
+        help="file containing gradient distortion coefficients. "
+             "Set to 'NONE' to turn off.")
+    parser.add_argument(
+        "--avgrdcmethod", default="SiemensFieldMap",
+        help="averaging and readout distortion correction method or 'NONE' if "
+             "not used.")
+    parser.add_argument(
+        "--topupconfig",
+        default="NONE",
+        help="configuration file for topup or 'NONE' if not used.")
+    parser.add_argument(
+        "--fsldir",
+        type=is_file,
+        help="the path to the FSL 'fsl.sh' configuration file.")
+    parser.add_argument(
+        "--fsconfig",
+        type=is_file,
+        help="the path to the FreeSurfer configuration file.")
+    parser.add_argument(
+        "--wbcommand",
+        type=is_directory,
+        help="the path containing the wbcommand.")
+    parser.add_argument(
+        "--verbose",
+        type=int, choices=[0, 1, 2], default=0,
+        help="increase the verbosity level: 0 silent, [1, 2] verbose.")
+    parser.add_argument(
+        "--erase",
+        action="store_true",
+        help="if activated, clean the result folder.")
+    parser.add_argument(
+        "--nopre",
+        action="store_true",
+        help="if activated, do not perform the prefreesurfer step.")
+    parser.add_argument(
+        "--t1wdir",
+        type=is_directory,
+        help="if nopre, the prefreesurfer T1w folder.")
+
+    # Create a dict of arguments to pass to the 'main' function
+    args = parser.parse_args()
+    if args.fsconfig is None:
+        args.fsconfig = DEFAULT_FREESURFER_PATH
+    if args.fsldir is None:
+        args.fsldir = DEFAULT_FSL_PATH
+    if args.wbcommand is None:
+        args.wbcommand = DEFAULT_WORKBENCH_PATH
+
+    return args
 
 
 """
-Check MRI field.
+Parse the command line.
 """
+args = get_cmd_line_args()
+tool = "pyfreesurfer_hcp"
 if args.field != "3T":
     raise ValueError("{0} field not yet supported.".format(args.field))
-
-"""
-First check if the subject FreeSurfer directory exists on the file system,
-and clean it if requested.
-"""
-tool = "pyfreesurfer_hcp"
 timestamp = datetime.now().isoformat()
 tool_version = version
-freesurfer_config = args.fsconfig or DEFAULT_FREESURFER_PATH
-fsl_config = args.fsldir or DEFAULT_FSL_PATH
-wbcommand = args.wbcommand or DEFAULT_WORKBENCH_PATH
+freesurfer_config = args.fsconfig
+fsl_config = args.fsldir
+wbcommand = args.wbcommand
 wrapper = HCPWrapper(
     env={"PATH": os.environ["PATH"],
          "HCPPIPEDIR": args.hcpdir,

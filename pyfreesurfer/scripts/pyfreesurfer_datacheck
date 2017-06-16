@@ -12,9 +12,12 @@ from __future__ import print_function
 import os
 import re
 import argparse
+import textwrap
+from argparse import RawTextHelpFormatter
 
 
-doc = """
+# Script documentation
+DOC = """
 FreeSurfer data check
 ---------------------
 
@@ -47,31 +50,60 @@ def is_directory(dirarg):
     return dirarg
 
 
-parser = argparse.ArgumentParser(description=doc)
-parser.add_argument(
-    "-v", "--verbose", dest="verbose", type=int, choices=[0, 1, 2], default=0,
-    help="increase the verbosity level: 0 silent, [1, 2] verbose.")
-parser.add_argument(
-    "-d", "--fsdir", dest="fsdir", required=True, metavar="PATH",
-    help="the FreeSurfer processing home directory.", type=is_directory)
-parser.add_argument(
-    "-s", "--subjectid", dest="subjectid",
-    help=("the subject identifier. If specified the complete subject "
-          "structure is exposed."))
-parser.add_argument(
-    "-c", "--conversion", dest="conversion_count", type=int,
-    help="the number of files expected in the converts folder.")
-parser.add_argument(
-    "-q", "--qc", dest="qc_count", type=int,
-    help="the number of files expected in the qc folder.")
-parser.add_argument(
-    "-l", "--log", dest="log_count", type=int,
-    help="the number of files expected in the log folder.")
-parser.add_argument(
-    "-r", "--regex", dest="regex", required=True,
-    help=("the expression to be applied on the 'fsdir' subfolders in order to"
-          "retrieve the subjects only."), type=str)
-args = parser.parse_args()
+def get_cmd_line_args():
+    """
+    Create a command line argument parser and return a dict mapping
+    <argument name> -> <argument value>.
+    """
+    parser = argparse.ArgumentParser(
+        prog="python pyfreesurfer_datacheck",
+        description=textwrap.dedent(DOC),
+        formatter_class=RawTextHelpFormatter)
+
+    # Required arguments
+    required = parser.add_argument_group("required arguments")
+    required.add_argument(
+        "-d", "--fsdir",
+        required=True, metavar="PATH", type=is_directory,
+        help="the FreeSurfer processing home directory.")
+    required.add_argument(
+        "-r", "--regex",
+        required=True,
+        help=("the expression to be applied on the 'fsdir' subfolders in order to"
+              "retrieve the subjects only."))
+
+    # Optional arguments
+    parser.add_argument(
+        "-v", "--verbose",
+        type=int, choices=[0, 1, 2], default=0,
+        help="increase the verbosity level: 0 silent, [1, 2] verbose.")
+    parser.add_argument(
+        "-s", "--subjectid",
+        help=("the subject identifier. If specified the complete subject "
+              "structure is exposed."))
+    parser.add_argument(
+        "-c", "--conversion", dest="conversion_count",
+        type=int,
+        help="the number of files expected in the converts folder.")
+    parser.add_argument(
+        "-q", "--qc", dest="qc_count",
+        type=int,
+        help="the number of files expected in the qc folder.")
+    parser.add_argument(
+        "-l", "--log", dest="log_count",
+        type=int,
+        help="the number of files expected in the log folder.")
+
+    # Create a dict of arguments to pass to the 'main' function
+    args = parser.parse_args()
+
+    return args
+
+
+"""
+Parse the command line.
+"""
+args = get_cmd_line_args()
 
 
 """

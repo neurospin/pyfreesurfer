@@ -149,7 +149,7 @@ def recon_all_custom_wm_mask(subject_id, wm_mask, keep_orig=True,
     # Check existence of the subject's directory
     subject_dir = os.path.join(subjects_dir, subject_id)
     if not os.path.isdir(subject_dir):
-        ValueError("Directory does not exist: %s" % subject_dir)
+        raise ValueError("Directory does not exist: %s" % subject_dir)
 
     # Create temporary directory to store intermediate files
     temp_dir = tempfile.mkdtemp(prefix="recon_all_custom_wm_mask_",

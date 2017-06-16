@@ -17,6 +17,8 @@ import json
 from pprint import pprint
 import nibabel
 import numpy
+import textwrap
+from argparse import RawTextHelpFormatter
 
 # Bredala import
 try:
@@ -50,7 +52,7 @@ __hopla__ = ["runtime", "inputs", "outputs"]
 
 
 # Script documentation
-doc = """
+DOC = """
 Freesurfer conversion
 ~~~~~~~~~~~~~~~~~~~~~
 
@@ -113,46 +115,74 @@ def is_directory(dirarg):
     return dirarg
 
 
-parser = argparse.ArgumentParser(description=doc)
-parser.add_argument(
-    "-v", "--verbose", dest="verbose", type=int, choices=[0, 1, 2], default=0,
-    help="increase the verbosity level: 0 silent, [1, 2] verbose.")
-parser.add_argument(
-    "-e", "--erase", dest="erase", action="store_true",
-    help="if activated, clean the result folder.")
-parser.add_argument(
-    "-c", "--config", dest="fsconfig", metavar="FILE",
-    help="the FreeSurfer configuration file.", type=is_file)
-parser.add_argument(
-    "-d", "--fsdir", dest="fsdir", required=True, metavar="PATH",
-    help="the FreeSurfer processing home directory.", type=is_directory)
-parser.add_argument(
-    "-o", "--outdir", dest="outdir", required=True, metavar="PATH",
-    help="the FreeSurfer conversion home directory.", type=is_directory)
-parser.add_argument(
-    "-s", "--subjectid", dest="subjectid", required=True,
-    help="the subject identifier.")
-parser.add_argument(
-    "-m", "--midgray", dest="midgray",  action="store_true",
-    help=("if activated, compute the mid thickness surfaces."))
-parser.add_argument(
-    "-r", "--surfreg", dest="surfreg", choices=["lh", "rh", "lhrh"],
-    help=("if set, surface-based interhemispheric registration using the "
-          "specified hemisphere."))
-parser.add_argument(
-    "-t", "--templatesym", dest="templatesym", type=is_directory,
-    help=("path to the 'fsaverage_sym' template."))
-args = parser.parse_args()
+def get_cmd_line_args():
+    """
+    Create a command line argument parser and return a dict mapping
+    <argument name> -> <argument value>.
+    """
+    parser = argparse.ArgumentParser(
+        prog="python pyfreesurfer_conversion",
+        description=textwrap.dedent(DOC),
+        formatter_class=RawTextHelpFormatter)
+
+    # Required arguments
+    required = parser.add_argument_group("required arguments")
+    required.add_argument(
+        "-d", "--fsdir",
+        required=True, metavar="PATH", type=is_directory,
+        help="the FreeSurfer processing home directory.")
+    required.add_argument(
+        "-o", "--outdir",
+        required=True, metavar="PATH", type=is_directory,
+        help="the FreeSurfer conversion home directory.")
+    parser.add_argument(
+        "-s", "--subjectid",
+        required=True,
+        help="the subject identifier.")
+
+    # Optional arguments
+    parser.add_argument(
+        "-v", "--verbose",
+        type=int, choices=[0, 1, 2], default=0,
+        help="increase the verbosity level: 0 silent, [1, 2] verbose.")
+    parser.add_argument(
+        "-e", "--erase",
+        action="store_true",
+        help="if activated, clean the result folder.")
+    parser.add_argument(
+        "-c", "--config", dest="fsconfig",
+        metavar="FILE", type=is_file,
+        help="the FreeSurfer configuration file.")
+    parser.add_argument(
+        "-m", "--midgray",
+        action="store_true",
+        help=("if activated, compute the mid thickness surfaces."))
+    parser.add_argument(
+        "-r", "--surfreg",
+        choices=["lh", "rh", "lhrh"],
+        help=("if set, surface-based interhemispheric registration using the "
+              "specified hemisphere."))
+    parser.add_argument(
+        "-t", "--templatesym",
+        type=is_directory,
+        help=("path to the 'fsaverage_sym' template."))
+
+    # Create a dict of arguments to pass to the 'main' function
+    args = parser.parse_args()
+    if args.fsconfig is None:
+        args.fsconfig = DEFAULT_FREESURFER_PATH
+
+    return args
 
 
 """
-First construct the subject FreeSurfer directory and check its existance on
-the file system.
+Parse the command line.
 """
+args = get_cmd_line_args()
 tool = "pyfreesurfer_conversion"
 timestamp = datetime.now().isoformat()
 tool_version = version
-freesurfer_config = args.fsconfig or DEFAULT_FREESURFER_PATH
+freesurfer_config = args.fsconfig
 freesurfer_version = FSWrapper([], freesurfer_config).version
 params = locals()
 runtime = dict([(name, params[name])

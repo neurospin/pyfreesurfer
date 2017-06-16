@@ -85,12 +85,16 @@ class FreeSurferMRIBinarize(unittest.TestCase):
 
         # Test execution
         mri_binarize(**self.kwargs)
+        cenv = {}
+        if "SUBJECTS_DIR" in os.environ:
+            cenv = {"SUBJECTS_DIR": os.environ["SUBJECTS_DIR"]}
         self.assertEqual([
-            mock.call(["which", "mri_binarize"], env={}, stderr=-1, stdout=-1),
+            mock.call(["which", "mri_binarize"],
+                      env=cenv, stderr=-1, stdout=-1),
             mock.call(["mri_binarize", "--i", self.kwargs["inputfile"],
                        "--o", self.kwargs["outputfile"], "--match"] +
                       self.kwargs["match"] + ["--wm"],
-                      env={}, stderr=-1, stdout=-1)],
+                      env=cenv, stderr=-1, stdout=-1)],
             self.mock_popen.call_args_list)
         self.assertEqual(len(self.mock_env.call_args_list), 1)
 
@@ -197,12 +201,16 @@ class FreeSurferMRIConvert(unittest.TestCase):
                                       basename + ".native.nii.gz")
         reference_file = os.path.join(self.kwargs["fsdir"], "Lola", "mri",
                                       "rawavg.mgz")
+        cenv = {}
+        if "SUBJECTS_DIR" in os.environ:
+            cenv = {"SUBJECTS_DIR": os.environ["SUBJECTS_DIR"]}
         self.assertEqual([
-            mock.call(["which", "mri_convert"], env={}, stderr=-1, stdout=-1),
+            mock.call(["which", "mri_convert"],
+                      env=cenv, stderr=-1, stdout=-1),
             mock.call(["mri_convert", "--resample_type",
                        self.kwargs["interpolation"], "--reslice_like",
                        reference_file, mock_glob.return_value[0],
-                       converted_file], env={}, stderr=-1, stdout=-1)],
+                       converted_file], env=cenv, stderr=-1, stdout=-1)],
             self.mock_popen.call_args_list)
         self.assertEqual(len(self.mock_env.call_args_list), 1)
 
@@ -328,8 +336,12 @@ class FreeSurferMRIVol2Surf(unittest.TestCase):
 
         # Test execution
         mri_vol2surf(**self.kwargs)
+        cenv = {}
+        if "SUBJECTS_DIR" in os.environ:
+            cenv = {"SUBJECTS_DIR": os.environ["SUBJECTS_DIR"]}
         self.assertEqual([
-            mock.call(["which", "mri_vol2surf"], env={}, stderr=-1, stdout=-1),
+            mock.call(["which", "mri_vol2surf"],
+                      env=cenv, stderr=-1, stdout=-1),
             mock.call(["mri_vol2surf", "--src", self.kwargs["volume_file"],
                        "--out", self.kwargs["out_texture_file"],
                        "--srcreg", self.kwargs["dat_file"], "--hemi",
@@ -338,7 +350,7 @@ class FreeSurferMRIVol2Surf(unittest.TestCase):
                        "--surf", self.kwargs["surface_name"], "--sd",
                        self.kwargs["fsdir"], "--srcsubject",
                        self.kwargs["sid"], "--noreshape", "--out_type",
-                       "mgz"], env={}, stderr=-1, stdout=-1)],
+                       "mgz"], env=cenv, stderr=-1, stdout=-1)],
             self.mock_popen.call_args_list)
         self.assertEqual(len(self.mock_env.call_args_list), 1)
 

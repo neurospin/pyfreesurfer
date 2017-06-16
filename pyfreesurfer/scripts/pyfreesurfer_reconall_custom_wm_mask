@@ -12,8 +12,9 @@ import os
 import argparse
 import datetime
 import json
-
 from pprint import pprint
+import textwrap
+from argparse import RawTextHelpFormatter
 
 # Package
 import pyfreesurfer
@@ -25,6 +26,7 @@ from pyfreesurfer.wrapper import FSWrapper
 # Parameters to keep trace
 __hopla__ = ["runtime", "inputs", "outputs"]
 
+# Script documentation
 DOC = """
 Assuming you have run recon-all (at least upto wm.mgz creation), this
 script allows to rerun recon-all using a custom white matter mask.
@@ -57,7 +59,11 @@ def get_cmd_line_args():
     usage = ("%(prog)s -s <subject id> -w <path> [-k] [-S <dir>] "
              "[-T <path>] [-c <path>] [-v <int>]")
     prog = "python pyfreesurfer_reconall_custom_wm_mask"
-    parser = argparse.ArgumentParser(prog=prog, usage=usage, description=DOC)
+    parser = argparse.ArgumentParser(
+        prog=prog,
+        usage=usage,
+        description=textwrap.dedent(DOC),
+        formatter_class=RawTextHelpFormatter)
 
     # Required arguments
     parser.add_argument("-s", "--subject-id", required=True, metavar="<id>",

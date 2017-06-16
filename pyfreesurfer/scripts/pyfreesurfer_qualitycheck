@@ -15,6 +15,8 @@ import shutil
 from datetime import datetime
 import json
 from pprint import pprint
+import textwrap
+from argparse import RawTextHelpFormatter
 
 # Bredala import
 try:
@@ -51,7 +53,7 @@ __hopla__ = ["runtime", "inputs", "outputs"]
 
 
 # Script documentation
-doc = """
+DOC = """
 FreeSurfer Quality Check
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -60,11 +62,8 @@ Inspect the results returned by the FreeSurfer segmentation.
 Steps:
 
 1- Create the population statistic.
-
 2- Create polar plots.
-
 3- Create white/pial mesh overlays.
-
 4- Compress the FreeSurfer surfaces.
 
 Command:
@@ -102,55 +101,86 @@ def is_directory(dirarg):
     return dirarg
 
 
-parser = argparse.ArgumentParser(description=doc)
-parser.add_argument(
-    "-v", "--verbose", dest="verbose", type=int, choices=[0, 1, 2], default=0,
-    help="increase the verbosity level: 0 silent, [1, 2] verbose.")
-parser.add_argument(
-    "-e", "--erase", dest="erase", action="store_true",
-    help="if activated, clean the result folder if already created.")
-parser.add_argument(
-    "-C", "--clientname", dest="clientname", default="NC",
-    help="the client name.")
-parser.add_argument(
-    "-P", "--projectname", dest="projectname", required=True,
-    help="the project name.")
-parser.add_argument(
-    "-T", "--timestep", dest="timestep", required=True,
-    help="the time step assocaited to the diffusion dataset.")
-parser.add_argument(
-    "-c", "--fsconfig", dest="fsconfig", metavar="FILE",
-    help="the FreeSurfer configuration file.", type=is_file)
-parser.add_argument(
-    "-m", "--statdir", dest="statdir", required=True, metavar="PATH",
-    help="the path to the summary FreeSurfer 'stats'.", type=is_directory)
-parser.add_argument(
-    "-d", "--fsdir", dest="fsdir", required=True, metavar="PATH",
-    help="the FreeSurfer processing home directory.", type=is_directory)
-parser.add_argument(
-    "-o", "--outdir", dest="outdir", metavar="PATH", type=is_directory,
-    help="the FreeSurfer QC home directory, default is 'fsdir'.")
-parser.add_argument(
-    "-s", "--subjectid", dest="subjectid", required=True,
-    help="the subject identifier.")
-parser.add_argument(
-    "-i", "--incr", dest="incr", default=1, type=int,
-    help="the increment between two slices.")
-parser.add_argument(
-    "-a", "--cutaxis", dest="cutaxis", nargs="+", choices=["C", "A", "S"],
-    help=("the cut axis, use 'C' for Coronal, 'A' for Axial and 'S' for "
-          "Sagittal."))
-args = parser.parse_args()
+def get_cmd_line_args():
+    """
+    Create a command line argument parser and return a dict mapping
+    <argument name> -> <argument value>.
+    """
+    parser = argparse.ArgumentParser(
+        prog="python pyfreesurfer_qualitycheck",
+        description=textwrap.dedent(DOC),
+        formatter_class=RawTextHelpFormatter)
+
+    # Required arguments
+    required = parser.add_argument_group("required arguments")
+    required.add_argument(
+        "-P", "--projectname",
+        required=True,
+        help="the project name.")
+    required.add_argument(
+        "-T", "--timestep",
+        required=True,
+        help="the time step assocaited to the diffusion dataset.")
+    required.add_argument(
+        "-m", "--statdir",
+        required=True, metavar="PATH", type=is_directory,
+        help="the path to the summary FreeSurfer 'stats'.")
+    required.add_argument(
+        "-d", "--fsdir",
+        required=True, metavar="PATH", type=is_directory,
+        help="the FreeSurfer processing home directory.")
+    required.add_argument(
+        "-s", "--subjectid",
+        required=True,
+        help="the subject identifier.")
+    required.add_argument(
+        "-a", "--cutaxis",
+        nargs="+", choices=["C", "A", "S"],
+        help=("the cut axis, use 'C' for Coronal, 'A' for Axial and 'S' for "
+              "Sagittal."))
+
+    # Optional arguments
+    parser.add_argument(
+        "-v", "--verbose",
+        type=int, choices=[0, 1, 2], default=0,
+        help="increase the verbosity level: 0 silent, [1, 2] verbose.")
+    parser.add_argument(
+        "-e", "--erase",
+        action="store_true",
+        help="if activated, clean the result folder if already created.")
+    parser.add_argument(
+        "-C", "--clientname",
+        default="NC",
+        help="the client name.")
+    parser.add_argument(
+        "-c", "--fsconfig",
+        metavar="FILE", type=is_file,
+        help="the FreeSurfer configuration file.")
+    parser.add_argument(
+        "-o", "--outdir",
+        metavar="PATH", type=is_directory,
+        help="the FreeSurfer QC home directory, default is 'fsdir'.")
+    parser.add_argument(
+        "-i", "--incr",
+        default=1, type=int,
+        help="the increment between two slices.")
+
+    # Create a dict of arguments to pass to the 'main' function
+    args = parser.parse_args()
+    if args.fsconfig is None:
+        args.fsconfig = DEFAULT_FREESURFER_PATH
+
+    return args
 
 
 """
-First construct the subject FreeSurfer directory and check its existance on
-the file system.
+Parse the command line.
 """
+args = get_cmd_line_args()
 tool = "pyfreesurfer_qualitycheck"
 timestamp = datetime.now().isoformat()
 tool_version = version
-freesurfer_config = args.fsconfig or DEFAULT_FREESURFER_PATH
+freesurfer_config = args.fsconfig
 freesurfer_version = FSWrapper([], freesurfer_config).version
 params = locals()
 runtime = dict([(name, params[name])
