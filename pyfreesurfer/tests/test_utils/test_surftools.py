@@ -58,6 +58,17 @@ class FreeSurferTriSurface(unittest.TestCase):
         self.labels = numpy.asarray(range(6))
         meta = dict((index, {"color": (1, 1, 1, 1)}) for index in self.labels)
 
+        # Deal with vtk
+        try:
+            import vtk
+        except:
+            class dummy_vtk(object):
+                def nop(*args, **kwargs): pass
+
+                def __getattr__(self, _): return self.nop
+            sys.modules["vtk"] = dummy_vtk()
+
+        # Define default arguments
         self.kwargs = {
             "vertices": numpy.asarray(verts),
             "triangles": numpy.asarray(faces),
@@ -138,24 +149,27 @@ class FreeSurferTriSurface(unittest.TestCase):
         self.assertEqual(6, nb_of_labels)
 
     @mock.patch("vtk.vtkPolyDataWriter")
-    @mock.patch("vtk.util.numpy_support.vtk_to_numpy")
+    @mock.patch("vtk.util")
     @mock.patch("vtk.vtkSelectEnclosedPoints")
     @mock.patch("pyfreesurfer.utils.surftools.TriSurface._polydata")
     @mock.patch("vtk.vtkPolyData")
     @mock.patch("vtk.vtkPoints")
     def test_voxelize(self, mock_vtkpoint, mock_vtkpoly, mock_poly,
-                      mock_vtkslect, mock_vtknp, mock_vtkwrite):
+                      mock_vtkslect, mock_vtkutil, mock_vtkwrite):
         """ Test the voxelize vtk method.
         """
         # Set the mocked functions returned values
         mock_poly.return_value = object()
-        mock_vtknp.return_value = numpy.ones((3, 3, 3), dtype=int)
+        mock_vtkutil.numpy_support.vtk_to_numpy.return_value = numpy.ones(
+            (3, 3, 3), dtype=int)
 
         # Test execution
         surf = TriSurface(**self.kwargs)
         out_file = "/my/path/mock_destination"
         inside_array = surf.voxelize(shape=(3, 3, 3), tol=0)
-        self.assertTrue(numpy.allclose(inside_array, mock_vtknp.return_value))
+        self.assertTrue(numpy.allclose(
+            inside_array,
+            mock_vtkutil.numpy_support.vtk_to_numpy.return_value))
 
 
 class FreeSurferApplyAffine(unittest.TestCase):

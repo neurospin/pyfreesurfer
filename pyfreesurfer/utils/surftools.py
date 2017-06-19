@@ -202,7 +202,6 @@ class TriSurface(object):
         """
         # Import here since vtk is not required by the package
         import vtk
-        from vtk.util.numpy_support import vtk_to_numpy
 
         # Construct the mesh grid from shape
         nx, ny, nz = shape
@@ -231,7 +230,8 @@ class TriSurface(object):
         enclosed_pts.Complete()
 
         # Convert result as a numpy array
-        inside_array = vtk_to_numpy(inside_points).reshape(ny, nx, nz)
+        inside_array = vtk.util.numpy_support.vtk_to_numpy(
+            inside_points).reshape(ny, nx, nz)
         inside_array = numpy.swapaxes(inside_array, 1, 0)
 
         return inside_array
