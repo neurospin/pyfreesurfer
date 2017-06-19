@@ -34,7 +34,7 @@ def mkpreproc_sess(
         fsd="bold",
         perrun=True,
         persession=False,
-        fwhm=5.,
+        fwhm=5,
         update=True,
         force=False,
         sliceorder=None,
@@ -148,7 +148,7 @@ def mkpreproc_sess(
     else:
         cmd += ["-s", sessid]
     if sliceorder is not None:
-        cmd.extend(sliceorder)  # -stc
+        cmd.extend(["-stc", sliceorder])
     for value, name in ((perrun, "-per-run"), (persession, "-per-session"),
                         (update, "-update"), (force, "-force"),
                         (mni3052mm, "-mni305-2mm"), (mni3051mm, "-mni305-1mm"),
@@ -159,7 +159,16 @@ def mkpreproc_sess(
             cmd.append(name)
     fsl_env = environment(fslconfig)
     wrap = FSWrapper(cmd, shfile=fsconfig, env=fsl_env, subjects_dir=fsdir)
-    wrap()
+
+    # Manage first execution shell syntax bug
+    while True:
+        try:
+            wrap()
+        except Exception as e:
+            if "if: Badly formed number." not in e.message:
+                raise
+        else:
+            break
 
     # QC
     # > Motion Correction plot: gives the vector motion at each time point for
@@ -226,7 +235,7 @@ def mkmodel_sess(
         fsd="bold",
         perrun=True,
         persession=False,
-        fwhm=5.,
+        fwhm=5,
         mni3052mm=True,
         mni3051mm=False,
         blocked_design=True,
@@ -244,6 +253,7 @@ def mkmodel_sess(
         nuisreg=None,
         nskip=4,
         fsconfig=DEFAULT_FREESURFER_PATH,
+        sliceorder=None,
         verbose=0):
     """ Configure First Level GLM Analysis for event-related and blocked
     design.
@@ -344,6 +354,8 @@ def mkmodel_sess(
         # Set preproc options
         cmd = ["mkanalysis-sess", "-fsd", fsd, "-paradigm", "odd.even.par",
                "-analysis", analysis_name, "-TR", str(tr), "-force"]
+        if sliceorder is not None:
+            cmd.extend(["-stc", sliceorder])
         if funcstem is None:
             cmd += ["-fwhm", str(fwhm)]
         else:
@@ -351,11 +363,12 @@ def mkmodel_sess(
         if space in ["lh", "rh"]:
             cmd += ["-surface", "fsaverage", space]
         else:
-            cmd += ["-mni305"]
+            for value, name in ((mni3052mm, ["-mni305", "2"]),
+                                (mni3051mm, ["-mni305", "1"])):
+                if value:
+                    cmd.extend(name)
         for value, name in ((perrun, ["-per-run"]),
-                            (persession, ["-per-session"]),
-                            (mni3052mm, ["-mni305", "2"]),
-                            (mni3051mm, ["-mni305", "1"])):
+                            (persession, ["-per-session"])):
             if value:
                 cmd.extend(name)
 
