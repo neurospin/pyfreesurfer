@@ -59,10 +59,15 @@ class FreeSurferTriSurface(unittest.TestCase):
         meta = dict((index, {"color": (1, 1, 1, 1)}) for index in self.labels)
 
         # Deal with vtk
+        self.is_vtk_installed = True
         try:
             import vtk
         except:
+            self.is_vtk_installed = False
+
             class dummy_vtk(object):
+                VTK_MAJOR_VERSION = 6
+
                 def nop(*args, **kwargs): pass
 
                 def __getattr__(self, _): return self.nop
@@ -75,6 +80,12 @@ class FreeSurferTriSurface(unittest.TestCase):
             "inflated_vertices": numpy.asarray(verts),
             "labels": self.labels
         }
+
+    def tearDown(self):
+        """ Run after each test.
+        """
+        if not self.is_vtk_installed:
+            del sys.modules["vtk"]
 
     def test_normal_execution(self):
         """ Test the normal behaviour of the function.
