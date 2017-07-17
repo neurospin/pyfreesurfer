@@ -131,7 +131,6 @@ class TriSurface(object):
         writer = vtk.vtkPolyDataWriter()
         writer.SetDataModeToAscii()
         writer.SetFileName(outfile)
-        print(vtk.VTK_MAJOR_VERSION)
         if vtk.VTK_MAJOR_VERSION <= 5:
             writer.SetInput(polydata)
         else:
