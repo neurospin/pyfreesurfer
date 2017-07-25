@@ -124,7 +124,7 @@ def trac_all(outdir, subject_id, dwi, bvals, bvecs, bedpostx_dir,
              subjects_dir=None, do_eddy=False, do_rotate_bvecs=True,
              do_bbregister=True, do_register_mni=True, temp_dir=None,
              fsconfig=DEFAULT_FREESURFER_PATH):
-    """
+    """ Pathway reconstruction.
 
     Parameters
     ----------
