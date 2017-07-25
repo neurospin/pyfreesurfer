@@ -1,0 +1,163 @@
+#! /usr/bin/env python
+##########################################################################
+# NSAp - Copyright (C) CEA, 2013 - 2016
+# Distributed under the terms of the CeCILL-B license, as published by
+# the CEA-CNRS-INRIA. Refer to the LICENSE file or to
+# http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
+# for details.
+##########################################################################
+
+# System modules
+from __future__ import print_function
+import os
+import re
+import json
+import glob
+import argparse
+import textwrap
+import datetime
+from pprint import pprint
+from argparse import RawTextHelpFormatter
+
+# Bredala import
+try:
+    import bredala
+    bredala.USE_PROFILER = False
+    bredala.register("pyfreesurfer.plots.formatting",
+                     names=["sort_features"])
+except:
+    pass
+
+# Package
+import pyfreesurfer
+from pyfreesurfer.plots.formatting import sort_features
+
+# Third party import
+import pandas
+
+
+# Parameters to keep trace
+__hopla__ = ["runtime", "inputs", "outputs"]
+
+
+# Script documentation
+DOC = """
+FreeSurfer stat check
+---------------------
+
+Run this command to check the FreeSurfer stat summary file consistency, ie
+regroup similar features/subjects.
+
+python $HOME/git/pyfreesurfer/pyfreesurfer/scripts/pyfreesurfer_statcheck \
+    -v 2 \
+    -i /neurospin/imagen/FU2/processed/freesurfer_stats \
+    -o /neurospin/nsap/processed/imagen/data/freesurfer_statcheck/FU2
+"""
+
+
+def is_directory(dirarg):
+    """ Type for argparse - checks that directory exists.
+    """
+    if not os.path.isdir(dirarg):
+        raise argparse.ArgumentError(
+            "The directory '{0}' does not exist!".format(dirarg))
+    return dirarg
+
+
+def get_cmd_line_args():
+    """
+    Create a command line argument parser and return a dict mapping
+    <argument name> -> <argument value>.
+    """
+    parser = argparse.ArgumentParser(
+        prog="python pyfreesurfer_statcheck",
+        description=textwrap.dedent(DOC),
+        formatter_class=RawTextHelpFormatter)
+
+    # Required arguments
+    required = parser.add_argument_group("required arguments")
+    required.add_argument(
+        "-i", "--indir",
+        required=True, metavar="<PATH>", type=is_directory,
+        help="the folder that contains the FreeSurfer stat summary files of "
+             "the form '*.csv' (can be tuned by setting the --regex option).")
+    required.add_argument(
+        "-o", "--outdir",
+        required=True, metavar="<PATH>", type=is_directory,
+        help="the destination folder.")
+
+    # Optional arguments
+    parser.add_argument(
+        "-r", "--regex",
+        default="*.csv",
+        help="the summary stat file pattern.")
+    parser.add_argument(
+        "-v", "--verbose",
+        type=int, choices=[0, 1, 2], default=0,
+        help="increase the verbosity level: 0 silent, [1, 2] verbose.")
+
+    # Create a dict of arguments to pass to the 'main' function
+    args = parser.parse_args()
+    kwargs = vars(args)
+    verbose = kwargs.pop("verbose")
+
+    return kwargs, verbose
+
+
+"""
+Parse the command line.
+"""
+inputs, verbose = get_cmd_line_args()
+
+
+"""
+Runtime informations.
+"""
+runtime = dict(tool="pyfreesurfer_statcheck",
+               tool_version=pyfreesurfer.__version__,
+               timestamp=datetime.datetime.now().isoformat())
+if verbose > 0:
+    pprint("[info] Starting stat summary checking...")
+    pprint("[info] Runtime:")
+    pprint(runtime)
+    pprint("[info] Inputs:")
+    pprint(inputs)
+
+
+"""
+Parse the stat folder.
+"""
+statfiles = glob.glob(os.path.join(inputs["indir"], inputs["regex"]))
+
+
+"""
+Run.
+"""
+features_snaps = []
+for path in statfiles:
+    if verbose > 0:
+        print("[info] Loading '{0}'...".format(path))
+    df = pandas.read_csv(path, sep=",")
+    name = os.path.basename(path).split(".")[0]
+    features_snaps.append(
+        sort_features(df.values[:, 1:], inputs["outdir"], name, verbose=verbose))
+
+
+"""
+Store inputs, runtime and outputs as JSONs in a 'logs' dir.
+"""
+logdir = os.path.join(inputs["outdir"], "logs")
+if not os.path.isdir(logdir):
+    os.mkdir(logdir)
+params = locals()
+outputs = dict([(name, params[name]) for name in ("features_snaps", )])
+for name, final_struct in [("inputs", inputs), ("outputs", outputs),
+                           ("runtime", runtime)]:
+    log_file = os.path.join(logdir, "{0}.json".format(name))
+    with open(log_file, "wt") as open_file:
+        json.dump(final_struct, open_file, sort_keys=True, check_circular=True,
+                  indent=4)
+if args.verbose > 1:
+    print("[final]")
+    pprint(outputs)
+
