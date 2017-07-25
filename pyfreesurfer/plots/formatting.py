@@ -44,7 +44,6 @@ def sort_features(features, outdir, name, verbose=0):
     # Normalize features
     scaler = preprocessing.StandardScaler().fit(features)
     scaled_features = scaler.transform(features)
-        
 
     # Use the seaborn template to create a pretty display
     with plt.style.context("seaborn-deep"):
@@ -72,7 +71,7 @@ def sort_features(features, outdir, name, verbose=0):
 
         # Organize the input feature array
         idx1 = dendogram_1["leaves"]
-        idx2 = dendogram_2["leaves"]       
+        idx2 = dendogram_2["leaves"]
         axmatrix = fig.add_axes([0.3, 0.15, 0.6, 0.73])
         matrix = scaled_features[:, idx2]
         matrix = matrix[idx1, :]

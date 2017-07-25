@@ -100,7 +100,7 @@ def trac_all(outdir, subjects_dir=None, temp_dir=None,
                 outliers.add(match.replace("Found outlier path: ", ""))
     with open(outlierfile, "wt") as open_file:
         json.dump(list(outliers), open_file, indent=4)
-    
+
     return statdir, outlierfile
 
 
