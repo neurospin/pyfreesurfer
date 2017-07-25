@@ -7,17 +7,174 @@
 ##########################################################################
 
 # Sytem import
+import re
 import os
 import csv
+import json
 import glob
 import numpy
-import nibabel
 import shutil
+import nibabel
+import tempfile
 
 # Pyfreesurfer import
-from pyfreesurfer import DEFAULT_FREESURFER_PATH
 from pyfreesurfer.wrapper import FSWrapper
+from pyfreesurfer import DEFAULT_FSL_PATH
+from pyfreesurfer import DEFAULT_FREESURFER_PATH
 from pyfreesurfer.conversions.surfconvs import mri_surf2surf
+from pyfreesurfer.utils.filetools import get_or_check_freesurfer_subjects_dir
+
+
+CONFIG_TEMPLATE = """
+setenv SUBJECTS_DIR {subjects_dir}
+set subjlist = ({subjlist})
+set dtroot = {dtroot}
+"""
+
+
+def trac_all(outdir, subjects_dir=None, temp_dir=None,
+             fsconfig=DEFAULT_FREESURFER_PATH, fslconfig=DEFAULT_FSL_PATH):
+    """ Anisotropy and diffusivity along the trajectory of a pathway.
+
+    Parameters
+    ----------
+    outdir: str
+        Root directory where to create the subject's output directory.
+        Created if not existing.
+    subjects_dir: str, default None
+        Path to the FreeSurfer subjects directory. Required if the
+        environment variable $SUBJECTS_DIR is not set.
+    temp_dir: str, default None
+        Directory to use to store temporary files. By default OS tmp dir.
+    fsconfig: str, default <pyfreesurfer.DEFAULT_FREESURFER_PATH>
+        Path to the FreeSurfer configuration file.
+
+    Returns
+    -------
+    statdir: str
+        The directory containing the FreeSurfer summary files.
+    outlierfile: str
+        A file that contains the subjects flagged as outliers.
+    """
+    # FreeSurfer $SUBJECTS_DIR has to be passed or set as an env variable
+    subjects_dir = get_or_check_freesurfer_subjects_dir(subjects_dir)
+
+    # Find all the subjects with a pathway stat file
+    statdirs = glob.glob(os.path.join(subjects_dir, "*", "dpath"))
+    subjects = set([path.split(os.sep)[-2] for path in statdirs])
+    subjects = " ".join(subjects)
+
+    # Create directory for temporary files
+    temp_dir = tempfile.mkdtemp(prefix="trac-all_", dir=temp_dir)
+
+    # Create configuration file
+    config_str = CONFIG_TEMPLATE.format(subjects_dir=subjects_dir,
+                                        subjlist=subjects,
+                                        dtroot=subjects_dir)
+    path_config = os.path.join(temp_dir, "trac-all.dmrirc")
+    with open(path_config, "w") as f:
+        f.write(config_str)
+
+    # Run Tracula preparation
+    cmd_prep = ["trac-all", "-stat", "-c", path_config]
+    FSWrapper(cmd_prep, shfile=fsconfig, subjects_dir=subjects_dir,
+              add_fsl_env=True, fsl_sh=fslconfig)()
+
+    # Move results to destination folder
+    statdir = os.path.join(subjects_dir, "stats")
+    shutil.move(statdir, outdir)
+
+    # Clean tmp dir
+    shutil.rmtree(temp_dir)
+
+    # Detect outliers
+    statdir = os.path.join(outdir, "stats")
+    outlierfile = os.path.join(outdir, "outliers.json")
+    logfiles = glob.glob(os.path.join(statdir, "*.log"))
+    outliers = set()
+    regex = r"^Found outlier path: .*"
+    for path in logfiles:
+        with open(path, "rt") as open_file:
+            for match in re.findall(regex, open_file.read(),
+                                    flags=re.MULTILINE):
+                outliers.add(match.replace("Found outlier path: ", ""))
+    with open(outlierfile, "wt") as open_file:
+        json.dump(list(outliers), open_file, indent=4)
+    
+    return statdir, outlierfile
+
+
+def tractstats2table(fsdir, outdir, fsconfig=DEFAULT_FREESURFER_PATH):
+    """ Generate text/ascii tables of FreeSurfer tracula pathways anisotropy
+    and diffusivity summary from 'dpath/<hemi>.<path>/pathstats.overall.txt'
+    and 'dpath/<hemi>.<path>/pathstats.byvoxel.txt'.
+
+    This can then be easily imported into a spreadsheet and/or stats program.
+
+    Binding over the FreeSurfer's 'tractstats2table' command.
+
+    Parameters
+    ----------
+    fsdir: (mandatory)
+        The freesurfer working directory with all the subjects.
+    outdir: str (mandatory)
+        The destination folder.
+    fsconfig: str (optional)
+        The FreeSurfer configuration batch.
+
+    Return
+    ------
+    statfiles: list of str
+        The FreeSurfer summary files.
+    """
+    # Check input parameters
+    for path in (fsdir, outdir):
+        if not os.path.isdir(path):
+            raise ValueError("'{0}' is not a valid directory.".format(path))
+
+    # Parameter that will contain the output group statistics
+    statfiles = []
+
+    # Fist find all the subjects with a pathway stat file
+    pathstatfiles = glob.glob(
+        os.path.join(fsdir, "*", "dpath", "*", "pathstats.overall.txt"))
+
+    # Split these files by pathway names
+    pathwayfiles = {}
+    for path in pathstatfiles:
+        pathwayname = path.split(os.sep)[-2]
+        if pathwayname not in pathwayfiles:
+            pathwayfiles[pathwayname] = []
+        pathwayfiles[pathwayname].append(path)
+
+    # Save the FreeSurfer current working directory and set the new one
+    fscwd = None
+    if "SUBJECTS_DIR" in os.environ:
+        fscwd = os.environ["SUBJECTS_DIR"]
+    os.environ["SUBJECTS_DIR"] = fsdir
+
+    # Create the output stat directory
+    fsoutdir = os.path.join(outdir, "overall_stats")
+    if not os.path.isdir(fsoutdir):
+        os.mkdir(fsoutdir)
+
+    # Call freesurfer
+    for name, files in pathwayfiles.items():
+
+        statfile = os.path.join(fsoutdir, "{0}.csv".format(name))
+        statfiles.append(statfile)
+        cmd = [
+            "tractstats2table", "--inputs"] + files + [
+            "--overall", "--tablefile", statfile]
+
+        recon = FSWrapper(cmd, shfile=fsconfig)
+        recon()
+
+    # Restore the FreeSurfer working directory
+    if fscwd is not None:
+        os.environ["SUBJECTS_DIR"] = fscwd
+
+    return statfiles
 
 
 def population_summary(statsdir, sid=None):

@@ -1,0 +1,187 @@
+#! /usr/bin/env python
+##########################################################################
+# NSAp - Copyright (C) CEA, 2017
+# Distributed under the terms of the CeCILL-B license, as published by
+# the CEA-CNRS-INRIA. Refer to the LICENSE file or to
+# http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
+# for details.
+##########################################################################
+
+# System import
+from __future__ import print_function
+import os
+import json
+import shutil
+import argparse
+import textwrap
+from pprint import pprint
+from datetime import datetime
+from argparse import RawTextHelpFormatter
+
+# Bredala import
+try:
+    import bredala
+    bredala.USE_PROFILER = False
+    bredala.register("pyfreesurfer.utils.stattools",
+                     names=["tractstats2table", "trac_all"])
+except:
+    pass
+
+# Pyfreesurfer import
+from pyfreesurfer import __version__ as version
+from pyfreesurfer.utils.stattools import tractstats2table
+from pyfreesurfer.utils.stattools import trac_all
+from pyfreesurfer.wrapper import FSWrapper
+from pyfreesurfer import DEFAULT_FREESURFER_PATH
+from pyfreesurfer import DEFAULT_FSL_PATH
+
+
+# Parameters to keep trace
+__hopla__ = ["runtime", "inputs", "outputs"]
+
+
+# Script documentation
+DOC = """
+Freesurfer statistics
+~~~~~~~~~~~~~~~~~~~~~
+
+Generate text/ascii tables of FreeSurfer tracula pathways anisotropy
+and diffusivity summary 'dpath/<hemi>.<path>/pathstats.overall.txt'.
+This can then be easily imported into a spreadsheet and/or stats program.
+
+Command:
+
+python $HOME/git/pyfreesurfer/pyfreesurfer/scripts/pyfreesurfer_tracall_stats \
+    -v 2 \
+    -c /i2bm/local/freesurfer/SetUpFreeSurfer.sh \
+    -d /neurospin/nsap/processed/imagen/data/tracula/FU2 \
+    -o /neurospin/nsap/processed/imagen/data/tracula_stats/FU2
+"""
+
+
+def is_file(filearg):
+    """ Type for argparse - checks that file exists but does not open.
+    """
+    if not os.path.isfile(filearg):
+        raise argparse.ArgumentError(
+            "The file '{0}' does not exist!".format(filearg))
+    return filearg
+
+
+def is_directory(dirarg):
+    """ Type for argparse - checks that directory exists.
+    """
+    if not os.path.isdir(dirarg):
+        raise argparse.ArgumentError(
+            "The directory '{0}' does not exist!".format(dirarg))
+    return dirarg
+
+
+def get_cmd_line_args():
+    """
+    Create a command line argument parser and return a dict mapping
+    <argument name> -> <argument value>.
+    """
+    parser = argparse.ArgumentParser(
+        prog="python pyfreesurfer_tracall_stats",
+        description=textwrap.dedent(DOC),
+        formatter_class=RawTextHelpFormatter)
+
+    # Required arguments
+    required = parser.add_argument_group("required arguments")
+    required.add_argument(
+        "-d", "--fsdir",
+        required=True, metavar="<PATH>", type=is_directory,
+        help="the FreeSurfer processing home directory.")
+    required.add_argument(
+        "-o", "--outdir",
+        required=True, metavar="<PATH>", type=is_directory,
+        help="the destination folder.")
+
+    # Optional arguments
+    parser.add_argument(
+        "-v", "--verbose",
+        metavar="<INT>", type=int, choices=[0, 1, 2], default=0,
+        help="increase the verbosity level: 0 silent, [1, 2] verbose.")
+    parser.add_argument(
+        "-c", "--fsconfig",
+        metavar="<FILE>", type=is_file,
+        help="the FreeSurfer configuration file.")
+    parser.add_argument(
+        "-k", "--fslconfig",
+        metavar="<FILE>", type=is_file,
+        help="the FSL configuration file.")
+
+    # Create a dict of arguments to pass to the 'main' function
+    args = parser.parse_args()
+    if args.fsconfig is None:
+        args.fsconfig = DEFAULT_FREESURFER_PATH
+    kwargs = vars(args)
+    verbose = kwargs.pop("verbose")
+    if kwargs["fsconfig"] is None:
+        kwargs["fsconfig"] = DEFAULT_FREESURFER_PATH
+    if kwargs["fslconfig"] is None:
+        kwargs["fslconfig"] = DEFAULT_FSL_PATH
+
+    return kwargs, verbose
+
+
+"""
+Parse the command line.
+"""
+inputs, verbose = get_cmd_line_args()
+runtime = dict(tool="pyfreesurfer_tracall_stats",
+               tool_version=version,
+               fs_version=FSWrapper([], shfile=inputs["fsconfig"]).version,
+               timestamp=datetime.now().isoformat())
+outputs = None
+if verbose > 0:
+    pprint("[info] Starting FreeSurfer tracall cat stats...")
+    pprint("[info] Runtime:")
+    pprint(runtime)
+    pprint("[info] Inputs:")
+    pprint(inputs)
+
+
+"""
+Summarize all the subjects' pathway overall statistics
+"""
+overallfiles = tractstats2table(
+    inputs["fsdir"],
+    inputs["outdir"],
+    fsconfig=inputs["fsconfig"])
+if verbose > 1:
+    print("[result] Pathway overall stats: {0}.".format(overallfiles))
+
+""" 
+Summarize all the subjects' pathway by voxel statistics
+"""
+statdir, outlierfile = trac_all(
+    inputs["outdir"],
+    subjects_dir=inputs["fsdir"],
+    temp_dir=None,
+    fsconfig=inputs["fsconfig"],
+    fslconfig=inputs["fslconfig"])
+if verbose > 1:
+    print("[result] Pathway byvoxel stats: {0}.".format(statdir))
+    print("[result] Outliers: {0}.".format(outlierfile))
+
+
+"""
+Update the outputs and save them and the inputs in a 'logs' directory.
+"""
+logdir = os.path.join(inputs["outdir"], "logs")
+if not os.path.isdir(logdir):
+    os.mkdir(logdir)
+params = locals()
+outputs = dict([(name, params[name])
+               for name in ("overallfiles", "statdir")])
+for name, final_struct in [("inputs", inputs), ("outputs", outputs),
+                           ("runtime", runtime)]:
+    log_file = os.path.join(logdir, "{0}.json".format(name))
+    with open(log_file, "wt") as open_file:
+        json.dump(final_struct, open_file, sort_keys=True, check_circular=True,
+                  indent=4)
+if verbose > 1:
+    print("[final]")
+    pprint(outputs)
