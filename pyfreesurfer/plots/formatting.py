@@ -6,6 +6,11 @@
 # for details.
 ##########################################################################
 
+
+"""
+Modules that provides features manipulation tools.
+"""
+
 # System import
 from __future__ import print_function
 import os

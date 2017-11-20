@@ -25,6 +25,11 @@
 #     distribution.
 # -----------------------------------------------------------------------------
 
+
+"""
+Modules that provides openctm support.
+"""
+
 import os
 import ctypes
 from ctypes import *

@@ -6,6 +6,10 @@
 # for details.
 ##########################################################################
 
+"""
+Modules that provides image manipulation tools.
+"""
+
 # System import
 import os
 import glob

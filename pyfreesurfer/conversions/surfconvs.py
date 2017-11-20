@@ -379,9 +379,10 @@ def surf_convert(
 
     Note that all the returned vetices are given in the index coordinate
     system.
+
     The subject id in the t1 and surf files must appear in the 'sidpos'
-    position. For the default value '-3', the T1 path might look like:
-        xxx/subject_id/convert/t1.nii.gz
+    position. For the default value '-3', the T1 path might look like
+    'xxx/subject_id/convert/t1.nii.gz'
 
     Parameters
     ----------

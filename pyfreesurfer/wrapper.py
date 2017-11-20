@@ -6,6 +6,10 @@
 # for details.
 ##########################################################################
 
+"""
+Modules that provides tools to wrap FreeSurfer commands.
+"""
+
 # System import
 import os
 import subprocess

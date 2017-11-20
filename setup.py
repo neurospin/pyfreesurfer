@@ -24,20 +24,6 @@ pkgdata = {
                     "plots/tkmedit_slicer_labels.tcl",
                     "plot/resources/*.json"]
 }
-scripts = [
-    "pyfreesurfer/scripts/pyfreesurfer_conversion",
-    "pyfreesurfer/scripts/pyfreesurfer_datacheck",
-    "pyfreesurfer/scripts/pyfreesurfer_fmri",
-    "pyfreesurfer/scripts/pyfreesurfer_hcp",
-    "pyfreesurfer/scripts/pyfreesurfer_qualitycheck",
-    "pyfreesurfer/scripts/pyfreesurfer_reconall",
-    "pyfreesurfer/scripts/pyfreesurfer_reconall_custom_wm_mask",
-    "pyfreesurfer/scripts/pyfreesurfer_reconall_longitudinal",
-    "pyfreesurfer/scripts/pyfreesurfer_stats",
-    "pyfreesurfer/scripts/pyfreesurfer_textures",
-    "pyfreesurfer/scripts/pyfreesurfer_tracall",
-    "pyfreesurfer/scripts/pyfreesurfer_tracall_longitudinal"
-]
 
 setup(
     name=release_info["NAME"],
@@ -54,5 +40,5 @@ setup(
     extras_require=release_info["EXTRA_REQUIRES"],
     install_requires=release_info["REQUIRES"],
     package_data=pkgdata,
-    scripts=scripts
+    scripts=release_info["SCRIPTS"]
 )

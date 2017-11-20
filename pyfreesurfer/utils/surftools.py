@@ -6,6 +6,12 @@
 # for details.
 ##########################################################################
 
+
+"""
+Modules that provides surface manipulation tools.
+"""
+
+
 # System import
 import copy
 import numpy

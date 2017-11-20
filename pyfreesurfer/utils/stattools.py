@@ -6,6 +6,10 @@
 # for details.
 ##########################################################################
 
+"""
+Modules that provides stat file manipulation tools.
+"""
+
 # Sytem import
 import re
 import os

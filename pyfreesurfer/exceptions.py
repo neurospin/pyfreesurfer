@@ -7,6 +7,10 @@
 ##########################################################################
 
 
+"""
+Module that defines the package exceptions.
+"""
+
 class FreeSurferError(Exception):
     """ Base exception type for the package.
     """

@@ -6,6 +6,10 @@
 # for details.
 ##########################################################################
 
+"""
+Modules that provides tools to configure FreeSurfer.
+"""
+
 # System import
 import os
 import re

@@ -6,6 +6,10 @@
 # for details.
 ##########################################################################
 
+"""
+Modules that provides file manipulation tools.
+"""
+
 # System import
 import os
 import ctypes
@@ -158,8 +162,9 @@ def parse_fs_lut(path_lut):
 def load_look_up_table(path_lut):
     """ Load a Look Up Table, provided in the FreeSurfer LUT format,
     as 3 ordered lists: labels (ints), names, colors (RGBA tuples)
+
     Structure:
-        [.., 55, ..], [.., 'Right-Insula', .. ], [.., (80, 196, 98, 0), ..]
+    [.., 55, ..], [.., 'Right-Insula', .. ], [.., (80, 196, 98, 0), ..]
 
     Use dict(zip(<list1>, <list2>)) to get a map from one list to the other.
 

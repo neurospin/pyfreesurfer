@@ -6,6 +6,10 @@
 # for details.
 ##########################################################################
 
+"""
+Modules that provides polar plot tools.
+"""
+
 # System import
 import numpy as np
 import matplotlib.pyplot as plt

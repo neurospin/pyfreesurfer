@@ -11,18 +11,21 @@
 Wrapper around the HCP prefreesurfer, freesurfer and postfreesurfer
 scripts.
 
-Requirements for this module:
-  installed versions of:
-    - FSL (version 5.0.6),
-    - FreeSurfer (version 5.3.0-HCP),
-    - gradunwarp (HCP version 1.0.2) if doing gradient distortion correction
+**Requirements for this module**
 
-  environment:
-    - FSLDIR
-    - FREESURFER_HOME
-    - HCPPIPEDIR
-    - CARET7DIR
-    - PATH (to be able to find gradient_unwarp.py)
+Installed versions of:
+
+- FSL (version 5.0.6),
+- FreeSurfer (version 5.3.0-HCP),
+- gradunwarp (HCP version 1.0.2) if doing gradient distortion correction
+
+Environment:
+
+- FSLDIR
+- FREESURFER_HOME
+- HCPPIPEDIR
+- CARET7DIR
+- PATH (to be able to find gradient_unwarp.py)
 """
 
 # System import
@@ -47,14 +50,13 @@ def prefreesurfer_hcp(path, subject, t1, t2, fmapmag, fmapphase, hcpdir,
                       fsconfig=DEFAULT_FREESURFER_PATH):
     """ Performs all the HCP PreFreeSurfer steps.
 
-    1. To average any image repeats (i.e. multiple T1w or T2w images
-       available).
+    1. To average any image repeats (i.e. multiple T1w or T2w images available).
     2. To create a native, undistorted structural volume space for the subject
-            * Subject images in this native space will be distortion corrected
-              for gradient and b0 distortions and rigidly aligned to the axes
-              of the MNI space. "Native, undistorted structural volume space"
-              is sometimes shortened to the "subject's native space" or simply
-              "native space".
+       Subject images in this native space will be distortion corrected
+       for gradient and b0 distortions and rigidly aligned to the axes
+       of the MNI space. 'Native, undistorted structural volume space'
+       is sometimes shortened to the 'subject's native space' or simply
+       'native space'.
     3. To provide an initial robust brain extraction.
     4. To align the T1w and T2w structural images (register them to the native
        space).
@@ -65,41 +67,40 @@ def prefreesurfer_hcp(path, subject, t1, t2, fmapmag, fmapphase, hcpdir,
     this script to work.
 
     The main output directories are:
-        * The t1w_folder: which is created by concatenating the following three
-          option values: --path/--subject/--t1
-        * The t2w_folder: which is created by concatenating the following three
-          option values: --path/--subject/--t2
-        * The atlas_space_folder: /path/subject/MNINonLinear
+
+    * The t1w_folder: which is created by concatenating the following three
+      option values: --path/--subject/--t1
+    * The t2w_folder: which is created by concatenating the following three
+      option values: --path/--subject/--t2
+    * The atlas_space_folder: /path/subject/MNINonLinear
 
     The full list of output directories is:
-        * /t1w_folder/T1w?_GradientDistortionUnwarp
-        * /t1w_folder/AverageT1wImages
-        * /t1w_folder/ACPCAlignment
-        * /t1w_folder/BrainExtraction_FNIRTbased
-        * /t1w_folder/xfms - transformation matrices and warp fields
 
-        * /t2w_folder/T2w?_GradientDistortionUnwarp
-        * /t2w_folder/AverageT1wImages
-        * /t2w_folder/ACPCAlignment
-        * /t2w_folder/BrainExtraction_FNIRTbased
-        * /t2w_folder/xfms - transformation matrices and warp fields
-
-        * /t2w_folder/T2wToT1wDistortionCorrectAndReg
-        * /t1w_folder/BiasFieldCorrection_sqrtT1wXT1w
-
-        * /atlas_space_folder
-        * /atlas_space_folder/xfms
+    * /t1w_folder/T1w?_GradientDistortionUnwarp
+    * /t1w_folder/AverageT1wImages
+    * /t1w_folder/ACPCAlignment
+    * /t1w_folder/BrainExtraction_FNIRTbased
+    * /t1w_folder/xfms - transformation matrices and warp fields
+    * /t2w_folder/T2w?_GradientDistortionUnwarp
+    * /t2w_folder/AverageT1wImages
+    * /t2w_folder/ACPCAlignment
+    * /t2w_folder/BrainExtraction_FNIRTbased
+    * /t2w_folder/xfms - transformation matrices and warp fields
+    * /t2w_folder/T2wToT1wDistortionCorrectAndReg
+    * /t1w_folder/BiasFieldCorrection_sqrtT1wXT1w
+    * /atlas_space_folder
+    * /atlas_space_folder/xfms
 
     The following settings for AvgrdcSTRING, MagnitudeInputName,
     PhaseInputName, and TE are for using the Siemens specific Gradient Echo
     Field Maps that are collected and used in the standard HCP protocol.
 
     The values set below are for the HCP Protocol using the Siemens Connectom
-    Scanner: t1samplespacing=0.0000074,
-             t2samplespacing=0.0000021,
-             unwarpdir="z".
+    Scanner: t1samplespacing=0.0000074, t2samplespacing=0.0000021,
+    unwarpdir='z'.
 
-    References:
+    **References**
+
     [HCP]: http://www.humanconnectome.org
     [GlasserEtAl]: http://www.ncbi.nlm.nih.gov/pubmed/23668970
     [FSL]: http://fsl.fmrib.ox.ac.uk
@@ -127,9 +128,7 @@ def prefreesurfer_hcp(path, subject, t1, t2, fmapmag, fmapphase, hcpdir,
         the path to the HCP project containing the script of interest.
     fmapgeneralelectric: str (optional, default 'NONE')
         general Electric Gradient Echo Field Map file.
-        Two volumes in one file:
-            1. field map in deg,
-            2. magnitude.
+        Two volumes in one file: 1. field map in deg, 2. magnitude.
     echodiff: float (optional, default 2.46)
         delta TE in ms for field map or 'NONE' if not used.
         2.46 for 3T scanner or 1.02ms for 7T.
@@ -159,7 +158,7 @@ def prefreesurfer_hcp(path, subject, t1, t2, fmapmag, fmapphase, hcpdir,
     gdcoeffs: str (optional, default 'NONE')
         file containing gradient distortion coefficients.
         Set to NONE to skip gradient distortion correction.
-    avgrdcmethod: str (optional, default "SiemensFieldMap")
+    avgrdcmethod: str (optional, default 'SiemensFieldMap')
         averaging and readout distortion correction method.
     topupconfig: str (optional, default 'NONE')
         configuration file for topup or 'NONE' if not used.

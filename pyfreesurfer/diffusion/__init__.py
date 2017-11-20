@@ -5,3 +5,7 @@
 # http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
 # for details.
 ##########################################################################
+
+"""
+This module is used to wrap the diffusin MRI tools available in FreeSurfer.
+"""

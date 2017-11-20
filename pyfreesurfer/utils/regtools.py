@@ -7,7 +7,7 @@
 ##########################################################################
 
 """
-Wrappers for the FreeSurfer's registration utilities.
+Modules that provides registration tools.
 """
 
 # System import

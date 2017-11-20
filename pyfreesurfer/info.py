@@ -35,23 +35,28 @@ CLASSIFIERS = ["Development Status :: 5 - Production/Stable",
 
 # Project descriptions
 description = """
-[pyFreeSurfer]
-This package provides common scripts:
+Using FreeSurfer in Python.
+"""
+SUMMARY = """
+.. container:: summary-carousel
 
-* pyfreesurfer_reconall: FreeSurfer cortical and subcortical segmentation.
-* pyfreesurfer_datacheck: check FreeSurfer 'reconall' produced data integrity.
-* pyfreesurfer_conversion:  convert FreeSurfer volume, mesh , annotations
-  to the native space. The produced meshes will also be aligned across
-  subjects.
-* pyfreesurfer_qualitycheck: check FreeSurfer 'reconall' produced data quality.
-* pyfreesurfer_stats: summarize the FreeSurfer 'reconall' individual
-  statistics.
-* pyfreesurfer_textures: build texture arrays aligned across subjects.
+    pyFreeSurfer is a Python module that can be used to play with anatomical
+    data using FreeSurfer. This package offers:
+
+    * pyfreesurfer_reconall: FreeSurfer cortical and subcortical segmentation.
+    * pyfreesurfer_datacheck: check FreeSurfer 'reconall' produced data integrity.
+    * pyfreesurfer_conversion:  convert FreeSurfer volume, mesh , annotations
+      to the native space. The produced meshes will also be aligned across
+      subjects.
+    * pyfreesurfer_qualitycheck: check FreeSurfer 'reconall' produced data quality.
+    * pyfreesurfer_stats: summarize the FreeSurfer 'reconall' individual
+      statistics.
+    * pyfreesurfer_textures: build texture arrays aligned across subjects.
 """
 long_description = """
-======================
+============
 pyFreeSurfer
-======================
+============
 
 Python wrappers for FreeSurfer: wrap the FreeSurfer software and simplify
 scripting calls. Such calls can be performed through the use of a
@@ -82,3 +87,17 @@ REQUIRES = [
     "packaging"
 ]
 EXTRA_REQUIRES = {}
+SCRIPTS = [
+    "pyfreesurfer/scripts/pyfreesurfer_conversion",
+    "pyfreesurfer/scripts/pyfreesurfer_datacheck",
+    "pyfreesurfer/scripts/pyfreesurfer_fmri",
+    "pyfreesurfer/scripts/pyfreesurfer_hcp",
+    "pyfreesurfer/scripts/pyfreesurfer_qualitycheck",
+    "pyfreesurfer/scripts/pyfreesurfer_reconall",
+    "pyfreesurfer/scripts/pyfreesurfer_reconall_custom_wm_mask",
+    "pyfreesurfer/scripts/pyfreesurfer_reconall_longitudinal",
+    "pyfreesurfer/scripts/pyfreesurfer_stats",
+    "pyfreesurfer/scripts/pyfreesurfer_textures",
+    "pyfreesurfer/scripts/pyfreesurfer_tracall",
+    "pyfreesurfer/scripts/pyfreesurfer_tracall_longitudinal"
+]
