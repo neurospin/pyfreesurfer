@@ -44,11 +44,13 @@ SUMMARY = """
     data using FreeSurfer. This package offers:
 
     * pyfreesurfer_reconall: FreeSurfer cortical and subcortical segmentation.
-    * pyfreesurfer_datacheck: check FreeSurfer 'reconall' produced data integrity.
+    * pyfreesurfer_datacheck: check FreeSurfer 'reconall' produced data
+      integrity.
     * pyfreesurfer_conversion:  convert FreeSurfer volume, mesh , annotations
       to the native space. The produced meshes will also be aligned across
       subjects.
-    * pyfreesurfer_qualitycheck: check FreeSurfer 'reconall' produced data quality.
+    * pyfreesurfer_qualitycheck: check FreeSurfer 'reconall' produced data
+      quality.
     * pyfreesurfer_stats: summarize the FreeSurfer 'reconall' individual
       statistics.
     * pyfreesurfer_textures: build texture arrays aligned across subjects.

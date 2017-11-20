@@ -50,7 +50,8 @@ def prefreesurfer_hcp(path, subject, t1, t2, fmapmag, fmapphase, hcpdir,
                       fsconfig=DEFAULT_FREESURFER_PATH):
     """ Performs all the HCP PreFreeSurfer steps.
 
-    1. To average any image repeats (i.e. multiple T1w or T2w images available).
+    1. To average any image repeats (i.e. multiple T1w or T2w images
+       available).
     2. To create a native, undistorted structural volume space for the subject
        Subject images in this native space will be distortion corrected
        for gradient and b0 distortions and rigidly aligned to the axes
