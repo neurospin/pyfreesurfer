@@ -1,13 +1,27 @@
 .. AUTO-GENERATED FILE -- DO NOT EDIT!
 
-Documentation of PYFREESURFER
-==============================
+API documentation of PYFREESURFER
+==================================
+
+This is the classes and functions reference in pyfreesurfer. Please refer to the gallery for further details, as the class and function raw specifications may not be enough to give full guidelines on their uses.
+
+.. rst-class:: documentation-contents
+
+  **Contents**:
+    * `pyfreesurfer <pyfreesurfer.html>`_
+    * `pyfreesurfer.utils <pyfreesurfer.utils.html>`_
+    * `pyfreesurfer.conversions <pyfreesurfer.conversions.html>`_
+    * `pyfreesurfer.segmentation <pyfreesurfer.segmentation.html>`_
+    * `pyfreesurfer.diffusion <pyfreesurfer.diffusion.html>`_
+    * `pyfreesurfer.plots <pyfreesurfer.plots.html>`_
 
 .. raw:: html
 
     <!-- Block section -->
 
     <div class='container-fluid'>
+
+    <div class='float-left'>
 
     <div class='row'>
 
@@ -26,11 +40,11 @@ Documentation of PYFREESURFER
     </blockquote>    </blockquote>
     </div>
     <div class='col-md-4'>
-    <h3><a href='pyfreesurfer.plots.html'>
-    pyfreesurfer.plots
+    <h3><a href='pyfreesurfer.utils.html'>
+    pyfreesurfer.utils
     </a></h3>
     <blockquote>
-        <p>This module can be used to render the produced FreeSurfer data.</p>    </blockquote>
+        <p>Utility functions wrapped from the FreeSurfer package.</p>    </blockquote>
     </div>
     <div class='col-md-4'>
     <h3><a href='pyfreesurfer.conversions.html'>
@@ -39,7 +53,9 @@ Documentation of PYFREESURFER
     <blockquote>
         <p>This module can be used to convert the FreeSurfer produced data.</p>    </blockquote>
     </div>
-    <div class='col-md-4'>
+
+    </div>
+    <div class='row'>    <div class='col-md-4'>
     <h3><a href='pyfreesurfer.segmentation.html'>
     pyfreesurfer.segmentation
     </a></h3>
@@ -48,12 +64,22 @@ Documentation of PYFREESURFER
     reconstruction tool: recon-all.</p>    </blockquote>
     </div>
     <div class='col-md-4'>
-    <h3><a href='pyfreesurfer.utils.html'>
-    pyfreesurfer.utils
+    <h3><a href='pyfreesurfer.diffusion.html'>
+    pyfreesurfer.diffusion
     </a></h3>
     <blockquote>
-        <p>Utility functions wrapped from the FreeSurfer package.</p>    </blockquote>
+        <p>This module is used to wrap the diffusin MRI tools available in FreeSurfer.</p>    </blockquote>
+    </div>
+    <div class='col-md-4'>
+    <h3><a href='pyfreesurfer.plots.html'>
+    pyfreesurfer.plots
+    </a></h3>
+    <blockquote>
+        <p>This module can be used to render the produced FreeSurfer data.</p>    </blockquote>
     </div>
 
+    </div>
+    <div class='row'>
+    </div>
     </div>
     </div>

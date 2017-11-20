@@ -15,11 +15,12 @@
     
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.0.0',
+        VERSION:     '1.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -51,7 +52,18 @@
   </script>
 
   </head>
-  <body><nav class="navbar navbar-default navbar-static-top">
+  <body role="document"><div class="banner">
+  <div class="container-fluid banner-container">
+    <div class="row banner-inner">
+      <div class="col-xs-4">
+        <img alt="Logo" src="../_static/pyfreesurfer.png">
+      </div>
+      <div class="col-xs-8">
+            <p>Using FreeSurfer in Python.</p>
+      </div>
+    </div>  
+  </div>
+</div><nav class="navbar navbar-default navbar-static-top">
   <div class="container-fluid">
     <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -61,38 +73,37 @@
           <span class="icon-bar"></span>
         </button>
         <a class="navbar-brand" href="../index.html">
-        <img alt="Logo" src="../_static/pyfreesurfer.png">
         </a>
     </div>
     <div id="navbar" class="navbar-collapse collapse" ng-controller="navCtrl" ng-app="navApp">
       <ul class="nav navbar-nav">
         <li ng-class="{ active: isActive('index') }"><a href="../index.html">Home</a></li>
         <li ng-class="{ active: isActive('installation') }"><a href="installation.html">Installation</a></li>
-        <li ng-class="{ active: isActive('documentation') }"><a href="documentation.html">Documentation</a></li>
-        <li class="dropdown">
+        <li ng-class="{ active: isActive('gallery') }"><a href="../auto_gallery/gallery.html">Gallery</a></li>
+        <li ng-class="{ active: isActive('documentation') }"><a href="documentation.html">API documentation</a></li>
+        <!--<li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></a>
           <ul class="dropdown-menu">
 	        <li><a href="pyfreesurfer.html">Pyfreesurfer</a></li>
-<li><a href="pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
+<li><a href="pyfreesurfer.utils.html">Pyfreesurfer.utils</a></li>
 <li><a href="pyfreesurfer.conversions.html">Pyfreesurfer.conversions</a></li>
 <li><a href="pyfreesurfer.segmentation.html">Pyfreesurfer.segmentation</a></li>
-<li><a href="pyfreesurfer.utils.html">Pyfreesurfer.utils</a></li>
+<li><a href="pyfreesurfer.diffusion.html">Pyfreesurfer.diffusion</a></li>
+<li><a href="pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
           </ul>
-        </li>
+        </li>-->
         <li><a href="https://github.com/AGrigis/pysphinxdoc">PYSPHINXDOC</a></li>
       </ul>
     </div>
   </div>
 </nav>
-
-
 <div class="content-wrapper">
     <div class="sphinxsidebar">
       <div class="sphinxsidebarwrapper">
 
         <!-- info setup -->
           <p class="doc-version">
-           This documentation is for pyfreesurfer <strong>version 1.0.0</strong>
+           This documentation is for pyfreesurfer <strong>version 1.2.0</strong>
           </p>
         <p class="citing">
           If you use the software, please do not esitate to 
@@ -113,12 +124,111 @@
       
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <span class="target" id="module-pyfreesurfer.conversions.surfconvs"></span><p>Wrappers for the FreeSurfer&#8217;s surface conversion utilities.</p>
 <dl class="function">
+<dt id="pyfreesurfer.conversions.surfconvs.interhemi_surfreg">
+<code class="descclassname">pyfreesurfer.conversions.surfconvs.</code><code class="descname">interhemi_surfreg</code><span class="sig-paren">(</span><em>hemi</em>, <em>outdir</em>, <em>fsdir</em>, <em>sid</em>, <em>template_file='/i2bm/local/freesurfer/subjects/fsaverage_sym'</em>, <em>destname='surfreg'</em>, <em>fsconfig='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/conversions/surfconvs.html#interhemi_surfreg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.conversions.surfconvs.interhemi_surfreg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Surface-based interhemispheric registration by aplying an existing
+atlas, the &#8216;fsaverage_sym&#8217;.</p>
+<p>Reference
+Greve, Douglas N., Lise Van der Haegen, Qing Cai, Steven Stufflebeam,
+Mert R. Sabuncu, Bruce Fischl, and Marc Bysbaert.
+&#8220;A surface-based analysis of language lateralization and cortical
+asymmetry.&#8221; (2013). Journal of Cognitive Neuroscience 25.9: 1477-1492.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>hemi: str (mandatory)</strong></p>
+<blockquote>
+<div><p>hemisphere (&#8216;lh&#8217; or &#8216;rh&#8217;).</p>
+</div></blockquote>
+<p><strong>outdir: str (mandatory)</strong></p>
+<blockquote>
+<div><p>the destination folder.</p>
+</div></blockquote>
+<p><strong>fsdir: str (mandatory)</strong></p>
+<blockquote>
+<div><p>FreeSurfer subjects directory &#8216;SUBJECTS_DIR&#8217;.</p>
+</div></blockquote>
+<p><strong>sid: str (mandatory)</strong></p>
+<blockquote>
+<div><p>FreeSurfer subject identifier.</p>
+</div></blockquote>
+<p><strong>template_file: str (optional, default DEFAULT_TEMPLATE_SYM_PATH)</strong></p>
+<blockquote>
+<div><p>path to the &#8216;fsaverage_sym&#8217; template.</p>
+</div></blockquote>
+<p><strong>destname: str (optional, default &#8216;destname&#8217;)</strong></p>
+<blockquote>
+<div><p>the name of the folder where the results will be stored.</p>
+</div></blockquote>
+<p><strong>fsconfig: str (optional, default DEFAULT_FREESURFER_PATH)</strong></p>
+<blockquote>
+<div><p>The FreeSurfer &#8216;.sh&#8217; config file.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">xhemidir: str</p>
+<blockquote>
+<div><p>the symetrized hemispheres.</p>
+</div></blockquote>
+<p>spherefile: str</p>
+<blockquote class="last">
+<div><p>the registration file to the template.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyfreesurfer.conversions.surfconvs.midgray_surface">
+<code class="descclassname">pyfreesurfer.conversions.surfconvs.</code><code class="descname">midgray_surface</code><span class="sig-paren">(</span><em>hemi</em>, <em>outdir</em>, <em>fsdir</em>, <em>sid</em>, <em>fsconfig='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/conversions/surfconvs.html#midgray_surface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.conversions.surfconvs.midgray_surface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a mid-thickness gray surface.</p>
+<p>Binding over the FreeSurfer&#8217;s &#8216;mris_expand&#8217; command.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>hemi: str (mandatory)</strong></p>
+<blockquote>
+<div><p>hemisphere (&#8216;lh&#8217; or &#8216;rh&#8217;).</p>
+</div></blockquote>
+<p><strong>outdir: str (mandatory)</strong></p>
+<blockquote>
+<div><p>the destination folder.</p>
+</div></blockquote>
+<p><strong>fsdir: str (mandatory)</strong></p>
+<blockquote>
+<div><p>FreeSurfer subjects directory &#8216;SUBJECTS_DIR&#8217;.</p>
+</div></blockquote>
+<p><strong>sid: str (mandatory)</strong></p>
+<blockquote>
+<div><p>FreeSurfer subject identifier.</p>
+</div></blockquote>
+<p><strong>fsconfig: str (optional)</strong></p>
+<blockquote>
+<div><p>The FreeSurfer &#8216;.sh&#8217; config file.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">midgray_file: str</p>
+<blockquote class="last">
+<div><p>the mid-thickness gray surface.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="pyfreesurfer.conversions.surfconvs.mri_surf2surf">
-<tt class="descclassname">pyfreesurfer.conversions.surfconvs.</tt><tt class="descname">mri_surf2surf</tt><big>(</big><em>hemi</em>, <em>input_surface_file</em>, <em>output_surface_file</em>, <em>ico_order</em>, <em>fsdir</em>, <em>sid</em>, <em>fsconfig='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em><big>)</big><a class="reference internal" href="../_modules/pyfreesurfer/conversions/surfconvs.html#mri_surf2surf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.conversions.surfconvs.mri_surf2surf" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pyfreesurfer.conversions.surfconvs.</code><code class="descname">mri_surf2surf</code><span class="sig-paren">(</span><em>hemi</em>, <em>input_surface_file</em>, <em>output_surface_file</em>, <em>ico_order</em>, <em>fsdir</em>, <em>sid</em>, <em>fsconfig='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/conversions/surfconvs.html#mri_surf2surf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.conversions.surfconvs.mri_surf2surf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Resample surface vertices.</p>
 <p>Binding over the FreeSurfer&#8217;s &#8216;mri_surf2surf&#8217; command.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -135,7 +245,7 @@
 </div></blockquote>
 <p><strong>output_surface_file: str (mandatory)</strong></p>
 <blockquote>
-<div><p>output &#8216;.mgz&#8217; surface path.</p>
+<div><p>output surface path.</p>
 </div></blockquote>
 <p><strong>ico_order: int (mandatory)</strong></p>
 <blockquote>
@@ -164,7 +274,7 @@ surface can be resampled using the
 
 <dl class="function">
 <dt id="pyfreesurfer.conversions.surfconvs.resample_cortical_surface">
-<tt class="descclassname">pyfreesurfer.conversions.surfconvs.</tt><tt class="descname">resample_cortical_surface</tt><big>(</big><em>fsdir, regex, outdir, orders=[4, 5, 6, 7], surface_name='white', fsconfig='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em><big>)</big><a class="reference internal" href="../_modules/pyfreesurfer/conversions/surfconvs.html#resample_cortical_surface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.conversions.surfconvs.resample_cortical_surface" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pyfreesurfer.conversions.surfconvs.</code><code class="descname">resample_cortical_surface</code><span class="sig-paren">(</span><em>fsdir, regex, outdir, destdirname='convert', orders=[4, 5, 6, 7], surface_name='white', fsconfig='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/conversions/surfconvs.html#resample_cortical_surface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.conversions.surfconvs.resample_cortical_surface" title="Permalink to this definition">¶</a></dt>
 <dd><p>Resamples one cortical surface onto an icosahedron.</p>
 <p>Resample the white or pial FreeSurfer cotical surface using the
 &#8216;mri_surf2surf&#8217; command. Map also the associated annotation file.</p>
@@ -197,6 +307,11 @@ from the &#8216;fsdir&#8217; directory.</p>
 <blockquote>
 <div><p>The destination folder.</p>
 </div></blockquote>
+<p><strong>destdirname: str (optional, default &#8216;convert&#8217;)</strong></p>
+<blockquote>
+<div><p>The name of the folder where each subject resample cortical surface
+will be saved.</p>
+</div></blockquote>
 <p><strong>orders: list of int</strong></p>
 <blockquote>
 <div><p>The icosahedron orders.</p>
@@ -227,12 +342,13 @@ from the &#8216;fsdir&#8217; directory.</p>
 
 <dl class="function">
 <dt id="pyfreesurfer.conversions.surfconvs.surf_convert">
-<tt class="descclassname">pyfreesurfer.conversions.surfconvs.</tt><tt class="descname">surf_convert</tt><big>(</big><em>fsdir</em>, <em>t1files</em>, <em>surffiles</em>, <em>rm_orig=False</em>, <em>fsconfig='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em><big>)</big><a class="reference internal" href="../_modules/pyfreesurfer/conversions/surfconvs.html#surf_convert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.conversions.surfconvs.surf_convert" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pyfreesurfer.conversions.surfconvs.</code><code class="descname">surf_convert</code><span class="sig-paren">(</span><em>fsdir</em>, <em>t1files</em>, <em>surffiles</em>, <em>sidpos=-3</em>, <em>rm_orig=False</em>, <em>fsconfig='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/conversions/surfconvs.html#surf_convert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.conversions.surfconvs.surf_convert" title="Permalink to this definition">¶</a></dt>
 <dd><p>Export FreeSurfer surfaces to the native space.</p>
 <p>Note that all the returned vetices are given in the index coordinate
-system.
-The subject id in the t1 and surf files must appear in the &#8216;-3&#8217; position:
-xxx/subject_id/convert/t1.nii.gz</p>
+system.</p>
+<p>The subject id in the t1 and surf files must appear in the &#8216;sidpos&#8217;
+position. For the default value &#8216;-3&#8217;, the T1 path might look like
+&#8216;xxx/subject_id/convert/t1.nii.gz&#8217;</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -248,6 +364,10 @@ xxx/subject_id/convert/t1.nii.gz</p>
 <p><strong>surffiles:</strong></p>
 <blockquote>
 <div><p>The surfaces to be converted.</p>
+</div></blockquote>
+<p><strong>sidpos: int (optional, default -3)</strong></p>
+<blockquote>
+<div><p>The subject identifier position in the surface and T1 files.</p>
 </div></blockquote>
 <p><strong>rm_orig: bool (optional)</strong></p>
 <blockquote>
@@ -274,6 +394,7 @@ xxx/subject_id/convert/t1.nii.gz</p>
           </div>
         </div>
       </div>
+
     <div class="clearer">
     </div>
   </div>
@@ -281,7 +402,7 @@ xxx/subject_id/convert/t1.nii.gz</p>
 </div>
 
 <div class="footer">
-    &copy; 2016, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
+    &copy; 2017, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
 </div>
   </body>
 </html>

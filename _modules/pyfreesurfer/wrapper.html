@@ -15,11 +15,12 @@
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '1.0.0',
+        VERSION:     '1.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -52,7 +53,18 @@
   </script>
 
   </head>
-  <body><nav class="navbar navbar-default navbar-static-top">
+  <body role="document"><div class="banner">
+  <div class="container-fluid banner-container">
+    <div class="row banner-inner">
+      <div class="col-xs-4">
+        <img alt="Logo" src="../../_static/pyfreesurfer.png">
+      </div>
+      <div class="col-xs-8">
+            <p>Using FreeSurfer in Python.</p>
+      </div>
+    </div>  
+  </div>
+</div><nav class="navbar navbar-default navbar-static-top">
   <div class="container-fluid">
     <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -62,38 +74,37 @@
           <span class="icon-bar"></span>
         </button>
         <a class="navbar-brand" href="../../index.html">
-        <img alt="Logo" src="../../_static/pyfreesurfer.png">
         </a>
     </div>
     <div id="navbar" class="navbar-collapse collapse" ng-controller="navCtrl" ng-app="navApp">
       <ul class="nav navbar-nav">
         <li ng-class="{ active: isActive('index') }"><a href="../../index.html">Home</a></li>
         <li ng-class="{ active: isActive('installation') }"><a href="../../generated/installation.html">Installation</a></li>
-        <li ng-class="{ active: isActive('documentation') }"><a href="../../generated/documentation.html">Documentation</a></li>
-        <li class="dropdown">
+        <li ng-class="{ active: isActive('gallery') }"><a href="../../auto_gallery/gallery.html">Gallery</a></li>
+        <li ng-class="{ active: isActive('documentation') }"><a href="../../generated/documentation.html">API documentation</a></li>
+        <!--<li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></a>
           <ul class="dropdown-menu">
 	        <li><a href="../../generated/pyfreesurfer.html">Pyfreesurfer</a></li>
-<li><a href="../../generated/pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
+<li><a href="../../generated/pyfreesurfer.utils.html">Pyfreesurfer.utils</a></li>
 <li><a href="../../generated/pyfreesurfer.conversions.html">Pyfreesurfer.conversions</a></li>
 <li><a href="../../generated/pyfreesurfer.segmentation.html">Pyfreesurfer.segmentation</a></li>
-<li><a href="../../generated/pyfreesurfer.utils.html">Pyfreesurfer.utils</a></li>
+<li><a href="../../generated/pyfreesurfer.diffusion.html">Pyfreesurfer.diffusion</a></li>
+<li><a href="../../generated/pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
           </ul>
-        </li>
+        </li>-->
         <li><a href="https://github.com/AGrigis/pysphinxdoc">PYSPHINXDOC</a></li>
       </ul>
     </div>
   </div>
 </nav>
-
-
 <div class="content-wrapper">
     <div class="sphinxsidebar">
       <div class="sphinxsidebarwrapper">
 
         <!-- info setup -->
           <p class="doc-version">
-           This documentation is for pyfreesurfer <strong>version 1.0.0</strong>
+           This documentation is for pyfreesurfer <strong>version 1.2.0</strong>
           </p>
         <p class="citing">
           If you use the software, please do not esitate to 
@@ -112,36 +123,45 @@
       
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <h1>Source code for pyfreesurfer.wrapper</h1><div class="highlight"><pre>
-<span class="c">##########################################################################</span>
-<span class="c"># NSAp - Copyright (C) CEA, 2013 - 2016</span>
-<span class="c"># Distributed under the terms of the CeCILL-B license, as published by</span>
-<span class="c"># the CEA-CNRS-INRIA. Refer to the LICENSE file or to</span>
-<span class="c"># http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html</span>
-<span class="c"># for details.</span>
-<span class="c">##########################################################################</span>
+<span></span><span class="c1">##########################################################################</span>
+<span class="c1"># NSAp - Copyright (C) CEA, 2013 - 2016</span>
+<span class="c1"># Distributed under the terms of the CeCILL-B license, as published by</span>
+<span class="c1"># the CEA-CNRS-INRIA. Refer to the LICENSE file or to</span>
+<span class="c1"># http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html</span>
+<span class="c1"># for details.</span>
+<span class="c1">##########################################################################</span>
 
-<span class="c"># System import</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Modules that provides tools to wrap FreeSurfer commands.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># System import</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
-<span class="c"># Pyfreesurfer import</span>
+<span class="c1"># Pyfreesurfer import</span>
 <span class="kn">from</span> <span class="nn">.configuration</span> <span class="kn">import</span> <span class="n">environment</span>
+<span class="kn">from</span> <span class="nn">.configuration</span> <span class="kn">import</span> <span class="n">concat_environment</span>
 <span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">FreeSurferConfigurationError</span>
 <span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">FreeSurferRuntimeError</span>
+<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">HCPConfigurationError</span>
+<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">HCPRuntimeError</span>
 <span class="kn">from</span> <span class="nn">.info</span> <span class="kn">import</span> <span class="n">DEFAULT_FREESURFER_PATH</span>
+<span class="kn">from</span> <span class="nn">.info</span> <span class="kn">import</span> <span class="n">DEFAULT_FSL_PATH</span>
 <span class="kn">from</span> <span class="nn">.info</span> <span class="kn">import</span> <span class="n">FREESURFER_RELEASE</span>
 
 
 <div class="viewcode-block" id="FSWrapper"><a class="viewcode-back" href="../../generated/pyfreesurfer.wrapper.html#pyfreesurfer.wrapper.FSWrapper">[docs]</a><span class="k">class</span> <span class="nc">FSWrapper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Parent class for the wrapping of FreeSurfer functions.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">shfile</span><span class="o">=</span><span class="n">DEFAULT_FREESURFER_PATH</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">shfile</span><span class="o">=</span><span class="n">DEFAULT_FREESURFER_PATH</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">subjects_dir</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">add_fsl_env</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">fsl_sh</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Initialize the FSWrapper class by setting properly the</span>
 <span class="sd">        environment.</span>
 
@@ -151,22 +171,50 @@
 <span class="sd">            the FreeSurfer command to execute.</span>
 <span class="sd">        shfile: str (optional, default NeuroSpin path)</span>
 <span class="sd">            the path to the FreeSurfer &#39;SetUpFreeSurfer.sh&#39; configuration file.</span>
+<span class="sd">        env: dict (optional, default None)</span>
+<span class="sd">            An environment to add to the FreeSurfer environment,</span>
+<span class="sd">            e.g. os.environ to maintain current env in the FreeSurfer env.</span>
+<span class="sd">        subjects_dir: str, default None.</span>
+<span class="sd">            To set the $SUBJECTS_DIR environment variable.</span>
+<span class="sd">        add_fsl_env:  bool, default False</span>
+<span class="sd">            To activate the FSL environment, required for commands like</span>
+<span class="sd">            bbregister.</span>
+<span class="sd">        fsl_sh: str, default NeuroSpin path</span>
+<span class="sd">            Path to the Bash script setting the FSL environment, if needed.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cmd</span> <span class="o">=</span> <span class="n">cmd</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shfile</span> <span class="o">=</span> <span class="n">shfile</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">environment</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_freesurfer_version_check</span><span class="p">()</span>
 
-        <span class="c"># Update the environment variables</span>
-        <span class="k">if</span> <span class="s">&quot;SUBJECTS_DIR&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">environment</span><span class="p">[</span><span class="s">&quot;SUBJECTS_DIR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&quot;SUBJECTS_DIR&quot;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;tkmedit&quot;</span> <span class="ow">and</span> <span class="s">&quot;DISPLAY&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">environment</span><span class="p">[</span><span class="s">&quot;DISPLAY&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&quot;DISPLAY&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">env</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">environment</span> <span class="o">=</span> <span class="n">concat_environment</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">environment</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># If requested add FSL environment</span>
+        <span class="k">if</span> <span class="n">add_fsl_env</span><span class="p">:</span>
+            <span class="c1"># Import here so that the dependency is not mandatory for</span>
+            <span class="c1"># the rest of the package</span>
+            <span class="kn">from</span> <span class="nn">pyconnectome.wrapper</span> <span class="kn">import</span> <span class="n">FSLWrapper</span>
+            <span class="k">if</span> <span class="n">fsl_sh</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">fsl_sh</span> <span class="o">=</span> <span class="n">DEFAULT_FSL_PATH</span>
+            <span class="n">fsl_env</span> <span class="o">=</span> <span class="n">FSLWrapper</span><span class="p">([],</span> <span class="n">shfile</span><span class="o">=</span><span class="n">fsl_sh</span><span class="p">)</span><span class="o">.</span><span class="n">environment</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">environment</span> <span class="o">=</span> <span class="n">concat_environment</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">environment</span><span class="p">,</span> <span class="n">fsl_env</span><span class="p">)</span>
+
+        <span class="c1"># Update the environment variables</span>
+        <span class="k">if</span> <span class="n">subjects_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">environment</span><span class="p">[</span><span class="s2">&quot;SUBJECTS_DIR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">subjects_dir</span>
+        <span class="k">elif</span> <span class="s2">&quot;SUBJECTS_DIR&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">environment</span><span class="p">[</span><span class="s2">&quot;SUBJECTS_DIR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SUBJECTS_DIR&quot;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cmd</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;tkmedit&quot;</span> <span class="ow">and</span>
+                <span class="s2">&quot;DISPLAY&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">environment</span><span class="p">[</span><span class="s2">&quot;DISPLAY&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;DISPLAY&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Run the FreeSurfer command.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c"># Check Freesurfer has been configured so the command can be found</span>
-        <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s">&quot;which&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
+        <span class="c1"># Check Freesurfer has been configured so the command can be found</span>
+        <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s2">&quot;which&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
                                    <span class="n">env</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">environment</span><span class="p">,</span>
                                    <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
                                    <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
@@ -175,7 +223,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exitcode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">FreeSurferConfigurationError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
-        <span class="c"># Execute the command</span>
+        <span class="c1"># Execute the command</span>
         <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cmd</span><span class="p">,</span>
             <span class="n">env</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">environment</span><span class="p">,</span>
@@ -184,10 +232,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stderr</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">exitcode</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span>
 
-        <span class="c"># Raise exception of exitcode is not zero</span>
+        <span class="c1"># Raise exception if exitcode is not zero</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exitcode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">FreeSurferRuntimeError</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">:]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">stderr</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">:]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">stderr</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_environment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Return a dictionary of the environment needed by FreeSurfer</span>
@@ -196,25 +244,25 @@
 <span class="sd">        In order not to parse the configuration ntimes, it is stored in the</span>
 <span class="sd">        &#39;FREESURFER_CONFIGURED&#39; environment variable.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c"># Check if FreeSurfer has already been configures</span>
-        <span class="n">env</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;FREESURFER_CONFIGURED&quot;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="c1"># Check if FreeSurfer has already been configures</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;FREESURFER_CONFIGURED&quot;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
 
-        <span class="c"># Configure FreeSurfer</span>
+        <span class="c1"># Configure FreeSurfer</span>
         <span class="k">if</span> <span class="n">env</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
 
-            <span class="c"># FreeSurfer home directory</span>
-            <span class="n">fs_home</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;FREESURFER_HOME&quot;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+            <span class="c1"># FreeSurfer home directory</span>
+            <span class="n">fs_home</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;FREESURFER_HOME&quot;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
             <span class="n">env</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="k">if</span> <span class="n">fs_home</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="n">env</span><span class="p">[</span><span class="s">&quot;FREESURFER_HOME&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fs_home</span>
+                <span class="n">env</span><span class="p">[</span><span class="s2">&quot;FREESURFER_HOME&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fs_home</span>
 
-            <span class="c"># Parse configuration file</span>
+            <span class="c1"># Parse configuration file</span>
             <span class="n">env</span> <span class="o">=</span> <span class="n">environment</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shfile</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
 
-            <span class="c"># Save the result</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&quot;FREESURFER_CONFIGURED&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+            <span class="c1"># Save the result</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;FREESURFER_CONFIGURED&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
 
-        <span class="c"># Load configuration</span>
+        <span class="c1"># Load configuration</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">env</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
 
@@ -229,45 +277,222 @@
 <span class="sd">        environment: dict</span>
 <span class="sd">            the configured FreeSurfer environment.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c"># If a configuration file is passed</span>
+        <span class="c1"># If a configuration file is passed</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shfile</span><span class="p">):</span>
 
-            <span class="c"># Parse FreeSurfer environment</span>
+            <span class="c1"># Parse FreeSurfer environment</span>
             <span class="n">environment</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_environment</span><span class="p">()</span>
 
-            <span class="c"># Check FreeSurfer version</span>
-            <span class="n">version_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">environment</span><span class="p">[</span><span class="s">&quot;FREESURFER_HOME&quot;</span><span class="p">],</span>
-                                        <span class="s">&quot;build-stamp.txt&quot;</span><span class="p">)</span>
-            <span class="n">version_regex</span> <span class="o">=</span> <span class="s">&quot;\d.\d.\d&quot;</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">version_file</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">open_file</span><span class="p">:</span>
+            <span class="c1"># Check FreeSurfer version</span>
+            <span class="n">version_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">environment</span><span class="p">[</span><span class="s2">&quot;FREESURFER_HOME&quot;</span><span class="p">],</span>
+                                        <span class="s2">&quot;build-stamp.txt&quot;</span><span class="p">)</span>
+            <span class="n">version_regex</span> <span class="o">=</span> <span class="s2">&quot;\d.\d.\d&quot;</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">version_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">open_file</span><span class="p">:</span>
                 <span class="n">match_object</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">version_regex</span><span class="p">,</span> <span class="n">open_file</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">match_object</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="n">message</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;Can&#39;t detect &#39;FREESURFER&#39; version from &quot;</span>
-                               <span class="s">&quot;version file &#39;{0}&#39;. You have not &quot;</span>
-                               <span class="s">&quot;provided a valid configuration file.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">message</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Can&#39;t detect &#39;FREESURFER&#39; version from &quot;</span>
+                               <span class="s2">&quot;version file &#39;{0}&#39;. You have not &quot;</span>
+                               <span class="s2">&quot;provided a valid configuration file.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                                    <span class="n">version_file</span><span class="p">))</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="n">match_object</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">!=</span> <span class="n">FREESURFER_RELEASE</span><span class="p">:</span>
-                        <span class="n">message</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;Installed &#39;{0}&#39; version of FreeSurfer &quot;</span>
-                                   <span class="s">&quot;not tested. Currently supported version &quot;</span>
-                                   <span class="s">&quot;is &#39;{1}&#39;.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">,</span>
+                        <span class="n">message</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Installed &#39;{0}&#39; version of FreeSurfer &quot;</span>
+                                   <span class="s2">&quot;not tested. Currently supported version &quot;</span>
+                                   <span class="s2">&quot;is &#39;{1}&#39;.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">,</span>
                                                       <span class="n">FREESURFER_RELEASE</span><span class="p">))</span>
                         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
-        <span class="c"># Configuration file is not a file</span>
+        <span class="c1"># Configuration file is not a file</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;&#39;{0}&#39; is not a valid file, can&#39;t configure &quot;</span>
-                       <span class="s">&quot;FreeSurfer.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shfile</span><span class="p">))</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;&#39;{0}&#39; is not a valid file, can&#39;t configure &quot;</span>
+                       <span class="s2">&quot;FreeSurfer.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shfile</span><span class="p">))</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">environment</span></div>
+
+
+<div class="viewcode-block" id="HCPWrapper"><a class="viewcode-back" href="../../generated/pyfreesurfer.wrapper.html#pyfreesurfer.wrapper.HCPWrapper">[docs]</a><span class="k">class</span> <span class="nc">HCPWrapper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Parent class for the wrapping of HCP functions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">fslconfig</span><span class="o">=</span><span class="n">DEFAULT_FSL_PATH</span><span class="p">,</span>
+                 <span class="n">fsconfig</span><span class="o">=</span><span class="n">DEFAULT_FREESURFER_PATH</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize the HCPWrapper class.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        env: dict (mandatory)</span>
+<span class="sd">            the HCP environment.</span>
+<span class="sd">        fslconfig: str (optional, default NeuroSpin path)</span>
+<span class="sd">            the path to the FSL &#39;fsl.sh&#39; configuration file.</span>
+<span class="sd">        fsconfig: str (optional, default NeuroSpin path)</span>
+<span class="sd">            the path to the FreeSurfer configuration file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Class parameter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fslconfig</span> <span class="o">=</span> <span class="n">fslconfig</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fsconfig</span> <span class="o">=</span> <span class="n">fsconfig</span>
+
+        <span class="c1"># Load FreeSurfer configuration</span>
+        <span class="n">fs_home</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;FREESURFER_HOME&quot;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="n">fs_env</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">fs_home</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">fs_env</span><span class="p">[</span><span class="s2">&quot;FREESURFER_HOME&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fs_home</span>
+        <span class="n">fs_env</span> <span class="o">=</span> <span class="n">environment</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fsconfig</span><span class="p">,</span> <span class="n">fs_env</span><span class="p">)</span>
+
+        <span class="c1"># Load FSL configuration</span>
+        <span class="n">fsl_env</span> <span class="o">=</span> <span class="n">environment</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fslconfig</span><span class="p">)</span>
+
+        <span class="c1"># Concatenate FSL, FreeSurfer and current environment variables</span>
+        <span class="n">concat_env</span> <span class="o">=</span> <span class="n">concat_environment</span><span class="p">(</span><span class="n">fs_env</span><span class="p">,</span> <span class="n">fsl_env</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">environment</span> <span class="o">=</span> <span class="n">concat_environment</span><span class="p">(</span><span class="n">concat_env</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Run the HCP command.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        cmd: list of str (mandatory)</span>
+<span class="sd">            the HCP command to execute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Check HCP pipelines has been configured so the command can be</span>
+        <span class="c1"># found</span>
+        <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+            <span class="p">[</span><span class="s2">&quot;which&quot;</span><span class="p">,</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
+            <span class="n">env</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">environment</span><span class="p">,</span>
+            <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+            <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stderr</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exitcode</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exitcode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HCPConfigurationError</span><span class="p">(</span><span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="c1"># Format the command</span>
+        <span class="n">fcmd</span> <span class="o">=</span> <span class="p">[</span><span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="k">for</span> <span class="n">indx</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">indx</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span>
+            <span class="n">fcmd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;{0}={1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+
+        <span class="c1"># Execute the command</span>
+        <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+            <span class="n">fcmd</span><span class="p">,</span>
+            <span class="n">env</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">environment</span><span class="p">,</span>
+            <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+            <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stderr</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exitcode</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exitcode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">error_message</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;STDOUT&quot;</span><span class="p">,</span> <span class="s2">&quot;----&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="s2">&quot;STDERR&quot;</span><span class="p">,</span> <span class="s2">&quot;----&quot;</span><span class="p">,</span>
+                             <span class="bp">self</span><span class="o">.</span><span class="n">stderr</span><span class="p">]</span>
+            <span class="n">error_message</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">error_message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">HCPRuntimeError</span><span class="p">(</span><span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">error_message</span><span class="p">)</span>
+
+<div class="viewcode-block" id="HCPWrapper.freesurfer_version"><a class="viewcode-back" href="../../generated/pyfreesurfer.wrapper.html#pyfreesurfer.wrapper.HCPWrapper.freesurfer_version">[docs]</a>    <span class="k">def</span> <span class="nf">freesurfer_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Check for FreeSurfer version on system.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        version : str</span>
+<span class="sd">           version number as string or None if FreeSurfer not found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">fs_home</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">environment</span><span class="p">[</span><span class="s2">&quot;FREESURFER_HOME&quot;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="n">version_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fs_home</span><span class="p">,</span> <span class="s2">&quot;build-stamp.txt&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">version_file</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">version_file</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fopen</span><span class="p">:</span>
+            <span class="n">version</span> <span class="o">=</span> <span class="n">fopen</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+        <span class="n">version_regex</span> <span class="o">=</span> <span class="s2">&quot;\d.\d.\d&quot;</span>
+        <span class="n">version</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">version_regex</span><span class="p">,</span> <span class="n">version</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">version</span></div>
+
+<div class="viewcode-block" id="HCPWrapper.fsl_version"><a class="viewcode-back" href="../../generated/pyfreesurfer.wrapper.html#pyfreesurfer.wrapper.HCPWrapper.fsl_version">[docs]</a>    <span class="k">def</span> <span class="nf">fsl_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Check for FSL version on system.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        version : str</span>
+<span class="sd">           version number as string or None if FSL not found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">basedir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">environment</span><span class="p">[</span><span class="s2">&quot;FSLDIR&quot;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="n">version_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">basedir</span><span class="p">,</span> <span class="s2">&quot;etc&quot;</span><span class="p">,</span> <span class="s2">&quot;fslversion&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">version_file</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">version_file</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fopen</span><span class="p">:</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">fopen</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">out</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HCPWrapper.gradunwarp_version"><a class="viewcode-back" href="../../generated/pyfreesurfer.wrapper.html#pyfreesurfer.wrapper.HCPWrapper.gradunwarp_version">[docs]</a>    <span class="k">def</span> <span class="nf">gradunwarp_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Check for gradunwarp version on system.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        version : str</span>
+<span class="sd">           version number as string or None if gradunwarp not found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;gradient_unwarp.py&quot;</span><span class="p">,</span> <span class="s2">&quot;-v&quot;</span><span class="p">]</span>
+        <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+            <span class="n">cmd</span><span class="p">,</span>
+            <span class="n">env</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">environment</span><span class="p">,</span>
+            <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+            <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+        <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+        <span class="n">exitcode</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span>
+        <span class="k">if</span> <span class="n">exitcode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="k">return</span> <span class="n">stderr</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HCPWrapper.wbcommand_version"><a class="viewcode-back" href="../../generated/pyfreesurfer.wrapper.html#pyfreesurfer.wrapper.HCPWrapper.wbcommand_version">[docs]</a>    <span class="k">def</span> <span class="nf">wbcommand_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Check for wbcommand version on system.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        version : str</span>
+<span class="sd">           version number as string or None if wbcommand not found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;wb_command&quot;</span><span class="p">,</span> <span class="s2">&quot;-version&quot;</span><span class="p">]</span>
+        <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+            <span class="n">cmd</span><span class="p">,</span>
+            <span class="n">env</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">environment</span><span class="p">,</span>
+            <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+            <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+        <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+        <span class="n">exitcode</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span>
+        <span class="k">if</span> <span class="n">exitcode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="n">version_regex</span> <span class="o">=</span> <span class="s2">&quot;Version: \d.\d.\d&quot;</span>
+        <span class="n">version</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">version_regex</span><span class="p">,</span> <span class="n">stdout</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;Version: &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">version</span></div>
+
+<div class="viewcode-block" id="HCPWrapper.hcp_version"><a class="viewcode-back" href="../../generated/pyfreesurfer.wrapper.html#pyfreesurfer.wrapper.HCPWrapper.hcp_version">[docs]</a>    <span class="k">def</span> <span class="nf">hcp_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Check for HCP version on system.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        version : str</span>
+<span class="sd">           version number as string or None if HCP not found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">basedir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">environment</span><span class="p">[</span><span class="s2">&quot;HCPPIPEDIR&quot;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="n">version_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">basedir</span><span class="p">,</span> <span class="s2">&quot;version.txt&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">version_file</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">version_file</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">open_file</span><span class="p">:</span>
+            <span class="n">version</span> <span class="o">=</span> <span class="n">open_file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">version</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div></div>
 </pre></div>
 
           </div>
         </div>
       </div>
+
     <div class="clearer">
     </div>
   </div>
@@ -275,7 +500,7 @@
 </div>
 
 <div class="footer">
-    &copy; 2016, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
+    &copy; 2017, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
 </div>
   </body>
 </html>

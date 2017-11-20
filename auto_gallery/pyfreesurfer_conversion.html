@@ -1,0 +1,502 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+  
+    <title>PYFREESURFER &mdash; pyFreeSurfer</title>
+  <!-- htmltitle is before nature.css - we use this hack to load bootstrap first -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../_static/css/bootstrap.min.css" media="screen" />
+
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="pyFreeSurfer" href="../index.html" />
+  
+   
+       <script type="text/javascript" src="../_static/sidebar.js"></script>
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="../_static/js/bootstrap.min.js" type="text/javascript"></script>
+
+  <script src="../_static/js/angular.min.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    var app = angular.module("navApp", []);
+    app.controller('navCtrl', ['$scope', '$window', function($scope, $window) {
+      $scope.isActive = function (viewLocation) {
+        var rel = $window.location.pathname.split("/")
+        rel = rel[rel.length - 1]
+        rel = rel.split(".")[0]
+        var active = (viewLocation === rel);
+        return active;};
+    }]);
+  </script>
+
+  </head>
+  <body role="document"><div class="banner">
+  <div class="container-fluid banner-container">
+    <div class="row banner-inner">
+      <div class="col-xs-4">
+        <img alt="Logo" src="../_static/pyfreesurfer.png">
+      </div>
+      <div class="col-xs-8">
+            <p>Using FreeSurfer in Python.</p>
+      </div>
+    </div>  
+  </div>
+</div><nav class="navbar navbar-default navbar-static-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+        </a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse" ng-controller="navCtrl" ng-app="navApp">
+      <ul class="nav navbar-nav">
+        <li ng-class="{ active: isActive('index') }"><a href="../index.html">Home</a></li>
+        <li ng-class="{ active: isActive('installation') }"><a href="../generated/installation.html">Installation</a></li>
+        <li ng-class="{ active: isActive('gallery') }"><a href="gallery.html">Gallery</a></li>
+        <li ng-class="{ active: isActive('documentation') }"><a href="../generated/documentation.html">API documentation</a></li>
+        <!--<li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+	        <li><a href="../generated/pyfreesurfer.html">Pyfreesurfer</a></li>
+<li><a href="../generated/pyfreesurfer.utils.html">Pyfreesurfer.utils</a></li>
+<li><a href="../generated/pyfreesurfer.conversions.html">Pyfreesurfer.conversions</a></li>
+<li><a href="../generated/pyfreesurfer.segmentation.html">Pyfreesurfer.segmentation</a></li>
+<li><a href="../generated/pyfreesurfer.diffusion.html">Pyfreesurfer.diffusion</a></li>
+<li><a href="../generated/pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
+          </ul>
+        </li>-->
+        <li><a href="https://github.com/AGrigis/pysphinxdoc">PYSPHINXDOC</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="content-wrapper">
+    <div class="sphinxsidebar">
+      <div class="sphinxsidebarwrapper">
+
+        <!-- info setup -->
+          <p class="doc-version">
+           This documentation is for pyfreesurfer <strong>version 1.2.0</strong>
+          </p>
+        <p class="citing">
+          If you use the software, please do not esitate to 
+          <a &mdash; <a href="https://github.com/neurospin/pyfreesurfer">
+          Report a Bug</a>.
+        </p>
+
+      <!-- toc tree -->
+      <ul>
+<li><a class="reference internal" href="#">Pyfreesurfer Conversion</a></li>
+</ul>
+
+
+      </div>
+    </div>
+  
+
+  <div class="content">
+      
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="pyfreesurfer-conversion">
+<span id="sphx-glr-auto-gallery-pyfreesurfer-conversion-py"></span><h1>Pyfreesurfer Conversion<a class="headerlink" href="#pyfreesurfer-conversion" title="Permalink to this headline">¶</a></h1>
+<p>Example automatically generated from package script.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># System import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
+<span class="kn">import</span> <span class="nn">nibabel</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">textwrap</span>
+<span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">RawTextHelpFormatter</span>
+
+<span class="c1"># Bredala import</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">bredala</span>
+    <span class="n">bredala</span><span class="o">.</span><span class="n">USE_PROFILER</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">bredala</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;pyfreesurfer.conversions.volconvs&quot;</span><span class="p">,</span>
+                     <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mri_convert&quot;</span><span class="p">])</span>
+    <span class="n">bredala</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;pyfreesurfer.conversions.surfconvs&quot;</span><span class="p">,</span>
+                     <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;resample_cortical_surface&quot;</span><span class="p">,</span> <span class="s2">&quot;surf_convert&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;midgray_surface&quot;</span><span class="p">,</span> <span class="s2">&quot;interhemi_surfreg&quot;</span><span class="p">])</span>
+    <span class="n">bredala</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;pyfreesurfer.utils.regtools&quot;</span><span class="p">,</span>
+                     <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;conformed_to_native_space&quot;</span><span class="p">])</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+<span class="c1"># Pyfreesurfer import</span>
+<span class="kn">from</span> <span class="nn">pyfreesurfer</span> <span class="kn">import</span> <span class="n">__version__</span> <span class="k">as</span> <span class="n">version</span>
+<span class="kn">from</span> <span class="nn">pyfreesurfer.wrapper</span> <span class="kn">import</span> <span class="n">FSWrapper</span>
+<span class="kn">from</span> <span class="nn">pyfreesurfer</span> <span class="kn">import</span> <span class="n">DEFAULT_FREESURFER_PATH</span>
+<span class="kn">from</span> <span class="nn">pyfreesurfer</span> <span class="kn">import</span> <span class="n">DEFAULT_TEMPLATE_SYM_PATH</span>
+<span class="kn">from</span> <span class="nn">pyfreesurfer.conversions.volconvs</span> <span class="kn">import</span> <span class="n">mri_convert</span>
+<span class="kn">from</span> <span class="nn">pyfreesurfer.conversions.surfconvs</span> <span class="kn">import</span> <span class="n">surf_convert</span>
+<span class="kn">from</span> <span class="nn">pyfreesurfer.conversions.surfconvs</span> <span class="kn">import</span> <span class="n">resample_cortical_surface</span>
+<span class="kn">from</span> <span class="nn">pyfreesurfer.conversions.surfconvs</span> <span class="kn">import</span> <span class="n">midgray_surface</span>
+<span class="kn">from</span> <span class="nn">pyfreesurfer.conversions.surfconvs</span> <span class="kn">import</span> <span class="n">interhemi_surfreg</span>
+<span class="kn">from</span> <span class="nn">pyfreesurfer.utils.regtools</span> <span class="kn">import</span> <span class="n">conformed_to_native_space</span>
+
+
+<span class="c1"># Parameters to keep trace</span>
+<span class="n">__hopla__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;runtime&quot;</span><span class="p">,</span> <span class="s2">&quot;inputs&quot;</span><span class="p">,</span> <span class="s2">&quot;outputs&quot;</span><span class="p">]</span>
+
+
+<span class="c1"># Script documentation</span>
+<span class="n">DOC</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Freesurfer conversion</span>
+<span class="s2">~~~~~~~~~~~~~~~~~~~~~</span>
+
+<span class="s2">Convert the results returned by the FreeSurfer cortical reconstruction</span>
+<span class="s2">pipeline.</span>
+
+<span class="s2">Steps:</span>
+
+<span class="s2">1- Nifti conversions: aseg - aparc+aseg - aparc.a2009s+aseg - wm - t1.</span>
+<span class="s2">   Export FreeSurfer &#39;.mgz&#39; images of interest in Nifti format. These</span>
+<span class="s2">   images are resliced like the &#39;rawavg.mgz&#39; file, have a &#39;.native&#39;</span>
+<span class="s2">   suffix and are stored in a &#39;convert&#39; folder.</span>
+
+<span class="s2">2- Registration matrix: between the conformed space (orig.mgz)</span>
+<span class="s2">   and the native anatomical (rawavg.mgz).</span>
+
+<span class="s2">3- Create the ribbon right and left hemispheres masks.</span>
+
+<span class="s2">4- Create the mid thickness right and left hemispheres surfaces.</span>
+<span class="s2">   [optional 10-30 min]</span>
+
+<span class="s2">5- Surface conversions: resample the white or pial FreeSurfer</span>
+<span class="s2">   surfaces at different resolutions (impacts the number of vertex)</span>
+<span class="s2">   with common mesh that can be directly used in a longitudinal</span>
+<span class="s2">   setting. The results are also stored in a &#39;convert&#39; folder with</span>
+<span class="s2">   a &#39;.native&#39; suffix and the considered level in the file name. Vetex</span>
+<span class="s2">   are expressed in the index coordinate system.</span>
+
+<span class="s2">6- Align the interhemispheric surface vertices by aplying an existing atlas.</span>
+<span class="s2">   [optional 1-2 hours]</span>
+
+<span class="s2">Command:</span>
+
+<span class="s2">python $HOME/git/pyfreesurfer/pyfreesurfer/scripts/pyfreesurfer_conversion </span><span class="se">\</span>
+<span class="s2">    -v 2 </span><span class="se">\</span>
+<span class="s2">    -c /i2bm/local/freesurfer/SetUpFreeSurfer.sh </span><span class="se">\</span>
+<span class="s2">    -d /neurospin/senior/nsap/data/V4/freesurfer </span><span class="se">\</span>
+<span class="s2">    -s ag110371 </span><span class="se">\</span>
+<span class="s2">    -o /tmp </span><span class="se">\</span>
+<span class="s2">    -r lhrh </span><span class="se">\</span>
+<span class="s2">    -e</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">is_file</span><span class="p">(</span><span class="n">filearg</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Type for argparse - checks that file exists but does not open.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filearg</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentError</span><span class="p">(</span>
+            <span class="s2">&quot;The file &#39;{0}&#39; does not exist!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filearg</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">filearg</span>
+
+
+<span class="k">def</span> <span class="nf">is_directory</span><span class="p">(</span><span class="n">dirarg</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Type for argparse - checks that directory exists.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">dirarg</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentError</span><span class="p">(</span>
+            <span class="s2">&quot;The directory &#39;{0}&#39; does not exist!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dirarg</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">dirarg</span>
+
+
+<span class="k">def</span> <span class="nf">get_cmd_line_args</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a command line argument parser and return a dict mapping</span>
+<span class="sd">    &lt;argument name&gt; -&gt; &lt;argument value&gt;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
+        <span class="n">prog</span><span class="o">=</span><span class="s2">&quot;python pyfreesurfer_conversion&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span><span class="n">DOC</span><span class="p">),</span>
+        <span class="n">formatter_class</span><span class="o">=</span><span class="n">RawTextHelpFormatter</span><span class="p">)</span>
+
+    <span class="c1"># Required arguments</span>
+    <span class="n">required</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s2">&quot;required arguments&quot;</span><span class="p">)</span>
+    <span class="n">required</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-d&quot;</span><span class="p">,</span> <span class="s2">&quot;--fsdir&quot;</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;PATH&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">is_directory</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;the FreeSurfer processing home directory.&quot;</span><span class="p">)</span>
+    <span class="n">required</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-o&quot;</span><span class="p">,</span> <span class="s2">&quot;--outdir&quot;</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;PATH&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">is_directory</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;the FreeSurfer conversion home directory.&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-s&quot;</span><span class="p">,</span> <span class="s2">&quot;--subjectid&quot;</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;the subject identifier.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Optional arguments</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="s2">&quot;--verbose&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;increase the verbosity level: 0 silent, [1, 2] verbose.&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-e&quot;</span><span class="p">,</span> <span class="s2">&quot;--erase&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;if activated, clean the result folder.&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-c&quot;</span><span class="p">,</span> <span class="s2">&quot;--config&quot;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;fsconfig&quot;</span><span class="p">,</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;FILE&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">is_file</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;the FreeSurfer configuration file.&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-m&quot;</span><span class="p">,</span> <span class="s2">&quot;--midgray&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;if activated, compute the mid thickness surfaces.&quot;</span><span class="p">))</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-r&quot;</span><span class="p">,</span> <span class="s2">&quot;--surfreg&quot;</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;lh&quot;</span><span class="p">,</span> <span class="s2">&quot;rh&quot;</span><span class="p">,</span> <span class="s2">&quot;lhrh&quot;</span><span class="p">],</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;if set, surface-based interhemispheric registration using the &quot;</span>
+              <span class="s2">&quot;specified hemisphere.&quot;</span><span class="p">))</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-t&quot;</span><span class="p">,</span> <span class="s2">&quot;--templatesym&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">is_directory</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;path to the &#39;fsaverage_sym&#39; template.&quot;</span><span class="p">))</span>
+
+    <span class="c1"># Create a dict of arguments to pass to the &#39;main&#39; function</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">fsconfig</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">fsconfig</span> <span class="o">=</span> <span class="n">DEFAULT_FREESURFER_PATH</span>
+
+    <span class="k">return</span> <span class="n">args</span>
+</pre></div>
+</div>
+<p>Parse the command line.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">args</span> <span class="o">=</span> <span class="n">get_cmd_line_args</span><span class="p">()</span>
+<span class="n">tool</span> <span class="o">=</span> <span class="s2">&quot;pyfreesurfer_conversion&quot;</span>
+<span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+<span class="n">tool_version</span> <span class="o">=</span> <span class="n">version</span>
+<span class="n">freesurfer_config</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">fsconfig</span>
+<span class="n">freesurfer_version</span> <span class="o">=</span> <span class="n">FSWrapper</span><span class="p">([],</span> <span class="n">freesurfer_config</span><span class="p">)</span><span class="o">.</span><span class="n">version</span>
+<span class="n">params</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span>
+<span class="n">runtime</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+               <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;freesurfer_config&quot;</span><span class="p">,</span> <span class="s2">&quot;tool&quot;</span><span class="p">,</span> <span class="s2">&quot;tool_version&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;freesurfer_version&quot;</span><span class="p">,</span> <span class="s2">&quot;timestamp&quot;</span><span class="p">)])</span>
+<span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;[info] Start FreeSurfer conversions...&quot;</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;[info] FreeSurfer home directory: {0}.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">fsdir</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;[info] Output directory: {0}.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">outdir</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;[info] Subject: {0}.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">subjectid</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;[info] FreeSurfer version: {0}.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">freesurfer_version</span><span class="p">))</span>
+<span class="n">subjectid</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">subjectid</span>
+<span class="n">templatesym</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">templatesym</span> <span class="ow">or</span> <span class="n">DEFAULT_TEMPLATE_SYM_PATH</span>
+<span class="n">subjdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">fsdir</span><span class="p">,</span> <span class="n">subjectid</span><span class="p">)</span>
+<span class="n">convertdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">outdir</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">subjectid</span><span class="p">,</span> <span class="s2">&quot;convert&quot;</span><span class="p">)</span>
+<span class="n">imagedir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">convertdir</span><span class="p">,</span> <span class="s2">&quot;images&quot;</span><span class="p">)</span>
+<span class="n">surfacedir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">convertdir</span><span class="p">,</span> <span class="s2">&quot;surfaces&quot;</span><span class="p">)</span>
+<span class="n">addmidgray</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">midgray</span>
+<span class="n">surfreg</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">surfreg</span>
+<span class="n">params</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span>
+<span class="n">inputs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+               <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;subjectid&quot;</span><span class="p">,</span> <span class="s2">&quot;subjdir&quot;</span><span class="p">,</span> <span class="s2">&quot;convertdir&quot;</span><span class="p">,</span> <span class="s2">&quot;imagedir&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;surfacedir&quot;</span><span class="p">,</span> <span class="s2">&quot;addmidgray&quot;</span><span class="p">,</span> <span class="s2">&quot;surfreg&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;templatesym&quot;</span><span class="p">)])</span>
+<span class="n">outputs</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">subjdir</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="s2">&quot;&#39;{0}&#39; is not a FreeSurfer subject folder.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">subjdir</span><span class="p">))</span>
+<span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">erase</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">convertdir</span><span class="p">):</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">convertdir</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">directory</span> <span class="ow">in</span> <span class="p">(</span><span class="n">convertdir</span><span class="p">,</span> <span class="n">imagedir</span><span class="p">,</span> <span class="n">surfacedir</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Step 1: Nifti conversions.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;[info] Start Nifti conversions...&quot;</span><span class="p">)</span>
+<span class="n">niftifiles</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">modality</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;aparc+aseg&quot;</span><span class="p">,</span> <span class="s2">&quot;aparc.a2009s+aseg&quot;</span><span class="p">,</span> <span class="s2">&quot;aseg&quot;</span><span class="p">,</span> <span class="s2">&quot;wm&quot;</span><span class="p">,</span> <span class="s2">&quot;rawavg&quot;</span><span class="p">,</span>
+                 <span class="s2">&quot;ribbon&quot;</span><span class="p">,</span> <span class="s2">&quot;brain&quot;</span><span class="p">]:</span>
+    <span class="n">regex</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">subjectid</span><span class="p">,</span> <span class="s2">&quot;mri&quot;</span><span class="p">,</span> <span class="s2">&quot;{0}.mgz&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">modality</span><span class="p">))</span>
+    <span class="n">niftifiles</span><span class="p">[</span><span class="n">modality</span><span class="p">]</span> <span class="o">=</span> <span class="n">mri_convert</span><span class="p">(</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">fsdir</span><span class="p">,</span>
+        <span class="n">regex</span><span class="p">,</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">outdir</span><span class="p">,</span>
+        <span class="n">destdirname</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;convert&quot;</span><span class="p">,</span> <span class="s2">&quot;images&quot;</span><span class="p">),</span>
+        <span class="n">reslice</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+        <span class="n">interpolation</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">,</span>
+        <span class="n">fsconfig</span><span class="o">=</span><span class="n">freesurfer_config</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;[result] {0}: {1}.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">modality</span><span class="p">,</span> <span class="n">niftifiles</span><span class="p">[</span><span class="n">modality</span><span class="p">]))</span>
+</pre></div>
+</div>
+<p>Step 2: Registration matrix.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;[info] Start Registration matrix...&quot;</span><span class="p">)</span>
+<span class="n">regex</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">subjectid</span><span class="p">,</span> <span class="s2">&quot;mri&quot;</span><span class="p">)</span>
+<span class="n">trffile</span> <span class="o">=</span> <span class="n">conformed_to_native_space</span><span class="p">(</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">fsdir</span><span class="p">,</span>
+    <span class="n">regex</span><span class="p">,</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">outdir</span><span class="p">,</span>
+    <span class="n">fsconfig</span><span class="o">=</span><span class="n">freesurfer_config</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;[result] trffile: {0}.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">trffile</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Step 3: Create the ribbon right and left hemispheres masks.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">ribbon_file</span> <span class="o">=</span> <span class="n">niftifiles</span><span class="p">[</span><span class="s2">&quot;ribbon&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">image</span> <span class="o">=</span> <span class="n">nibabel</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ribbon_file</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">hemi</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="p">[(</span><span class="s2">&quot;lh&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;rh&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="p">)]:</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">data</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">label</span> <span class="o">-</span> <span class="mf">0.01</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">data</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">label</span> <span class="o">+</span> <span class="mf">0.01</span><span class="p">)))</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">mask</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">mask_image</span> <span class="o">=</span> <span class="n">nibabel</span><span class="o">.</span><span class="n">Nifti1Image</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">image</span><span class="o">.</span><span class="n">get_affine</span><span class="p">())</span>
+    <span class="n">mask_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">imagedir</span><span class="p">,</span> <span class="s2">&quot;{0}.ribbon.nii.gz&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hemi</span><span class="p">))</span>
+    <span class="n">nibabel</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">mask_image</span><span class="p">,</span> <span class="n">mask_file</span><span class="p">)</span>
+    <span class="n">niftifiles</span><span class="p">[</span><span class="s2">&quot;ribbon&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mask_file</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Step 4: Create the mid thickness right and left hemispheres surfaces</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">addmidgray</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">hemi</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;lh&quot;</span><span class="p">,</span> <span class="s2">&quot;rh&quot;</span><span class="p">]:</span>
+        <span class="n">surf</span> <span class="o">=</span> <span class="n">midgray_surface</span><span class="p">(</span>
+            <span class="n">hemi</span><span class="p">,</span>
+            <span class="n">surfacedir</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">fsdir</span><span class="p">,</span>
+            <span class="n">subjectid</span><span class="p">,</span>
+            <span class="n">fsconfig</span><span class="o">=</span><span class="n">freesurfer_config</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Step 5: Surface conversions.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;[info] Start surface conversions...&quot;</span><span class="p">)</span>
+<span class="n">surfaces</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">annotations</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">modalities</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;pial&quot;</span><span class="p">,</span> <span class="s2">&quot;white&quot;</span><span class="p">]</span>
+<span class="k">if</span> <span class="n">addmidgray</span><span class="p">:</span>
+    <span class="n">modalities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;graymid&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">modality</span> <span class="ow">in</span> <span class="n">modalities</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">hemi</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;lh&quot;</span><span class="p">,</span> <span class="s2">&quot;rh&quot;</span><span class="p">]:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;{0}.{1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hemi</span><span class="p">,</span> <span class="n">modality</span><span class="p">)</span>
+        <span class="n">regex</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">subjectid</span><span class="p">,</span> <span class="s2">&quot;surf&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="n">resamplefiles</span><span class="p">,</span> <span class="n">annotfiles</span> <span class="o">=</span> <span class="n">resample_cortical_surface</span><span class="p">(</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">fsdir</span><span class="p">,</span>
+            <span class="n">regex</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">outdir</span><span class="p">,</span>
+            <span class="n">destdirname</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;convert&quot;</span><span class="p">,</span> <span class="s2">&quot;surfaces&quot;</span><span class="p">),</span>
+            <span class="n">orders</span><span class="o">=</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span>
+            <span class="n">surface_name</span><span class="o">=</span><span class="n">modality</span><span class="p">,</span>
+            <span class="n">fsconfig</span><span class="o">=</span><span class="n">freesurfer_config</span><span class="p">)</span>
+        <span class="n">annotations</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">annotfiles</span><span class="p">)</span>
+        <span class="n">surfaces</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">surf_convert</span><span class="p">(</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">fsdir</span><span class="p">,</span>
+            <span class="n">niftifiles</span><span class="p">[</span><span class="s2">&quot;rawavg&quot;</span><span class="p">],</span>
+            <span class="n">resamplefiles</span><span class="p">,</span>
+            <span class="n">sidpos</span><span class="o">=-</span><span class="mi">4</span><span class="p">,</span>
+            <span class="n">rm_orig</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+            <span class="n">fsconfig</span><span class="o">=</span><span class="n">freesurfer_config</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;[result] {0}: {1}.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">surfaces</span><span class="p">[</span><span class="n">name</span><span class="p">]))</span>
+<span class="n">annotations</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">annotations</span><span class="p">))</span>
+<span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;[result] Annotations: {0}.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">annotations</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Step 6: Surface-based interhemispheric registration.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">xhemidirs</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">spherefiles</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">if</span> <span class="n">surfreg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">surfreg</span> <span class="o">==</span> <span class="s2">&quot;lhrh&quot;</span><span class="p">:</span>
+        <span class="n">hemis</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;lh&quot;</span><span class="p">,</span> <span class="s2">&quot;rh&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">hemis</span> <span class="o">=</span> <span class="p">[</span><span class="n">surfreg</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">hemi</span> <span class="ow">in</span> <span class="n">hemis</span><span class="p">:</span>
+        <span class="n">xhemidir</span><span class="p">,</span> <span class="n">spherefile</span> <span class="o">=</span> <span class="n">interhemi_surfreg</span><span class="p">(</span>
+                <span class="n">hemi</span><span class="o">=</span><span class="n">hemi</span><span class="p">,</span>
+                <span class="n">outdir</span><span class="o">=</span><span class="n">convertdir</span><span class="p">,</span>
+                <span class="n">fsdir</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">fsdir</span><span class="p">,</span>
+                <span class="n">sid</span><span class="o">=</span><span class="n">subjectid</span><span class="p">,</span>
+                <span class="n">template_file</span><span class="o">=</span><span class="n">templatesym</span><span class="p">,</span>
+                <span class="n">destname</span><span class="o">=</span><span class="s2">&quot;{0}_surfreg&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hemi</span><span class="p">),</span>
+                <span class="n">fsconfig</span><span class="o">=</span><span class="n">freesurfer_config</span><span class="p">)</span>
+        <span class="n">xhemidirs</span><span class="p">[</span><span class="n">hemi</span><span class="p">]</span> <span class="o">=</span> <span class="n">xhemidir</span>
+        <span class="n">spherefiles</span><span class="p">[</span><span class="n">hemi</span><span class="p">]</span> <span class="o">=</span> <span class="n">spherefile</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;[result] xhemidir: {0}.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">xhemidir</span><span class="p">))</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;[result] spherefile: {0}.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">spherefile</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Update the outputs and save them and the inputs in a &#8216;logs&#8217; directory.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">logdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">convertdir</span><span class="p">,</span> <span class="s2">&quot;logs&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">logdir</span><span class="p">):</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">logdir</span><span class="p">)</span>
+<span class="n">params</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span>
+<span class="n">outputs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+               <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;niftifiles&quot;</span><span class="p">,</span> <span class="s2">&quot;trffile&quot;</span><span class="p">,</span> <span class="s2">&quot;surfaces&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;annotations&quot;</span><span class="p">,</span> <span class="s2">&quot;xhemidirs&quot;</span><span class="p">,</span> <span class="s2">&quot;spherefiles&quot;</span><span class="p">)])</span>
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">final_struct</span> <span class="ow">in</span> <span class="p">[(</span><span class="s2">&quot;inputs&quot;</span><span class="p">,</span> <span class="n">inputs</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;outputs&quot;</span><span class="p">,</span> <span class="n">outputs</span><span class="p">),</span>
+                           <span class="p">(</span><span class="s2">&quot;runtime&quot;</span><span class="p">,</span> <span class="n">runtime</span><span class="p">)]:</span>
+    <span class="n">log_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">logdir</span><span class="p">,</span> <span class="s2">&quot;{0}.json&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">log_file</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">open_file</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">final_struct</span><span class="p">,</span> <span class="n">open_file</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">check_circular</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                  <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;[final]&quot;</span><span class="p">)</span>
+    <span class="n">pprint</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Total running time of the script:</strong> ( 0 minutes  0.000 seconds)</p>
+<div class="sphx-glr-footer container">
+<div class="sphx-glr-download container">
+<a class="reference download internal" href="../_downloads/pyfreesurfer_conversion.py" download=""><code class="xref download docutils literal"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">pyfreesurfer_conversion.py</span></code></a></div>
+<div class="sphx-glr-download container">
+<a class="reference download internal" href="../_downloads/pyfreesurfer_conversion.ipynb" download=""><code class="xref download docutils literal"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">pyfreesurfer_conversion.ipynb</span></code></a></div>
+</div>
+<p class="sphx-glr-signature">Gallery generated by Sphinx-Gallery</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+
+    <div class="clearer">
+    </div>
+  </div>
+  
+</div>
+
+<div class="footer">
+    &copy; 2017, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
+</div>
+  </body>
+</html>

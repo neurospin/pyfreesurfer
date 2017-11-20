@@ -15,11 +15,12 @@
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '1.0.0',
+        VERSION:     '1.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -52,7 +53,18 @@
   </script>
 
   </head>
-  <body><nav class="navbar navbar-default navbar-static-top">
+  <body role="document"><div class="banner">
+  <div class="container-fluid banner-container">
+    <div class="row banner-inner">
+      <div class="col-xs-4">
+        <img alt="Logo" src="../../_static/pyfreesurfer.png">
+      </div>
+      <div class="col-xs-8">
+            <p>Using FreeSurfer in Python.</p>
+      </div>
+    </div>  
+  </div>
+</div><nav class="navbar navbar-default navbar-static-top">
   <div class="container-fluid">
     <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -62,38 +74,37 @@
           <span class="icon-bar"></span>
         </button>
         <a class="navbar-brand" href="../../index.html">
-        <img alt="Logo" src="../../_static/pyfreesurfer.png">
         </a>
     </div>
     <div id="navbar" class="navbar-collapse collapse" ng-controller="navCtrl" ng-app="navApp">
       <ul class="nav navbar-nav">
         <li ng-class="{ active: isActive('index') }"><a href="../../index.html">Home</a></li>
         <li ng-class="{ active: isActive('installation') }"><a href="../../generated/installation.html">Installation</a></li>
-        <li ng-class="{ active: isActive('documentation') }"><a href="../../generated/documentation.html">Documentation</a></li>
-        <li class="dropdown">
+        <li ng-class="{ active: isActive('gallery') }"><a href="../../auto_gallery/gallery.html">Gallery</a></li>
+        <li ng-class="{ active: isActive('documentation') }"><a href="../../generated/documentation.html">API documentation</a></li>
+        <!--<li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></a>
           <ul class="dropdown-menu">
 	        <li><a href="../../generated/pyfreesurfer.html">Pyfreesurfer</a></li>
-<li><a href="../../generated/pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
+<li><a href="../../generated/pyfreesurfer.utils.html">Pyfreesurfer.utils</a></li>
 <li><a href="../../generated/pyfreesurfer.conversions.html">Pyfreesurfer.conversions</a></li>
 <li><a href="../../generated/pyfreesurfer.segmentation.html">Pyfreesurfer.segmentation</a></li>
-<li><a href="../../generated/pyfreesurfer.utils.html">Pyfreesurfer.utils</a></li>
+<li><a href="../../generated/pyfreesurfer.diffusion.html">Pyfreesurfer.diffusion</a></li>
+<li><a href="../../generated/pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
           </ul>
-        </li>
+        </li>-->
         <li><a href="https://github.com/AGrigis/pysphinxdoc">PYSPHINXDOC</a></li>
       </ul>
     </div>
   </div>
 </nav>
-
-
 <div class="content-wrapper">
     <div class="sphinxsidebar">
       <div class="sphinxsidebarwrapper">
 
         <!-- info setup -->
           <p class="doc-version">
-           This documentation is for pyfreesurfer <strong>version 1.0.0</strong>
+           This documentation is for pyfreesurfer <strong>version 1.2.0</strong>
           </p>
         <p class="citing">
           If you use the software, please do not esitate to 
@@ -112,46 +123,77 @@
       
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <h1>Source code for pyfreesurfer.exceptions</h1><div class="highlight"><pre>
-<span class="c">##########################################################################</span>
-<span class="c"># NSAp - Copyright (C) CEA, 2013 - 2016</span>
-<span class="c"># Distributed under the terms of the CeCILL-B license, as published by</span>
-<span class="c"># the CEA-CNRS-INRIA. Refer to the LICENSE file or to</span>
-<span class="c"># http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html</span>
-<span class="c"># for details.</span>
-<span class="c">##########################################################################</span>
+<span></span><span class="c1">##########################################################################</span>
+<span class="c1"># NSAp - Copyright (C) CEA, 2013 - 2016</span>
+<span class="c1"># Distributed under the terms of the CeCILL-B license, as published by</span>
+<span class="c1"># the CEA-CNRS-INRIA. Refer to the LICENSE file or to</span>
+<span class="c1"># http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html</span>
+<span class="c1"># for details.</span>
+<span class="c1">##########################################################################</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module that defines the package exceptions.</span>
+<span class="sd">&quot;&quot;&quot;</span>
 
 
 <div class="viewcode-block" id="FreeSurferError"><a class="viewcode-back" href="../../generated/pyfreesurfer.exceptions.html#pyfreesurfer.exceptions.FreeSurferError">[docs]</a><span class="k">class</span> <span class="nc">FreeSurferError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Base exception type for the package.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">FreeSurferError</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FreeSurferError</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="FreeSurferRuntimeError"><a class="viewcode-back" href="../../generated/pyfreesurfer.exceptions.html#pyfreesurfer.exceptions.FreeSurferRuntimeError">[docs]</a><span class="k">class</span> <span class="nc">FreeSurferRuntimeError</span><span class="p">(</span><span class="n">FreeSurferError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Error thrown when call to the FreeSurfer software failed.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algorithm_name</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algorithm_name</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s">&quot;FreeSurfer call for &#39;{0}&#39; failed, with parameters: &#39;{1}&#39;.Error:: &quot;</span>
-            <span class="s">&quot;{2}.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">algorithm_name</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">error</span><span class="p">))</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">FreeSurferRuntimeError</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="s2">&quot;FreeSurfer call for &#39;{0}&#39; failed, with parameters: &#39;{1}&#39;.Error:: &quot;</span>
+            <span class="s2">&quot;{2}.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">algorithm_name</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">error</span><span class="p">))</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FreeSurferRuntimeError</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="FreeSurferConfigurationError"><a class="viewcode-back" href="../../generated/pyfreesurfer.exceptions.html#pyfreesurfer.exceptions.FreeSurferConfigurationError">[docs]</a><span class="k">class</span> <span class="nc">FreeSurferConfigurationError</span><span class="p">(</span><span class="n">FreeSurferError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Error thrown when call to the FreeSurfer software failed.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command_name</span><span class="p">):</span>
-        <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;FreeSurfer command &#39;{0}&#39; not found.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">command_name</span><span class="p">)</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">FreeSurferConfigurationError</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command_name</span><span class="p">):</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;FreeSurfer command &#39;{0}&#39; not found.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">command_name</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FreeSurferConfigurationError</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="HCPError"><a class="viewcode-back" href="../../generated/pyfreesurfer.exceptions.html#pyfreesurfer.exceptions.HCPError">[docs]</a><span class="k">class</span> <span class="nc">HCPError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Base exception type for the package.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">HCPError</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="HCPRuntimeError"><a class="viewcode-back" href="../../generated/pyfreesurfer.exceptions.html#pyfreesurfer.exceptions.HCPRuntimeError">[docs]</a><span class="k">class</span> <span class="nc">HCPRuntimeError</span><span class="p">(</span><span class="n">HCPError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Error thrown when call to the HCP pipelines failed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algorithm_name</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;HCP call for &#39;{0}&#39; failed, with parameters: &#39;{1}&#39;.Error:: &quot;</span>
+            <span class="s2">&quot;{2}.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">algorithm_name</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">error</span><span class="p">))</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">HCPRuntimeError</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="HCPConfigurationError"><a class="viewcode-back" href="../../generated/pyfreesurfer.exceptions.html#pyfreesurfer.exceptions.HCPConfigurationError">[docs]</a><span class="k">class</span> <span class="nc">HCPConfigurationError</span><span class="p">(</span><span class="n">HCPError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Error thrown when call to the HCP pipelines failed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command_name</span><span class="p">):</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;HCP command &#39;{0}&#39; not found.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">command_name</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">HCPConfigurationError</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 </pre></div>
 
           </div>
         </div>
       </div>
+
     <div class="clearer">
     </div>
   </div>
@@ -159,7 +201,7 @@
 </div>
 
 <div class="footer">
-    &copy; 2016, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
+    &copy; 2017, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
 </div>
   </body>
 </html>

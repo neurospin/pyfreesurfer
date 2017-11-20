@@ -15,11 +15,12 @@
     
     <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.0.0',
+        VERSION:     '1.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -52,7 +53,18 @@
   </script>
 
   </head>
-  <body><nav class="navbar navbar-default navbar-static-top">
+  <body role="document"><div class="banner">
+  <div class="container-fluid banner-container">
+    <div class="row banner-inner">
+      <div class="col-xs-4">
+        <img alt="Logo" src="../../../_static/pyfreesurfer.png">
+      </div>
+      <div class="col-xs-8">
+            <p>Using FreeSurfer in Python.</p>
+      </div>
+    </div>  
+  </div>
+</div><nav class="navbar navbar-default navbar-static-top">
   <div class="container-fluid">
     <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -62,38 +74,37 @@
           <span class="icon-bar"></span>
         </button>
         <a class="navbar-brand" href="../../../index.html">
-        <img alt="Logo" src="../../../_static/pyfreesurfer.png">
         </a>
     </div>
     <div id="navbar" class="navbar-collapse collapse" ng-controller="navCtrl" ng-app="navApp">
       <ul class="nav navbar-nav">
         <li ng-class="{ active: isActive('index') }"><a href="../../../index.html">Home</a></li>
         <li ng-class="{ active: isActive('installation') }"><a href="../../../generated/installation.html">Installation</a></li>
-        <li ng-class="{ active: isActive('documentation') }"><a href="../../../generated/documentation.html">Documentation</a></li>
-        <li class="dropdown">
+        <li ng-class="{ active: isActive('gallery') }"><a href="../../../auto_gallery/gallery.html">Gallery</a></li>
+        <li ng-class="{ active: isActive('documentation') }"><a href="../../../generated/documentation.html">API documentation</a></li>
+        <!--<li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></a>
           <ul class="dropdown-menu">
 	        <li><a href="../../../generated/pyfreesurfer.html">Pyfreesurfer</a></li>
-<li><a href="../../../generated/pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
+<li><a href="../../../generated/pyfreesurfer.utils.html">Pyfreesurfer.utils</a></li>
 <li><a href="../../../generated/pyfreesurfer.conversions.html">Pyfreesurfer.conversions</a></li>
 <li><a href="../../../generated/pyfreesurfer.segmentation.html">Pyfreesurfer.segmentation</a></li>
-<li><a href="../../../generated/pyfreesurfer.utils.html">Pyfreesurfer.utils</a></li>
+<li><a href="../../../generated/pyfreesurfer.diffusion.html">Pyfreesurfer.diffusion</a></li>
+<li><a href="../../../generated/pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
           </ul>
-        </li>
+        </li>-->
         <li><a href="https://github.com/AGrigis/pysphinxdoc">PYSPHINXDOC</a></li>
       </ul>
     </div>
   </div>
 </nav>
-
-
 <div class="content-wrapper">
     <div class="sphinxsidebar">
       <div class="sphinxsidebarwrapper">
 
         <!-- info setup -->
           <p class="doc-version">
-           This documentation is for pyfreesurfer <strong>version 1.0.0</strong>
+           This documentation is for pyfreesurfer <strong>version 1.2.0</strong>
           </p>
         <p class="citing">
           If you use the software, please do not esitate to 
@@ -112,30 +123,34 @@
       
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <h1>Source code for pyfreesurfer.segmentation.cortical</h1><div class="highlight"><pre>
-<span class="c">##########################################################################</span>
-<span class="c"># NSAp - Copyright (C) CEA, 2013-2015</span>
-<span class="c"># Distributed under the terms of the CeCILL-B license, as published by</span>
-<span class="c"># the CEA-CNRS-INRIA. Refer to the LICENSE file or to</span>
-<span class="c"># http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html</span>
-<span class="c"># for details.</span>
-<span class="c">##########################################################################</span>
+<span></span><span class="c1">##########################################################################</span>
+<span class="c1"># NSAp - Copyright (C) CEA, 2013-2015</span>
+<span class="c1"># Distributed under the terms of the CeCILL-B license, as published by</span>
+<span class="c1"># the CEA-CNRS-INRIA. Refer to the LICENSE file or to</span>
+<span class="c1"># http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html</span>
+<span class="c1"># for details.</span>
+<span class="c1">##########################################################################</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Wrapper for the FreeSurfer&#39;s cortical reconstruction steps.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="c"># System import</span>
+<span class="c1"># System import</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
 
-<span class="c"># Pyfreesurfer import</span>
+<span class="c1"># Pyfreesurfer import</span>
 <span class="kn">from</span> <span class="nn">pyfreesurfer.wrapper</span> <span class="kn">import</span> <span class="n">FSWrapper</span>
 <span class="kn">from</span> <span class="nn">pyfreesurfer</span> <span class="kn">import</span> <span class="n">DEFAULT_FREESURFER_PATH</span>
+<span class="kn">from</span> <span class="nn">pyfreesurfer.utils.filetools</span> <span class="kn">import</span> <span class="n">get_or_check_freesurfer_subjects_dir</span>
 
 
-<div class="viewcode-block" id="recon_all"><a class="viewcode-back" href="../../../generated/pyfreesurfer.segmentation.cortical.html#pyfreesurfer.segmentation.cortical.recon_all">[docs]</a><span class="k">def</span> <span class="nf">recon_all</span><span class="p">(</span><span class="n">fsdir</span><span class="p">,</span> <span class="n">anatfile</span><span class="p">,</span> <span class="n">sid</span><span class="p">,</span> <span class="n">fsconfig</span><span class="o">=</span><span class="n">DEFAULT_FREESURFER_PATH</span><span class="p">):</span>
+<div class="viewcode-block" id="recon_all"><a class="viewcode-back" href="../../../generated/pyfreesurfer.segmentation.cortical.html#pyfreesurfer.segmentation.cortical.recon_all">[docs]</a><span class="k">def</span> <span class="nf">recon_all</span><span class="p">(</span><span class="n">fsdir</span><span class="p">,</span> <span class="n">anatfile</span><span class="p">,</span> <span class="n">sid</span><span class="p">,</span> <span class="n">reconstruction_stage</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">resume</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+              <span class="n">t2file</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">flairfile</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">fsconfig</span><span class="o">=</span><span class="n">DEFAULT_FREESURFER_PATH</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Performs all the FreeSurfer cortical reconstruction steps.</span>
 
 <span class="sd">    Binding around the FreeSurfer&#39;s &#39;recon-all&#39; command.</span>
@@ -182,6 +197,17 @@
 <span class="sd">        The input anatomical image to be segmented with FreeSurfer.</span>
 <span class="sd">    sid: str (mandatory)</span>
 <span class="sd">        The current subject identifier.</span>
+<span class="sd">    reconstruction_stage: str (optional, default &#39;all&#39;)</span>
+<span class="sd">        The FreeSurfer reconstruction stage that will be launched.</span>
+<span class="sd">    resume: bool (optional, default False)</span>
+<span class="sd">        If true, try to resume the recon-all. This option is also usefull if</span>
+<span class="sd">        custom segmentation is used in recon-all.</span>
+<span class="sd">    t2file: str (optional, default None)</span>
+<span class="sd">        Specify the path to a T2 image that will be used to improve the pial</span>
+<span class="sd">        surfaces.</span>
+<span class="sd">    flairfile: str (optional, default None)</span>
+<span class="sd">        Specify the path to a FLAIR image that will be used to improve the pial</span>
+<span class="sd">        surfaces.</span>
 <span class="sd">    fsconfig: str (optional)</span>
 <span class="sd">        The FreeSurfer configuration batch.</span>
 <span class="sd">    Returns</span>
@@ -189,23 +215,178 @@
 <span class="sd">    subjfsdir: str</span>
 <span class="sd">        Path to the resulting FreeSurfer segmentation.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># Check input parameters</span>
+    <span class="c1"># Check input parameters</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">fsdir</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;&#39;{0}&#39; FreeSurfer home directory does not &quot;</span>
-                         <span class="s">&quot;exists.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fsdir</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;{0}&#39; FreeSurfer home directory does not &quot;</span>
+                         <span class="s2">&quot;exists.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fsdir</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">reconstruction_stage</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="s2">&quot;autorecon1&quot;</span><span class="p">,</span> <span class="s2">&quot;autorecon2&quot;</span><span class="p">,</span>
+                                    <span class="s2">&quot;autorecon2-cp&quot;</span><span class="p">,</span> <span class="s2">&quot;autorecon2-wm&quot;</span><span class="p">,</span>
+                                    <span class="s2">&quot;autorecon2-pial&quot;</span><span class="p">,</span> <span class="s2">&quot;autorecon3&quot;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unsupported &#39;{0}&#39; recon-all reconstruction &quot;</span>
+                         <span class="s2">&quot;stage.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">reconstruction_stage</span><span class="p">))</span>
 
-    <span class="c"># Call FreeSurfer segmentation</span>
-    <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;recon-all&quot;</span><span class="p">,</span> <span class="s">&quot;-all&quot;</span><span class="p">,</span> <span class="s">&quot;-subjid&quot;</span><span class="p">,</span> <span class="n">sid</span><span class="p">,</span> <span class="s">&quot;-i&quot;</span><span class="p">,</span> <span class="n">anatfile</span><span class="p">,</span> <span class="s">&quot;-sd&quot;</span><span class="p">,</span> <span class="n">fsdir</span><span class="p">]</span>
+    <span class="c1"># Call FreeSurfer segmentation</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;recon-all&quot;</span><span class="p">,</span> <span class="s2">&quot;-{0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">reconstruction_stage</span><span class="p">),</span> <span class="s2">&quot;-subjid&quot;</span><span class="p">,</span> <span class="n">sid</span><span class="p">,</span>
+           <span class="s2">&quot;-i&quot;</span><span class="p">,</span> <span class="n">anatfile</span><span class="p">,</span> <span class="s2">&quot;-sd&quot;</span><span class="p">,</span> <span class="n">fsdir</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">t2file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">cmd</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;-T2&quot;</span><span class="p">,</span> <span class="n">t2file</span><span class="p">,</span> <span class="s2">&quot;-T2pial&quot;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">flairfile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">cmd</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;-FLAIR&quot;</span><span class="p">,</span> <span class="n">t2file</span><span class="p">,</span> <span class="s2">&quot;-FLAIRpial&quot;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">resume</span><span class="p">:</span>
+        <span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;-make all&quot;</span>
     <span class="n">recon</span> <span class="o">=</span> <span class="n">FSWrapper</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shfile</span><span class="o">=</span><span class="n">fsconfig</span><span class="p">)</span>
     <span class="n">recon</span><span class="p">()</span>
     <span class="n">subjfsdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fsdir</span><span class="p">,</span> <span class="n">sid</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">subjfsdir</span></div>
+
+
+<div class="viewcode-block" id="recon_all_custom_wm_mask"><a class="viewcode-back" href="../../../generated/pyfreesurfer.segmentation.cortical.html#pyfreesurfer.segmentation.cortical.recon_all_custom_wm_mask">[docs]</a><span class="k">def</span> <span class="nf">recon_all_custom_wm_mask</span><span class="p">(</span><span class="n">subject_id</span><span class="p">,</span> <span class="n">wm_mask</span><span class="p">,</span> <span class="n">keep_orig</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                             <span class="n">subjects_dir</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">temp_dir</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                             <span class="n">fsconfig</span><span class="o">=</span><span class="n">DEFAULT_FREESURFER_PATH</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Assuming you have run recon-all (at least upto wm.mgz creation), this</span>
+<span class="sd">    function allows to rerun recon-all using a custom white matter mask. The</span>
+<span class="sd">    mask has to be in the subject&#39;s FreeSurfer space (1mm iso + aligned with</span>
+<span class="sd">    brain.mgz) with values in [0; 1] (i.e. probability of being white matter).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    subject_id: str</span>
+<span class="sd">        Identifier of subject.</span>
+<span class="sd">    wm_mask: str</span>
+<span class="sd">        Path to the custom white matter mask. It has to be in the subject&#39;s</span>
+<span class="sd">        FreeSurfer space (1mm iso + aligned with brain.mgz) with values in</span>
+<span class="sd">        [0; 1] (i.e. probability of being white matter).</span>
+<span class="sd">        For example, tt can be the &#39;brain_pve_2.nii.gz&quot; white matter</span>
+<span class="sd">        probability map created by FSL Fast.</span>
+<span class="sd">    keep_orig: bool, default True</span>
+<span class="sd">        Save original &#39;wm.seg.mgz&#39; as &#39;wm.seg.orig.mgz&#39; instead of overwriting</span>
+<span class="sd">        it.</span>
+<span class="sd">    subjects_dir: str, default None</span>
+<span class="sd">        Path to the FreeSurfer subjects directory. Required if the environment</span>
+<span class="sd">        variable $SUBJECTS_DIR is not set.</span>
+<span class="sd">    temp_dir: str, default None</span>
+<span class="sd">        Directory to use to store temporary files. By default OS tmp dir.</span>
+<span class="sd">    fsconfig: str, default &lt;pyfreesurfer.DEFAULT_FREESURFER_PATH&gt;</span>
+<span class="sd">        The FreeSurfer configuration batch.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># FreeSurfer $SUBJECTS_DIR has to be passed or set as an env variable</span>
+    <span class="n">subjects_dir</span> <span class="o">=</span> <span class="n">get_or_check_freesurfer_subjects_dir</span><span class="p">(</span><span class="n">subjects_dir</span><span class="p">)</span>
+
+    <span class="c1"># Check existence of the subject&#39;s directory</span>
+    <span class="n">subject_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subjects_dir</span><span class="p">,</span> <span class="n">subject_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">subject_dir</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Directory does not exist: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">subject_dir</span><span class="p">)</span>
+
+    <span class="c1"># Create temporary directory to store intermediate files</span>
+    <span class="n">temp_dir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;recon_all_custom_wm_mask_&quot;</span><span class="p">,</span>
+                                <span class="nb">dir</span><span class="o">=</span><span class="n">temp_dir</span><span class="p">)</span>
+
+    <span class="c1"># Change input mask range of values: [0-1] to [0-110]</span>
+    <span class="n">wm_mask_0_110</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="s2">&quot;wm_mask_0_110.nii.gz&quot;</span><span class="p">)</span>
+    <span class="n">cmd_1</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;mris_calc&quot;</span><span class="p">,</span> <span class="s2">&quot;-o&quot;</span><span class="p">,</span> <span class="n">wm_mask_0_110</span><span class="p">,</span> <span class="n">wm_mask</span><span class="p">,</span> <span class="s2">&quot;mul&quot;</span><span class="p">,</span> <span class="s2">&quot;110&quot;</span><span class="p">]</span>
+    <span class="n">FSWrapper</span><span class="p">(</span><span class="n">cmd_1</span><span class="p">,</span> <span class="n">shfile</span><span class="o">=</span><span class="n">fsconfig</span><span class="p">)()</span>
+
+    <span class="c1"># If requested save original wm.seg.mgz as wm.seg.orig.mgz</span>
+    <span class="n">wm_seg_mgz</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subject_dir</span><span class="p">,</span> <span class="s2">&quot;mri&quot;</span><span class="p">,</span> <span class="s2">&quot;wm.seg.mgz&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">keep_orig</span><span class="p">:</span>
+        <span class="n">save_as</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subject_dir</span><span class="p">,</span> <span class="s2">&quot;mri&quot;</span><span class="p">,</span> <span class="s2">&quot;wm.seg.orig.mgz&quot;</span><span class="p">)</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">wm_seg_mgz</span><span class="p">,</span> <span class="n">save_as</span><span class="p">)</span>
+
+    <span class="c1"># Write the new wm.seg.mgz, FreeSurfer requires MRI_UCHAR type</span>
+    <span class="n">cmd_2</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;mri_convert&quot;</span><span class="p">,</span> <span class="n">wm_mask_0_110</span><span class="p">,</span> <span class="n">wm_seg_mgz</span><span class="p">,</span> <span class="s2">&quot;-odt&quot;</span><span class="p">,</span> <span class="s2">&quot;uchar&quot;</span><span class="p">]</span>
+    <span class="n">FSWrapper</span><span class="p">(</span><span class="n">cmd_2</span><span class="p">,</span> <span class="n">shfile</span><span class="o">=</span><span class="n">fsconfig</span><span class="p">)()</span>
+
+    <span class="c1"># Clean tmp dir</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">)</span>
+
+    <span class="c1"># Rerun recon-all</span>
+    <span class="n">cmd_3</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;recon-all&quot;</span><span class="p">,</span> <span class="s2">&quot;-autorecon2-wm&quot;</span><span class="p">,</span> <span class="s2">&quot;-autorecon3&quot;</span><span class="p">,</span> <span class="s2">&quot;-s&quot;</span><span class="p">,</span> <span class="n">subject_id</span><span class="p">]</span>
+    <span class="n">FSWrapper</span><span class="p">(</span><span class="n">cmd_3</span><span class="p">,</span> <span class="n">shfile</span><span class="o">=</span><span class="n">fsconfig</span><span class="p">,</span> <span class="n">subjects_dir</span><span class="o">=</span><span class="n">subjects_dir</span><span class="p">)()</span>
+
+    <span class="k">return</span> <span class="n">subject_dir</span></div>
+
+
+<div class="viewcode-block" id="recon_all_longitudinal"><a class="viewcode-back" href="../../../generated/pyfreesurfer.segmentation.cortical.html#pyfreesurfer.segmentation.cortical.recon_all_longitudinal">[docs]</a><span class="k">def</span> <span class="nf">recon_all_longitudinal</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="n">subject_id</span><span class="p">,</span> <span class="n">subjects_dirs</span><span class="p">,</span> <span class="n">timepoints</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                           <span class="n">fsconfig</span><span class="o">=</span><span class="n">DEFAULT_FREESURFER_PATH</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Assuming you have run recon-all for all timepoints of a given subject,</span>
+<span class="sd">    and that the results are stored in one SUBJECTS_DIR per timepoint, this</span>
+<span class="sd">    function will:</span>
+<span class="sd">    - create a template for the subject and process it with recon-all</span>
+<span class="sd">    - rerun recon-all for all timepoints of the subject using the template</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    outdir: str</span>
+<span class="sd">        Directory where to output. Created if not already existing.</span>
+<span class="sd">    subject_id: str</span>
+<span class="sd">        Identifier of subject, used for all timepoints.</span>
+<span class="sd">    subjects_dirs: list of str</span>
+<span class="sd">        The FreeSurfer SUBJECTS_DIRs of timepoints.</span>
+<span class="sd">    timepoints: list of str, default None</span>
+<span class="sd">        The timepoint names in the same order as the SUBJECTS_DIRs.</span>
+<span class="sd">        Used to create the subject longitudinal IDs.</span>
+<span class="sd">        By default timepoints are &quot;1&quot;, &quot;2&quot;...</span>
+<span class="sd">    fsconfig: str, default &lt;pyfreesurfer.DEFAULT_FREESURFER_PATH&gt;</span>
+<span class="sd">        The FreeSurfer configuration batch.</span>
+
+<span class="sd">    Return</span>
+<span class="sd">    ------</span>
+<span class="sd">    subject_template_id: str</span>
+<span class="sd">        ID of the subject template.</span>
+<span class="sd">    subject_long_ids: list of str</span>
+<span class="sd">        Longitudinal IDs of the subject for all the timepoints.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Check existence of FreeSurfer subject directories</span>
+    <span class="k">for</span> <span class="n">subjects_dir</span> <span class="ow">in</span> <span class="n">subjects_dirs</span><span class="p">:</span>
+        <span class="n">subject_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subjects_dir</span><span class="p">,</span> <span class="n">subject_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">subject_dir</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Directory does not exist: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">subject_dir</span><span class="p">)</span>
+
+    <span class="c1"># If &#39;timepoints&#39; not passed, used defaults, else check validity</span>
+    <span class="k">if</span> <span class="n">timepoints</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">timepoints</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">subjects_dirs</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">timepoints</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">subjects_dirs</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;There should be as many timepoints as subjects_dirs&quot;</span><span class="p">)</span>
+
+    <span class="c1"># If &lt;outdir&gt; does not exist, create it</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">outdir</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">outdir</span><span class="p">)</span>
+
+    <span class="c1"># FreeSurfer requires a unique SUBJECTS_DIR will all the timepoints to</span>
+    <span class="c1"># compute the template: create symbolic links in &lt;outdir&gt; to all timepoints</span>
+    <span class="n">subject_tp_ids</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># To accumulate all the timepoint IDs</span>
+    <span class="k">for</span> <span class="n">tp</span><span class="p">,</span> <span class="n">subjects_dir</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">timepoints</span><span class="p">,</span> <span class="n">subjects_dirs</span><span class="p">):</span>
+        <span class="n">subject_tp_id</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">_</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">subject_id</span><span class="p">,</span> <span class="n">tp</span><span class="p">)</span>  <span class="c1"># subject timepoint ID</span>
+        <span class="n">src_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subjects_dir</span><span class="p">,</span> <span class="n">subject_id</span><span class="p">)</span>
+        <span class="n">dst_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="n">subject_tp_id</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">symlink</span><span class="p">(</span><span class="n">src_path</span><span class="p">,</span> <span class="n">dst_path</span><span class="p">)</span>
+        <span class="n">subject_tp_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subject_tp_id</span><span class="p">)</span>
+
+    <span class="c1"># STEP 1 - create and process template</span>
+    <span class="n">subject_template_id</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">_template_</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">subject_id</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">timepoints</span><span class="p">))</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;recon-all&quot;</span><span class="p">,</span> <span class="s2">&quot;-base&quot;</span><span class="p">,</span> <span class="n">subject_template_id</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">subj_tp_id</span> <span class="ow">in</span> <span class="n">subject_tp_ids</span><span class="p">:</span>
+        <span class="n">cmd</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;-tp&quot;</span><span class="p">,</span> <span class="n">subj_tp_id</span><span class="p">]</span>
+    <span class="n">cmd</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;-all&quot;</span><span class="p">]</span>
+    <span class="n">FSWrapper</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shfile</span><span class="o">=</span><span class="n">fsconfig</span><span class="p">,</span> <span class="n">subjects_dir</span><span class="o">=</span><span class="n">outdir</span><span class="p">)()</span>
+
+    <span class="c1"># STEP 2 - rerun recon-all for all timepoints using the template</span>
+    <span class="n">subject_long_ids</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">subj_tp_id</span> <span class="ow">in</span> <span class="n">subject_tp_ids</span><span class="p">:</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;recon-all&quot;</span><span class="p">,</span> <span class="s2">&quot;-long&quot;</span><span class="p">,</span> <span class="n">subj_tp_id</span><span class="p">,</span> <span class="n">subject_template_id</span><span class="p">,</span> <span class="s2">&quot;-all&quot;</span><span class="p">]</span>
+        <span class="n">FSWrapper</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shfile</span><span class="o">=</span><span class="n">fsconfig</span><span class="p">,</span> <span class="n">subjects_dir</span><span class="o">=</span><span class="n">outdir</span><span class="p">)()</span>
+        <span class="n">subject_long_ids</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.long.</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">subj_tp_id</span><span class="p">,</span> <span class="n">subject_template_id</span><span class="p">)]</span>
+
+    <span class="k">return</span> <span class="n">subject_template_id</span><span class="p">,</span> <span class="n">subject_long_ids</span></div>
 </pre></div>
 
           </div>
         </div>
       </div>
+
     <div class="clearer">
     </div>
   </div>
@@ -213,7 +394,7 @@
 </div>
 
 <div class="footer">
-    &copy; 2016, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
+    &copy; 2017, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
 </div>
   </body>
 </html>

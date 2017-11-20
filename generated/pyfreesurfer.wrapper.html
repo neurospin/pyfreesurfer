@@ -15,11 +15,12 @@
     
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.0.0',
+        VERSION:     '1.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -51,7 +52,18 @@
   </script>
 
   </head>
-  <body><nav class="navbar navbar-default navbar-static-top">
+  <body role="document"><div class="banner">
+  <div class="container-fluid banner-container">
+    <div class="row banner-inner">
+      <div class="col-xs-4">
+        <img alt="Logo" src="../_static/pyfreesurfer.png">
+      </div>
+      <div class="col-xs-8">
+            <p>Using FreeSurfer in Python.</p>
+      </div>
+    </div>  
+  </div>
+</div><nav class="navbar navbar-default navbar-static-top">
   <div class="container-fluid">
     <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -61,38 +73,37 @@
           <span class="icon-bar"></span>
         </button>
         <a class="navbar-brand" href="../index.html">
-        <img alt="Logo" src="../_static/pyfreesurfer.png">
         </a>
     </div>
     <div id="navbar" class="navbar-collapse collapse" ng-controller="navCtrl" ng-app="navApp">
       <ul class="nav navbar-nav">
         <li ng-class="{ active: isActive('index') }"><a href="../index.html">Home</a></li>
         <li ng-class="{ active: isActive('installation') }"><a href="installation.html">Installation</a></li>
-        <li ng-class="{ active: isActive('documentation') }"><a href="documentation.html">Documentation</a></li>
-        <li class="dropdown">
+        <li ng-class="{ active: isActive('gallery') }"><a href="../auto_gallery/gallery.html">Gallery</a></li>
+        <li ng-class="{ active: isActive('documentation') }"><a href="documentation.html">API documentation</a></li>
+        <!--<li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></a>
           <ul class="dropdown-menu">
 	        <li><a href="pyfreesurfer.html">Pyfreesurfer</a></li>
-<li><a href="pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
+<li><a href="pyfreesurfer.utils.html">Pyfreesurfer.utils</a></li>
 <li><a href="pyfreesurfer.conversions.html">Pyfreesurfer.conversions</a></li>
 <li><a href="pyfreesurfer.segmentation.html">Pyfreesurfer.segmentation</a></li>
-<li><a href="pyfreesurfer.utils.html">Pyfreesurfer.utils</a></li>
+<li><a href="pyfreesurfer.diffusion.html">Pyfreesurfer.diffusion</a></li>
+<li><a href="pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
           </ul>
-        </li>
+        </li>-->
         <li><a href="https://github.com/AGrigis/pysphinxdoc">PYSPHINXDOC</a></li>
       </ul>
     </div>
   </div>
 </nav>
-
-
 <div class="content-wrapper">
     <div class="sphinxsidebar">
       <div class="sphinxsidebarwrapper">
 
         <!-- info setup -->
           <p class="doc-version">
-           This documentation is for pyfreesurfer <strong>version 1.0.0</strong>
+           This documentation is for pyfreesurfer <strong>version 1.2.0</strong>
           </p>
         <p class="citing">
           If you use the software, please do not esitate to 
@@ -113,12 +124,109 @@
       
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
-  <span class="target" id="module-pyfreesurfer.wrapper"></span><dl class="class">
+  <span class="target" id="module-pyfreesurfer.wrapper"></span><p>Modules that provides tools to wrap FreeSurfer commands.</p>
+<dl class="class">
 <dt id="pyfreesurfer.wrapper.FSWrapper">
-<em class="property">class </em><tt class="descclassname">pyfreesurfer.wrapper.</tt><tt class="descname">FSWrapper</tt><big>(</big><em>cmd</em>, <em>shfile='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em><big>)</big><a class="reference internal" href="../_modules/pyfreesurfer/wrapper.html#FSWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.wrapper.FSWrapper" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pyfreesurfer.wrapper.</code><code class="descname">FSWrapper</code><span class="sig-paren">(</span><em>cmd</em>, <em>shfile='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em>, <em>env=None</em>, <em>subjects_dir=None</em>, <em>add_fsl_env=False</em>, <em>fsl_sh=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/wrapper.html#FSWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.wrapper.FSWrapper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parent class for the wrapping of FreeSurfer functions.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="pyfreesurfer.wrapper.HCPWrapper">
+<em class="property">class </em><code class="descclassname">pyfreesurfer.wrapper.</code><code class="descname">HCPWrapper</code><span class="sig-paren">(</span><em>env</em>, <em>fslconfig='/etc/fsl/5.0/fsl.sh'</em>, <em>fsconfig='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/wrapper.html#HCPWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.wrapper.HCPWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parent class for the wrapping of HCP functions.</p>
+<dl class="method">
+<dt id="pyfreesurfer.wrapper.HCPWrapper.freesurfer_version">
+<code class="descname">freesurfer_version</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/wrapper.html#HCPWrapper.freesurfer_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.wrapper.HCPWrapper.freesurfer_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check for FreeSurfer version on system.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>version</strong> : str</p>
+<blockquote class="last">
+<div><p>version number as string or None if FreeSurfer not found.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyfreesurfer.wrapper.HCPWrapper.fsl_version">
+<code class="descname">fsl_version</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/wrapper.html#HCPWrapper.fsl_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.wrapper.HCPWrapper.fsl_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check for FSL version on system.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>version</strong> : str</p>
+<blockquote class="last">
+<div><p>version number as string or None if FSL not found.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyfreesurfer.wrapper.HCPWrapper.gradunwarp_version">
+<code class="descname">gradunwarp_version</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/wrapper.html#HCPWrapper.gradunwarp_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.wrapper.HCPWrapper.gradunwarp_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check for gradunwarp version on system.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>version</strong> : str</p>
+<blockquote class="last">
+<div><p>version number as string or None if gradunwarp not found.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyfreesurfer.wrapper.HCPWrapper.hcp_version">
+<code class="descname">hcp_version</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/wrapper.html#HCPWrapper.hcp_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.wrapper.HCPWrapper.hcp_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check for HCP version on system.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>version</strong> : str</p>
+<blockquote class="last">
+<div><p>version number as string or None if HCP not found.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyfreesurfer.wrapper.HCPWrapper.wbcommand_version">
+<code class="descname">wbcommand_version</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/wrapper.html#HCPWrapper.wbcommand_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.wrapper.HCPWrapper.wbcommand_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check for wbcommand version on system.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>version</strong> : str</p>
+<blockquote class="last">
+<div><p>version number as string or None if wbcommand not found.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 
@@ -126,6 +234,7 @@
           </div>
         </div>
       </div>
+
     <div class="clearer">
     </div>
   </div>
@@ -133,7 +242,7 @@
 </div>
 
 <div class="footer">
-    &copy; 2016, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
+    &copy; 2017, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
 </div>
   </body>
 </html>

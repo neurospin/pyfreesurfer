@@ -15,11 +15,12 @@
     
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.0.0',
+        VERSION:     '1.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -51,7 +52,18 @@
   </script>
 
   </head>
-  <body><nav class="navbar navbar-default navbar-static-top">
+  <body role="document"><div class="banner">
+  <div class="container-fluid banner-container">
+    <div class="row banner-inner">
+      <div class="col-xs-4">
+        <img alt="Logo" src="../_static/pyfreesurfer.png">
+      </div>
+      <div class="col-xs-8">
+            <p>Using FreeSurfer in Python.</p>
+      </div>
+    </div>  
+  </div>
+</div><nav class="navbar navbar-default navbar-static-top">
   <div class="container-fluid">
     <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -61,38 +73,37 @@
           <span class="icon-bar"></span>
         </button>
         <a class="navbar-brand" href="../index.html">
-        <img alt="Logo" src="../_static/pyfreesurfer.png">
         </a>
     </div>
     <div id="navbar" class="navbar-collapse collapse" ng-controller="navCtrl" ng-app="navApp">
       <ul class="nav navbar-nav">
         <li ng-class="{ active: isActive('index') }"><a href="../index.html">Home</a></li>
         <li ng-class="{ active: isActive('installation') }"><a href="installation.html">Installation</a></li>
-        <li ng-class="{ active: isActive('documentation') }"><a href="documentation.html">Documentation</a></li>
-        <li class="dropdown">
+        <li ng-class="{ active: isActive('gallery') }"><a href="../auto_gallery/gallery.html">Gallery</a></li>
+        <li ng-class="{ active: isActive('documentation') }"><a href="documentation.html">API documentation</a></li>
+        <!--<li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></a>
           <ul class="dropdown-menu">
 	        <li><a href="pyfreesurfer.html">Pyfreesurfer</a></li>
-<li><a href="pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
+<li><a href="pyfreesurfer.utils.html">Pyfreesurfer.utils</a></li>
 <li><a href="pyfreesurfer.conversions.html">Pyfreesurfer.conversions</a></li>
 <li><a href="pyfreesurfer.segmentation.html">Pyfreesurfer.segmentation</a></li>
-<li><a href="pyfreesurfer.utils.html">Pyfreesurfer.utils</a></li>
+<li><a href="pyfreesurfer.diffusion.html">Pyfreesurfer.diffusion</a></li>
+<li><a href="pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
           </ul>
-        </li>
+        </li>-->
         <li><a href="https://github.com/AGrigis/pysphinxdoc">PYSPHINXDOC</a></li>
       </ul>
     </div>
   </div>
 </nav>
-
-
 <div class="content-wrapper">
     <div class="sphinxsidebar">
       <div class="sphinxsidebarwrapper">
 
         <!-- info setup -->
           <p class="doc-version">
-           This documentation is for pyfreesurfer <strong>version 1.0.0</strong>
+           This documentation is for pyfreesurfer <strong>version 1.2.0</strong>
           </p>
         <p class="citing">
           If you use the software, please do not esitate to 
@@ -113,17 +124,18 @@
       
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
-  <span class="target" id="module-pyfreesurfer.utils.surftools"></span><dl class="class">
+  <span class="target" id="module-pyfreesurfer.utils.surftools"></span><p>Modules that provides surface manipulation tools.</p>
+<dl class="class">
 <dt id="pyfreesurfer.utils.surftools.TriSurface">
-<em class="property">class </em><tt class="descclassname">pyfreesurfer.utils.surftools.</tt><tt class="descname">TriSurface</tt><big>(</big><em>vertices</em>, <em>triangles</em>, <em>labels=None</em>, <em>metadata=None</em>, <em>inflated_vertices=None</em><big>)</big><a class="reference internal" href="../_modules/pyfreesurfer/utils/surftools.html#TriSurface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.utils.surftools.TriSurface" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pyfreesurfer.utils.surftools.</code><code class="descname">TriSurface</code><span class="sig-paren">(</span><em>vertices</em>, <em>triangles</em>, <em>labels=None</em>, <em>metadata=None</em>, <em>inflated_vertices=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/utils/surftools.html#TriSurface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.utils.surftools.TriSurface" title="Permalink to this definition">¶</a></dt>
 <dd><p>A class representing a triangulated 3D surface.</p>
 <p>The surface contains &#8216;ntrian&#8217; triangles, each having 3 vertices with
 3 coordinates.</p>
 <dl class="method">
 <dt id="pyfreesurfer.utils.surftools.TriSurface.labelize">
-<tt class="descname">labelize</tt><big>(</big><em>shape</em>, <em>shift=0</em><big>)</big><a class="reference internal" href="../_modules/pyfreesurfer/utils/surftools.html#TriSurface.labelize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.utils.surftools.TriSurface.labelize" title="Permalink to this definition">¶</a></dt>
+<code class="descname">labelize</code><span class="sig-paren">(</span><em>shape</em>, <em>shift=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/utils/surftools.html#TriSurface.labelize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.utils.surftools.TriSurface.labelize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute a label image of the TriSurface.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -155,7 +167,7 @@
 
 <dl class="classmethod">
 <dt id="pyfreesurfer.utils.surftools.TriSurface.load">
-<em class="property">classmethod </em><tt class="descname">load</tt><big>(</big><em>meshfile</em>, <em>inflatedmeshpath=None</em>, <em>annotfile=None</em><big>)</big><a class="reference internal" href="../_modules/pyfreesurfer/utils/surftools.html#TriSurface.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.utils.surftools.TriSurface.load" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">load</code><span class="sig-paren">(</span><em>meshfile</em>, <em>inflatedmeshpath=None</em>, <em>annotfile=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/utils/surftools.html#TriSurface.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.utils.surftools.TriSurface.load" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load a FreeSurfer surface.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -190,7 +202,7 @@ be loaded.</p>
 
 <dl class="method">
 <dt id="pyfreesurfer.utils.surftools.TriSurface.nedges">
-<tt class="descname">nedges</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyfreesurfer/utils/surftools.html#TriSurface.nedges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.utils.surftools.TriSurface.nedges" title="Permalink to this definition">¶</a></dt>
+<code class="descname">nedges</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/utils/surftools.html#TriSurface.nedges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.utils.surftools.TriSurface.nedges" title="Permalink to this definition">¶</a></dt>
 <dd><p>TriSurface number of edges.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -209,7 +221,7 @@ the number of edges of the TriSurface.</p>
 
 <dl class="method">
 <dt id="pyfreesurfer.utils.surftools.TriSurface.save">
-<tt class="descname">save</tt><big>(</big><em>out_file</em><big>)</big><a class="reference internal" href="../_modules/pyfreesurfer/utils/surftools.html#TriSurface.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.utils.surftools.TriSurface.save" title="Permalink to this definition">¶</a></dt>
+<code class="descname">save</code><span class="sig-paren">(</span><em>out_file</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/utils/surftools.html#TriSurface.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.utils.surftools.TriSurface.save" title="Permalink to this definition">¶</a></dt>
 <dd><p>Export a mesh in the FreeSurfer format.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -227,7 +239,7 @@ the number of edges of the TriSurface.</p>
 
 <dl class="method">
 <dt id="pyfreesurfer.utils.surftools.TriSurface.save_vtk">
-<tt class="descname">save_vtk</tt><big>(</big><em>outfile</em>, <em>inflated=False</em><big>)</big><a class="reference internal" href="../_modules/pyfreesurfer/utils/surftools.html#TriSurface.save_vtk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.utils.surftools.TriSurface.save_vtk" title="Permalink to this definition">¶</a></dt>
+<code class="descname">save_vtk</code><span class="sig-paren">(</span><em>outfile</em>, <em>inflated=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/utils/surftools.html#TriSurface.save_vtk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.utils.surftools.TriSurface.save_vtk" title="Permalink to this definition">¶</a></dt>
 <dd><p>Export a mesh in &#8216;.vtk&#8217; format.</p>
 <p>This code uses vtk.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -250,7 +262,7 @@ the number of edges of the TriSurface.</p>
 
 <dl class="method">
 <dt id="pyfreesurfer.utils.surftools.TriSurface.shape">
-<tt class="descname">shape</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/pyfreesurfer/utils/surftools.html#TriSurface.shape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.utils.surftools.TriSurface.shape" title="Permalink to this definition">¶</a></dt>
+<code class="descname">shape</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/utils/surftools.html#TriSurface.shape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.utils.surftools.TriSurface.shape" title="Permalink to this definition">¶</a></dt>
 <dd><p>TriSurface shape.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -268,7 +280,7 @@ the number of edges of the TriSurface.</p>
 
 <dl class="method">
 <dt id="pyfreesurfer.utils.surftools.TriSurface.voxelize">
-<tt class="descname">voxelize</tt><big>(</big><em>shape</em>, <em>tol=0</em><big>)</big><a class="reference internal" href="../_modules/pyfreesurfer/utils/surftools.html#TriSurface.voxelize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.utils.surftools.TriSurface.voxelize" title="Permalink to this definition">¶</a></dt>
+<code class="descname">voxelize</code><span class="sig-paren">(</span><em>shape</em>, <em>tol=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/utils/surftools.html#TriSurface.voxelize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.utils.surftools.TriSurface.voxelize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the enclosed points of the TriSurface.</p>
 <p>This code uses vtk.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -295,7 +307,7 @@ the number of edges of the TriSurface.</p>
 
 <dl class="function">
 <dt id="pyfreesurfer.utils.surftools.apply_affine_on_mesh">
-<tt class="descclassname">pyfreesurfer.utils.surftools.</tt><tt class="descname">apply_affine_on_mesh</tt><big>(</big><em>vertices</em>, <em>affine</em><big>)</big><a class="reference internal" href="../_modules/pyfreesurfer/utils/surftools.html#apply_affine_on_mesh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.utils.surftools.apply_affine_on_mesh" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pyfreesurfer.utils.surftools.</code><code class="descname">apply_affine_on_mesh</code><span class="sig-paren">(</span><em>vertices</em>, <em>affine</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/utils/surftools.html#apply_affine_on_mesh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.utils.surftools.apply_affine_on_mesh" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply an affine transformation on each vetex of the mesh.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -326,6 +338,7 @@ the number of edges of the TriSurface.</p>
           </div>
         </div>
       </div>
+
     <div class="clearer">
     </div>
   </div>
@@ -333,7 +346,7 @@ the number of edges of the TriSurface.</p>
 </div>
 
 <div class="footer">
-    &copy; 2016, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
+    &copy; 2017, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
 </div>
   </body>
 </html>

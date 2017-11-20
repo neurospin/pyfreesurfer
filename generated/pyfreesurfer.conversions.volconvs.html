@@ -15,11 +15,12 @@
     
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.0.0',
+        VERSION:     '1.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -51,7 +52,18 @@
   </script>
 
   </head>
-  <body><nav class="navbar navbar-default navbar-static-top">
+  <body role="document"><div class="banner">
+  <div class="container-fluid banner-container">
+    <div class="row banner-inner">
+      <div class="col-xs-4">
+        <img alt="Logo" src="../_static/pyfreesurfer.png">
+      </div>
+      <div class="col-xs-8">
+            <p>Using FreeSurfer in Python.</p>
+      </div>
+    </div>  
+  </div>
+</div><nav class="navbar navbar-default navbar-static-top">
   <div class="container-fluid">
     <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -61,38 +73,37 @@
           <span class="icon-bar"></span>
         </button>
         <a class="navbar-brand" href="../index.html">
-        <img alt="Logo" src="../_static/pyfreesurfer.png">
         </a>
     </div>
     <div id="navbar" class="navbar-collapse collapse" ng-controller="navCtrl" ng-app="navApp">
       <ul class="nav navbar-nav">
         <li ng-class="{ active: isActive('index') }"><a href="../index.html">Home</a></li>
         <li ng-class="{ active: isActive('installation') }"><a href="installation.html">Installation</a></li>
-        <li ng-class="{ active: isActive('documentation') }"><a href="documentation.html">Documentation</a></li>
-        <li class="dropdown">
+        <li ng-class="{ active: isActive('gallery') }"><a href="../auto_gallery/gallery.html">Gallery</a></li>
+        <li ng-class="{ active: isActive('documentation') }"><a href="documentation.html">API documentation</a></li>
+        <!--<li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></a>
           <ul class="dropdown-menu">
 	        <li><a href="pyfreesurfer.html">Pyfreesurfer</a></li>
-<li><a href="pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
+<li><a href="pyfreesurfer.utils.html">Pyfreesurfer.utils</a></li>
 <li><a href="pyfreesurfer.conversions.html">Pyfreesurfer.conversions</a></li>
 <li><a href="pyfreesurfer.segmentation.html">Pyfreesurfer.segmentation</a></li>
-<li><a href="pyfreesurfer.utils.html">Pyfreesurfer.utils</a></li>
+<li><a href="pyfreesurfer.diffusion.html">Pyfreesurfer.diffusion</a></li>
+<li><a href="pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
           </ul>
-        </li>
+        </li>-->
         <li><a href="https://github.com/AGrigis/pysphinxdoc">PYSPHINXDOC</a></li>
       </ul>
     </div>
   </div>
 </nav>
-
-
 <div class="content-wrapper">
     <div class="sphinxsidebar">
       <div class="sphinxsidebarwrapper">
 
         <!-- info setup -->
           <p class="doc-version">
-           This documentation is for pyfreesurfer <strong>version 1.0.0</strong>
+           This documentation is for pyfreesurfer <strong>version 1.2.0</strong>
           </p>
         <p class="citing">
           If you use the software, please do not esitate to 
@@ -113,12 +124,12 @@
       
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <span class="target" id="module-pyfreesurfer.conversions.volconvs"></span><p>Wrappers for the FreeSurfer&#8217;s volume conversion utilities.</p>
 <dl class="function">
 <dt id="pyfreesurfer.conversions.volconvs.mri_binarize">
-<tt class="descclassname">pyfreesurfer.conversions.volconvs.</tt><tt class="descname">mri_binarize</tt><big>(</big><em>inputfile</em>, <em>outputfile</em>, <em>match=None</em>, <em>wm=False</em>, <em>fsconfig='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em><big>)</big><a class="reference internal" href="../_modules/pyfreesurfer/conversions/volconvs.html#mri_binarize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.conversions.volconvs.mri_binarize" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pyfreesurfer.conversions.volconvs.</code><code class="descname">mri_binarize</code><span class="sig-paren">(</span><em>inputfile</em>, <em>outputfile</em>, <em>match=None</em>, <em>wm=False</em>, <em>ventricles=False</em>, <em>inv=False</em>, <em>fsconfig='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/conversions/volconvs.html#mri_binarize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.conversions.volconvs.mri_binarize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Binarize a FreeSurfer label map.</p>
 <p>Binding over the FreeSurfer&#8217;s &#8216;mri_binarize&#8217; command.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -141,6 +152,10 @@
 <blockquote>
 <div><p>set match vals to 2 and 41 (aseg for cerebral WM).</p>
 </div></blockquote>
+<p><strong>inv: bool (optional)</strong></p>
+<blockquote>
+<div><p>inverse the result.</p>
+</div></blockquote>
 <p><strong>fsconfig: str (optional)</strong></p>
 <blockquote class="last">
 <div><p>The freesurfer configuration batch.</p>
@@ -153,7 +168,7 @@
 
 <dl class="function">
 <dt id="pyfreesurfer.conversions.volconvs.mri_convert">
-<tt class="descclassname">pyfreesurfer.conversions.volconvs.</tt><tt class="descname">mri_convert</tt><big>(</big><em>fsdir</em>, <em>regex</em>, <em>outdir</em>, <em>reslice=True</em>, <em>interpolation='interpolate'</em>, <em>fsconfig='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em><big>)</big><a class="reference internal" href="../_modules/pyfreesurfer/conversions/volconvs.html#mri_convert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.conversions.volconvs.mri_convert" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pyfreesurfer.conversions.volconvs.</code><code class="descname">mri_convert</code><span class="sig-paren">(</span><em>fsdir</em>, <em>regex</em>, <em>outdir</em>, <em>destdirname='convert'</em>, <em>reslice=True</em>, <em>interpolation='interpolate'</em>, <em>fsconfig='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/conversions/volconvs.html#mri_convert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.conversions.volconvs.mri_convert" title="Permalink to this definition">¶</a></dt>
 <dd><p>Export FreeSurfer &#8216;.mgz&#8217; image in Nifti format.</p>
 <p>Convert in native space: the destination image is resliced like the
 &#8216;rawavg.mgz&#8217; file if the reslice option is set. The converted file will
@@ -175,6 +190,11 @@ then have a &#8216;.native&#8217; suffix.</p>
 <p><strong>outdir: str (mandatory)</strong></p>
 <blockquote>
 <div><p>The conversion destination folder.</p>
+</div></blockquote>
+<p><strong>destdirname: str (optional, default &#8216;convert&#8217;)</strong></p>
+<blockquote>
+<div><p>The name of the folder where each subject converted volumes will be
+saved. If None, don&#8217;t create a sub folder.</p>
 </div></blockquote>
 <p><strong>reslice: bool (optional default False)</strong></p>
 <blockquote>
@@ -202,7 +222,7 @@ then have a &#8216;.native&#8217; suffix.</p>
 
 <dl class="function">
 <dt id="pyfreesurfer.conversions.volconvs.mri_vol2surf">
-<tt class="descclassname">pyfreesurfer.conversions.volconvs.</tt><tt class="descname">mri_vol2surf</tt><big>(</big><em>hemi</em>, <em>volume_file</em>, <em>out_texture_file</em>, <em>ico_order</em>, <em>dat_file</em>, <em>fsdir</em>, <em>sid</em>, <em>surface_name='white'</em>, <em>fsconfig='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em><big>)</big><a class="reference internal" href="../_modules/pyfreesurfer/conversions/volconvs.html#mri_vol2surf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.conversions.volconvs.mri_vol2surf" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pyfreesurfer.conversions.volconvs.</code><code class="descname">mri_vol2surf</code><span class="sig-paren">(</span><em>hemi</em>, <em>volume_file</em>, <em>out_texture_file</em>, <em>ico_order</em>, <em>dat_file</em>, <em>fsdir</em>, <em>sid</em>, <em>surface_name='white'</em>, <em>fsconfig='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/conversions/volconvs.html#mri_vol2surf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.conversions.volconvs.mri_vol2surf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Assigns values from a volume to each surface vertices.</p>
 <p>Wrapper around the FreeSurfer &#8216;mri_vol2surf&#8217; command to create the
 described texture.</p>
@@ -261,6 +281,7 @@ file as computed by &#8216;tkregister2&#8217;.</p>
           </div>
         </div>
       </div>
+
     <div class="clearer">
     </div>
   </div>
@@ -268,7 +289,7 @@ file as computed by &#8216;tkregister2&#8217;.</p>
 </div>
 
 <div class="footer">
-    &copy; 2016, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
+    &copy; 2017, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
 </div>
   </body>
 </html>

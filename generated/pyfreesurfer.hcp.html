@@ -1,0 +1,462 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+  
+    <title>PYFREESURFER &mdash; pyFreeSurfer</title>
+  <!-- htmltitle is before nature.css - we use this hack to load bootstrap first -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../_static/css/bootstrap.min.css" media="screen" />
+
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="pyFreeSurfer" href="../index.html" />
+  
+   
+       <script type="text/javascript" src="../_static/sidebar.js"></script>
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="../_static/js/bootstrap.min.js" type="text/javascript"></script>
+
+  <script src="../_static/js/angular.min.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    var app = angular.module("navApp", []);
+    app.controller('navCtrl', ['$scope', '$window', function($scope, $window) {
+      $scope.isActive = function (viewLocation) {
+        var rel = $window.location.pathname.split("/")
+        rel = rel[rel.length - 1]
+        rel = rel.split(".")[0]
+        var active = (viewLocation === rel);
+        return active;};
+    }]);
+  </script>
+
+  </head>
+  <body role="document"><div class="banner">
+  <div class="container-fluid banner-container">
+    <div class="row banner-inner">
+      <div class="col-xs-4">
+        <img alt="Logo" src="../_static/pyfreesurfer.png">
+      </div>
+      <div class="col-xs-8">
+            <p>Using FreeSurfer in Python.</p>
+      </div>
+    </div>  
+  </div>
+</div><nav class="navbar navbar-default navbar-static-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+        </a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse" ng-controller="navCtrl" ng-app="navApp">
+      <ul class="nav navbar-nav">
+        <li ng-class="{ active: isActive('index') }"><a href="../index.html">Home</a></li>
+        <li ng-class="{ active: isActive('installation') }"><a href="installation.html">Installation</a></li>
+        <li ng-class="{ active: isActive('gallery') }"><a href="../auto_gallery/gallery.html">Gallery</a></li>
+        <li ng-class="{ active: isActive('documentation') }"><a href="documentation.html">API documentation</a></li>
+        <!--<li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+	        <li><a href="pyfreesurfer.html">Pyfreesurfer</a></li>
+<li><a href="pyfreesurfer.utils.html">Pyfreesurfer.utils</a></li>
+<li><a href="pyfreesurfer.conversions.html">Pyfreesurfer.conversions</a></li>
+<li><a href="pyfreesurfer.segmentation.html">Pyfreesurfer.segmentation</a></li>
+<li><a href="pyfreesurfer.diffusion.html">Pyfreesurfer.diffusion</a></li>
+<li><a href="pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
+          </ul>
+        </li>-->
+        <li><a href="https://github.com/AGrigis/pysphinxdoc">PYSPHINXDOC</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="content-wrapper">
+    <div class="sphinxsidebar">
+      <div class="sphinxsidebarwrapper">
+
+        <!-- info setup -->
+          <p class="doc-version">
+           This documentation is for pyfreesurfer <strong>version 1.2.0</strong>
+          </p>
+        <p class="citing">
+          If you use the software, please do not esitate to 
+          <a &mdash; <a href="https://github.com/neurospin/pyfreesurfer">
+          Report a Bug</a>.
+        </p>
+
+      <!-- toc tree -->
+      <ul class="simple">
+</ul>
+
+
+      </div>
+    </div>
+  
+
+  <div class="content">
+      
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="module-pyfreesurfer.hcp"></span><p>Wrapper around the HCP prefreesurfer, freesurfer and postfreesurfer
+scripts.</p>
+<p><strong>Requirements for this module</strong></p>
+<p>Installed versions of:</p>
+<ul class="simple">
+<li>FSL (version 5.0.6),</li>
+<li>FreeSurfer (version 5.3.0-HCP),</li>
+<li>gradunwarp (HCP version 1.0.2) if doing gradient distortion correction</li>
+</ul>
+<p>Environment:</p>
+<ul class="simple">
+<li>FSLDIR</li>
+<li>FREESURFER_HOME</li>
+<li>HCPPIPEDIR</li>
+<li>CARET7DIR</li>
+<li>PATH (to be able to find gradient_unwarp.py)</li>
+</ul>
+<dl class="function">
+<dt id="pyfreesurfer.hcp.freesurfer_hcp">
+<code class="descclassname">pyfreesurfer.hcp.</code><code class="descname">freesurfer_hcp</code><span class="sig-paren">(</span><em>subject</em>, <em>t1w_folder</em>, <em>t1_img</em>, <em>t1_img_brain</em>, <em>t2_img</em>, <em>hcpdir</em>, <em>wbcommand='/usr/bin'</em>, <em>fslconfig='/etc/fsl/5.0/fsl.sh'</em>, <em>fsconfig='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/hcp.html#freesurfer_hcp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.hcp.freesurfer_hcp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs all the HCP FreeSurfer steps.</p>
+<ol class="arabic simple">
+<li>Make Spline Interpolated Downsample to 1mm.</li>
+<li>Initial recon-all steps (with flags that are part of &#8220;-autorecon1&#8221;, with
+the exception of -skullstrip).</li>
+<li>Generate brain mask.</li>
+<li>Call recon-all to run most of the &#8220;-autorecon2&#8221; stages, but turning off
+smooth2, inflate2, curvstats, and segstats stages.</li>
+<li>High resolution white matter and fine tune T2w to T1w registration.</li>
+<li>Intermediate Recon-all Steps.</li>
+<li>High resolution pial matter (adjusts the pial surface based on the the
+T2w image).</li>
+<li>Final recon-all steps.</li>
+</ol>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>subject: str (mandatory)</strong></p>
+<blockquote>
+<div><p>the current subject identifier.</p>
+</div></blockquote>
+<p><strong>t1w_folder: str (mandatory)</strong></p>
+<blockquote>
+<div><p>the FreeSurfer working directory with all the subjects.</p>
+</div></blockquote>
+<p><strong>t1_img: str (mandatory)</strong></p>
+<blockquote>
+<div><p>the input anatomical image to be segmented with FreeSurfer
+(Full Resolution).</p>
+</div></blockquote>
+<p><strong>t1_img_brain: str (mandatory)</strong></p>
+<blockquote>
+<div><p>the input anatomical brain image to be segmented with FreeSurfer
+(Full Resolution).</p>
+</div></blockquote>
+<p><strong>t2_img: str (mandatory)</strong></p>
+<blockquote>
+<div><p>the input T2 image (Full Resolution).</p>
+</div></blockquote>
+<p><strong>hcpdir: str (mandatory)</strong></p>
+<blockquote>
+<div><p>the path to the HCP project containing the script of interest.</p>
+</div></blockquote>
+<p><strong>wbcommand: str (optional, default DEFAULT_WORKBENCH_PATH)</strong></p>
+<blockquote>
+<div><p>the path containing the wbcommand.</p>
+</div></blockquote>
+<p><strong>fslconfig: str (optional, default NeuroSpin path)</strong></p>
+<blockquote>
+<div><p>the path to the FSL &#8216;fsl.sh&#8217; configuration file.</p>
+</div></blockquote>
+<p><strong>fsconfig: str (optional, default NeuroSpin path)</strong></p>
+<blockquote class="last">
+<div><p>the path to the FreeSurfer configuration file.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyfreesurfer.hcp.postfreesurfer_hcp">
+<code class="descclassname">pyfreesurfer.hcp.</code><code class="descname">postfreesurfer_hcp</code><span class="sig-paren">(</span><em>path</em>, <em>subject</em>, <em>hcpdir</em>, <em>wbcommand='/usr/bin'</em>, <em>fslconfig='/etc/fsl/5.0/fsl.sh'</em>, <em>fsconfig='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/hcp.html#postfreesurfer_hcp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.hcp.postfreesurfer_hcp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs all the HCP PostFreeSurfer steps.</p>
+<ol class="arabic simple">
+<li>Conversion of FreeSurfer Volumes and Surfaces to NIFTI and GIFTI and
+Create Caret Files and Registration.</li>
+<li>Create FreeSurfer ribbon file at full resolution.</li>
+<li>Myelin Mapping.</li>
+</ol>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>path: str (mandatory)</strong></p>
+<blockquote>
+<div><p>the FreeSurfer working directory with all the subjects.</p>
+</div></blockquote>
+<p><strong>subject: str (mandatory)</strong></p>
+<blockquote>
+<div><p>the current subject identifier.</p>
+</div></blockquote>
+<p><strong>hcpdir: str (mandatory)</strong></p>
+<blockquote>
+<div><p>the path to the HCP project containing the script of interest.</p>
+</div></blockquote>
+<p><strong>wbcommand: str (optional, default DEFAULT_WORKBENCH_PATH)</strong></p>
+<blockquote>
+<div><p>the path containing the wbcommand.</p>
+</div></blockquote>
+<p><strong>fslconfig: str (optional, default NeuroSpin path)</strong></p>
+<blockquote>
+<div><p>the path to the FSL &#8216;fsl.sh&#8217; configuration file.</p>
+</div></blockquote>
+<p><strong>fsconfig: str (optional, default NeuroSpin path)</strong></p>
+<blockquote class="last">
+<div><p>the path to the FreeSurfer configuration file.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyfreesurfer.hcp.prefreesurfer_hcp">
+<code class="descclassname">pyfreesurfer.hcp.</code><code class="descname">prefreesurfer_hcp</code><span class="sig-paren">(</span><em>path</em>, <em>subject</em>, <em>t1</em>, <em>t2</em>, <em>fmapmag</em>, <em>fmapphase</em>, <em>hcpdir</em>, <em>brainsize=150</em>, <em>fmapgeneralelectric='NONE'</em>, <em>echodiff=2.46</em>, <em>SEPhaseNeg='NONE'</em>, <em>SEPhasePos='NONE'</em>, <em>echospacing='NONE'</em>, <em>seunwarpdir='NONE'</em>, <em>t1samplespacing=7.4e-06</em>, <em>t2samplespacing=2.1e-06</em>, <em>unwarpdir='z'</em>, <em>gdcoeffs='NONE'</em>, <em>avgrdcmethod='SiemensFieldMap'</em>, <em>topupconfig='NONE'</em>, <em>wbcommand='/usr/bin'</em>, <em>fslconfig='/etc/fsl/5.0/fsl.sh'</em>, <em>fsconfig='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/hcp.html#prefreesurfer_hcp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.hcp.prefreesurfer_hcp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs all the HCP PreFreeSurfer steps.</p>
+<ol class="arabic simple">
+<li>To average any image repeats (i.e. multiple T1w or T2w images
+available).</li>
+<li>To create a native, undistorted structural volume space for the subject
+Subject images in this native space will be distortion corrected
+for gradient and b0 distortions and rigidly aligned to the axes
+of the MNI space. &#8216;Native, undistorted structural volume space&#8217;
+is sometimes shortened to the &#8216;subject&#8217;s native space&#8217; or simply
+&#8216;native space&#8217;.</li>
+<li>To provide an initial robust brain extraction.</li>
+<li>To align the T1w and T2w structural images (register them to the native
+space).</li>
+<li>To perform bias field correction.</li>
+<li>To register the subject&#8217;s native space to the MNI space.</li>
+</ol>
+<p>At least one T1 weighted image and one T2 weighted image are required for
+this script to work.</p>
+<p>The main output directories are:</p>
+<ul class="simple">
+<li>The t1w_folder: which is created by concatenating the following three
+option values: &#8211;path/&#8211;subject/&#8211;t1</li>
+<li>The t2w_folder: which is created by concatenating the following three
+option values: &#8211;path/&#8211;subject/&#8211;t2</li>
+<li>The atlas_space_folder: /path/subject/MNINonLinear</li>
+</ul>
+<p>The full list of output directories is:</p>
+<ul class="simple">
+<li>/t1w_folder/T1w?_GradientDistortionUnwarp</li>
+<li>/t1w_folder/AverageT1wImages</li>
+<li>/t1w_folder/ACPCAlignment</li>
+<li>/t1w_folder/BrainExtraction_FNIRTbased</li>
+<li>/t1w_folder/xfms - transformation matrices and warp fields</li>
+<li>/t2w_folder/T2w?_GradientDistortionUnwarp</li>
+<li>/t2w_folder/AverageT1wImages</li>
+<li>/t2w_folder/ACPCAlignment</li>
+<li>/t2w_folder/BrainExtraction_FNIRTbased</li>
+<li>/t2w_folder/xfms - transformation matrices and warp fields</li>
+<li>/t2w_folder/T2wToT1wDistortionCorrectAndReg</li>
+<li>/t1w_folder/BiasFieldCorrection_sqrtT1wXT1w</li>
+<li>/atlas_space_folder</li>
+<li>/atlas_space_folder/xfms</li>
+</ul>
+<p>The following settings for AvgrdcSTRING, MagnitudeInputName,
+PhaseInputName, and TE are for using the Siemens specific Gradient Echo
+Field Maps that are collected and used in the standard HCP protocol.</p>
+<p>The values set below are for the HCP Protocol using the Siemens Connectom
+Scanner: t1samplespacing=0.0000074, t2samplespacing=0.0000021,
+unwarpdir=&#8217;z&#8217;.</p>
+<p><strong>References</strong></p>
+<p>[HCP]: <a class="reference external" href="http://www.humanconnectome.org">http://www.humanconnectome.org</a>
+[GlasserEtAl]: <a class="reference external" href="http://www.ncbi.nlm.nih.gov/pubmed/23668970">http://www.ncbi.nlm.nih.gov/pubmed/23668970</a>
+[FSL]: <a class="reference external" href="http://fsl.fmrib.ox.ac.uk">http://fsl.fmrib.ox.ac.uk</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>path: str (mandatory)</strong></p>
+<blockquote>
+<div><p>path to study data folder (~ to FreeSurfer home directory). Used with
+&#8211;subject input to create full path to root directory for all outputs
+generated as path/subject.</p>
+</div></blockquote>
+<p><strong>subject: str (mandatory)</strong></p>
+<blockquote>
+<div><p>subject ID. Used with &#8211;path input to create full path to root
+directory for all outputs generated as path/subject.</p>
+</div></blockquote>
+<p><strong>t1: list of str (mandatory)</strong></p>
+<blockquote>
+<div><p>list of full paths to T1-weighted structural images for the subject.</p>
+</div></blockquote>
+<p><strong>t2: list of str (mandatory)</strong></p>
+<blockquote>
+<div><p>list of full paths to T2-weighted structural images for the subject.</p>
+</div></blockquote>
+<p><strong>brainsize: int (optional, default 150)</strong></p>
+<blockquote>
+<div><p>brain size estimate in mm, 150 for humans.</p>
+</div></blockquote>
+<p><strong>fmapmag: str (mandatory)</strong></p>
+<blockquote>
+<div><p>Siemens Gradient Echo Fieldmap magnitude file.</p>
+</div></blockquote>
+<p><strong>fmapphase: str (mandatory)</strong></p>
+<blockquote>
+<div><p>Siemens Gradient Echo Fieldmap phase file.</p>
+</div></blockquote>
+<p><strong>hcpdir: str (mandatory)</strong></p>
+<blockquote>
+<div><p>the path to the HCP project containing the script of interest.</p>
+</div></blockquote>
+<p><strong>fmapgeneralelectric: str (optional, default &#8216;NONE&#8217;)</strong></p>
+<blockquote>
+<div><p>general Electric Gradient Echo Field Map file.
+Two volumes in one file: 1. field map in deg, 2. magnitude.</p>
+</div></blockquote>
+<p><strong>echodiff: float (optional, default 2.46)</strong></p>
+<blockquote>
+<div><p>delta TE in ms for field map or &#8216;NONE&#8217; if not used.
+2.46 for 3T scanner or 1.02ms for 7T.</p>
+</div></blockquote>
+<p><strong>SEPhaseNeg: str (optional, default &#8216;NONE&#8217;)</strong></p>
+<blockquote>
+<div><p>for spin echo field map, path to volume with a negative phase encoding
+direction (LR in HCP data), set to &#8216;NONE&#8217; if not using Spin Echo Field
+Maps.</p>
+</div></blockquote>
+<p><strong>SEPhasePos: str (optional, default &#8216;NONE&#8217;)</strong></p>
+<blockquote>
+<div><p>for spin echo field map, path to volume with a positive phase encoding
+direction (RL in HCP data), set to &#8216;NONE&#8217; if not using Spin Echo Field
+Maps.</p>
+</div></blockquote>
+<p><strong>echospacing: str (optional, default &#8216;NONE&#8217;)</strong></p>
+<blockquote>
+<div><p>echo Spacing or Dwelltime of Spin Echo Field Map or &#8216;NONE&#8217; if not used.</p>
+</div></blockquote>
+<p><strong>seunwarpdir: str (optional, default &#8216;NONE&#8217;)</strong></p>
+<blockquote>
+<div><p>phase encoding direction of the spin echo field map.
+(Only applies when using a spin echo field map.)</p>
+</div></blockquote>
+<p><strong>t1samplespacing: float (optional, default 0.0000074)</strong></p>
+<blockquote>
+<div><p>T1 image sample spacing.
+Set to NONE if not doing readout distortion correction.</p>
+</div></blockquote>
+<p><strong>t2samplespacing: float (optional, default 0.0000021)</strong></p>
+<blockquote>
+<div><p>T2 image sample spacing, &#8216;NONE&#8217; if not used.
+Set to NONE if not doing readout distortion correction.</p>
+</div></blockquote>
+<p><strong>unwarpdir: str (optional, default &#8216;z&#8217;)</strong></p>
+<blockquote>
+<div><p>readout direction of the T1w and T2w images (Used with either a
+gradient echo field map or a spin echo field map).
+Set NONE if not doing readout distortion correction.</p>
+</div></blockquote>
+<p><strong>gdcoeffs: str (optional, default &#8216;NONE&#8217;)</strong></p>
+<blockquote>
+<div><p>file containing gradient distortion coefficients.
+Set to NONE to skip gradient distortion correction.</p>
+</div></blockquote>
+<p><strong>avgrdcmethod: str (optional, default &#8216;SiemensFieldMap&#8217;)</strong></p>
+<blockquote>
+<div><p>averaging and readout distortion correction method.</p>
+</div></blockquote>
+<p><strong>topupconfig: str (optional, default &#8216;NONE&#8217;)</strong></p>
+<blockquote>
+<div><p>configuration file for topup or &#8216;NONE&#8217; if not used.</p>
+</div></blockquote>
+<p><strong>wbcommand: str (optional, default DEFAULT_WORKBENCH_PATH)</strong></p>
+<blockquote>
+<div><p>the path containing the wbcommand.</p>
+</div></blockquote>
+<p><strong>fslconfig: str (optional, default NeuroSpin path)</strong></p>
+<blockquote>
+<div><p>the path to the FSL &#8216;fsl.sh&#8217; configuration file.</p>
+</div></blockquote>
+<p><strong>fsconfig: str (optional, default NeuroSpin path)</strong></p>
+<blockquote>
+<div><p>the path to the FreeSurfer configuration file.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">t1w_folder: str</p>
+<blockquote>
+<div><p>the destination folder.</p>
+</div></blockquote>
+<p>t1_img: str</p>
+<blockquote>
+<div><p>the preprocessed T1w image.</p>
+</div></blockquote>
+<p>t1_img_brain: str</p>
+<blockquote>
+<div><p>the preprocessed T1w image brain.</p>
+</div></blockquote>
+<p>t2_img: str</p>
+<blockquote class="last">
+<div><p>the preprocessed T2w image.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+
+
+          </div>
+        </div>
+      </div>
+
+    <div class="clearer">
+    </div>
+  </div>
+  
+</div>
+
+<div class="footer">
+    &copy; 2017, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
+</div>
+  </body>
+</html>

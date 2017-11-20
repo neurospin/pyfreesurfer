@@ -1,0 +1,365 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+  
+    <title>PYFREESURFER &mdash; pyFreeSurfer</title>
+  <!-- htmltitle is before nature.css - we use this hack to load bootstrap first -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../_static/css/bootstrap.min.css" media="screen" />
+
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="pyFreeSurfer" href="../index.html" />
+  
+   
+       <script type="text/javascript" src="../_static/sidebar.js"></script>
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="../_static/js/bootstrap.min.js" type="text/javascript"></script>
+
+  <script src="../_static/js/angular.min.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    var app = angular.module("navApp", []);
+    app.controller('navCtrl', ['$scope', '$window', function($scope, $window) {
+      $scope.isActive = function (viewLocation) {
+        var rel = $window.location.pathname.split("/")
+        rel = rel[rel.length - 1]
+        rel = rel.split(".")[0]
+        var active = (viewLocation === rel);
+        return active;};
+    }]);
+  </script>
+
+  </head>
+  <body role="document"><div class="banner">
+  <div class="container-fluid banner-container">
+    <div class="row banner-inner">
+      <div class="col-xs-4">
+        <img alt="Logo" src="../_static/pyfreesurfer.png">
+      </div>
+      <div class="col-xs-8">
+            <p>Using FreeSurfer in Python.</p>
+      </div>
+    </div>  
+  </div>
+</div><nav class="navbar navbar-default navbar-static-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+        </a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse" ng-controller="navCtrl" ng-app="navApp">
+      <ul class="nav navbar-nav">
+        <li ng-class="{ active: isActive('index') }"><a href="../index.html">Home</a></li>
+        <li ng-class="{ active: isActive('installation') }"><a href="../generated/installation.html">Installation</a></li>
+        <li ng-class="{ active: isActive('gallery') }"><a href="gallery.html">Gallery</a></li>
+        <li ng-class="{ active: isActive('documentation') }"><a href="../generated/documentation.html">API documentation</a></li>
+        <!--<li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+	        <li><a href="../generated/pyfreesurfer.html">Pyfreesurfer</a></li>
+<li><a href="../generated/pyfreesurfer.utils.html">Pyfreesurfer.utils</a></li>
+<li><a href="../generated/pyfreesurfer.conversions.html">Pyfreesurfer.conversions</a></li>
+<li><a href="../generated/pyfreesurfer.segmentation.html">Pyfreesurfer.segmentation</a></li>
+<li><a href="../generated/pyfreesurfer.diffusion.html">Pyfreesurfer.diffusion</a></li>
+<li><a href="../generated/pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
+          </ul>
+        </li>-->
+        <li><a href="https://github.com/AGrigis/pysphinxdoc">PYSPHINXDOC</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="content-wrapper">
+    <div class="sphinxsidebar">
+      <div class="sphinxsidebarwrapper">
+
+        <!-- info setup -->
+          <p class="doc-version">
+           This documentation is for pyfreesurfer <strong>version 1.2.0</strong>
+          </p>
+        <p class="citing">
+          If you use the software, please do not esitate to 
+          <a &mdash; <a href="https://github.com/neurospin/pyfreesurfer">
+          Report a Bug</a>.
+        </p>
+
+      <!-- toc tree -->
+      <ul>
+<li><a class="reference internal" href="#">Pyfreesurfer Datacheck</a><ul>
+<li><a class="reference internal" href="#expected-freesurfer-data-structure">Expected FreeSurfer data structure</a></li>
+<li><a class="reference internal" href="#browsing">Browsing</a></li>
+<li><a class="reference internal" href="#display-a-summary">Display a summary</a></li>
+</ul>
+</li>
+</ul>
+
+
+      </div>
+    </div>
+  
+
+  <div class="content">
+      
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="pyfreesurfer-datacheck">
+<span id="sphx-glr-auto-gallery-pyfreesurfer-datacheck-py"></span><h1>Pyfreesurfer Datacheck<a class="headerlink" href="#pyfreesurfer-datacheck" title="Permalink to this headline">¶</a></h1>
+<p>Example automatically generated from package script.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># System modules</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">textwrap</span>
+<span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">RawTextHelpFormatter</span>
+
+
+<span class="c1"># Script documentation</span>
+<span class="n">DOC</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">FreeSurfer data check</span>
+<span class="s2">---------------------</span>
+
+<span class="s2">Run this command to check if your input FreeSurfer processing home</span>
+<span class="s2">directory (&#39;fsdir&#39;) contains the expected FreeSurfer output files for all</span>
+<span class="s2">the subjects. A two step check is leverage: check the file count in each</span>
+<span class="s2">folder - check the recon-all status exit message.</span>
+
+<span class="s2">It is possible to check in details one specific subject specifying his</span>
+<span class="s2">identifier.</span>
+
+<span class="s2">This script can also checks the &#39;freesurfer_conversion&#39; outputs by specifying</span>
+<span class="s2">the expected number of generated files.</span>
+
+<span class="s2">python $HOME/git/pyfreesurfer/pyfreesurfer/scripts/pyfreesurfer_datacheck </span><span class="se">\</span>
+<span class="s2">    -v 2 </span><span class="se">\</span>
+<span class="s2">    -d /neurospin/senior/nsap/data/V4/freesurfer </span><span class="se">\</span>
+<span class="s2">    -r &#39;[a-z]{2}\d{6}&#39; </span><span class="se">\</span>
+<span class="s2">    -c 30 </span><span class="se">\</span>
+<span class="s2">    -q 66</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">is_directory</span><span class="p">(</span><span class="n">dirarg</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Type for argparse - checks that directory exists.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">dirarg</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentError</span><span class="p">(</span>
+            <span class="s2">&quot;The directory &#39;{0}&#39; does not exist!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dirarg</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">dirarg</span>
+
+
+<span class="k">def</span> <span class="nf">get_cmd_line_args</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a command line argument parser and return a dict mapping</span>
+<span class="sd">    &lt;argument name&gt; -&gt; &lt;argument value&gt;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
+        <span class="n">prog</span><span class="o">=</span><span class="s2">&quot;python pyfreesurfer_datacheck&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span><span class="n">DOC</span><span class="p">),</span>
+        <span class="n">formatter_class</span><span class="o">=</span><span class="n">RawTextHelpFormatter</span><span class="p">)</span>
+
+    <span class="c1"># Required arguments</span>
+    <span class="n">required</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s2">&quot;required arguments&quot;</span><span class="p">)</span>
+    <span class="n">required</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-d&quot;</span><span class="p">,</span> <span class="s2">&quot;--fsdir&quot;</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;PATH&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">is_directory</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;the FreeSurfer processing home directory.&quot;</span><span class="p">)</span>
+    <span class="n">required</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-r&quot;</span><span class="p">,</span> <span class="s2">&quot;--regex&quot;</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;the expression to be applied on the &#39;fsdir&#39; subfolders in order to&quot;</span>
+              <span class="s2">&quot;retrieve the subjects only.&quot;</span><span class="p">))</span>
+
+    <span class="c1"># Optional arguments</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="s2">&quot;--verbose&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;increase the verbosity level: 0 silent, [1, 2] verbose.&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-s&quot;</span><span class="p">,</span> <span class="s2">&quot;--subjectid&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;the subject identifier. If specified the complete subject &quot;</span>
+              <span class="s2">&quot;structure is exposed.&quot;</span><span class="p">))</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-c&quot;</span><span class="p">,</span> <span class="s2">&quot;--conversion&quot;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;conversion_count&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;the number of files expected in the converts folder.&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-q&quot;</span><span class="p">,</span> <span class="s2">&quot;--qc&quot;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;qc_count&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;the number of files expected in the qc folder.&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-l&quot;</span><span class="p">,</span> <span class="s2">&quot;--log&quot;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;log_count&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;the number of files expected in the log folder.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Create a dict of arguments to pass to the &#39;main&#39; function</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">args</span>
+</pre></div>
+</div>
+<p>Parse the command line.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">args</span> <span class="o">=</span> <span class="n">get_cmd_line_args</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="section" id="expected-freesurfer-data-structure">
+<h2>Expected FreeSurfer data structure<a class="headerlink" href="#expected-freesurfer-data-structure" title="Permalink to this headline">¶</a></h2>
+<p>First we define the expected organization of the FreeSurfer output files: we
+consider the files count only as a criterion.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">fsstruct</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;bem&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="mi">69</span><span class="p">,</span>
+    <span class="s2">&quot;mri&quot;</span><span class="p">:</span> <span class="mi">35</span><span class="p">,</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;mri&quot;</span><span class="p">,</span> <span class="s2">&quot;orig&quot;</span><span class="p">):</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;mri&quot;</span><span class="p">,</span> <span class="s2">&quot;transforms&quot;</span><span class="p">):</span> <span class="mi">13</span><span class="p">,</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;mri&quot;</span><span class="p">,</span> <span class="s2">&quot;transforms&quot;</span><span class="p">,</span> <span class="s2">&quot;bak&quot;</span><span class="p">):</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;scripts&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+    <span class="s2">&quot;src&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;stats&quot;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span>
+    <span class="s2">&quot;surf&quot;</span><span class="p">:</span> <span class="mi">70</span><span class="p">,</span>
+    <span class="s2">&quot;tmp&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;touch&quot;</span><span class="p">:</span> <span class="mi">67</span><span class="p">,</span>
+    <span class="s2">&quot;trash&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;extrapaths&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span>
+<span class="p">}</span>
+<span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">conversion_count</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="n">fsstruct</span><span class="p">[</span><span class="s2">&quot;convert&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">conversion_count</span>
+<span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">qc_count</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="n">fsstruct</span><span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;convert&quot;</span><span class="p">,</span> <span class="s2">&quot;qc&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">qc_count</span>
+<span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">log_count</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="n">fsstruct</span><span class="p">[</span><span class="s2">&quot;logs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">log_count</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="browsing">
+<h2>Browsing<a class="headerlink" href="#browsing" title="Permalink to this headline">¶</a></h2>
+<p>Detect each subject in the FreeSurfer processing home directory &#8216;fsdir&#8217; and
+check the subject processing tree.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">status</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">subjectid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="n">fsdir_subfolders</span> <span class="o">=</span> <span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">subjectid</span><span class="p">]</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">fsdir_subfolders</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">fsdir</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">sid</span> <span class="ow">in</span> <span class="n">fsdir_subfolders</span><span class="p">:</span>
+
+    <span class="c1"># Check if the subject id is valid using the input regex</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">regex</span><span class="p">,</span> <span class="n">sid</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">match</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">match</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">sid</span><span class="p">:</span>
+        <span class="k">continue</span>
+
+    <span class="c1"># Store the subject tree folder-folder files counts</span>
+    <span class="n">status</span><span class="p">[</span><span class="n">sid</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;extrapaths&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;exitcode&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+    <span class="n">siddir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">fsdir</span><span class="p">,</span> <span class="n">sid</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">path</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">siddir</span><span class="p">):</span>
+        <span class="n">rpath</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">siddir</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rpath</span> <span class="ow">in</span> <span class="n">fsstruct</span><span class="p">:</span>
+            <span class="n">status</span><span class="p">[</span><span class="n">sid</span><span class="p">][</span><span class="n">rpath</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">status</span><span class="p">[</span><span class="n">sid</span><span class="p">][</span><span class="s2">&quot;extrapaths&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rpath</span><span class="p">)</span>
+    <span class="n">fslog</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">siddir</span><span class="p">,</span> <span class="s2">&quot;scripts&quot;</span><span class="p">,</span> <span class="s2">&quot;recon-all-status.log&quot;</span><span class="p">)</span>
+    <span class="n">last_non_empty_line</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="n">fslog</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+            <span class="n">last_non_empty_line</span> <span class="o">=</span> <span class="n">line</span>
+    <span class="k">if</span> <span class="s2">&quot;finished without error&quot;</span> <span class="ow">in</span> <span class="n">last_non_empty_line</span><span class="p">:</span>
+        <span class="n">status</span><span class="p">[</span><span class="n">sid</span><span class="p">][</span><span class="s2">&quot;exitcode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="display-a-summary">
+<h2>Display a summary<a class="headerlink" href="#display-a-summary" title="Permalink to this headline">¶</a></h2>
+<p>Depending on the verbosity, display the number of complete/failed processings,
+or the list of subjects that didn&#8217;t run properly.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">failed_sids</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">total_success</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">total_failed</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">count_sids</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">count_success</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">count_failed</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">status</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">sid</span><span class="p">,</span> <span class="n">sid_status</span> <span class="ow">in</span> <span class="n">status</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">exitcode</span> <span class="o">=</span> <span class="n">sid_status</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;exitcode&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">exitcode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">total_success</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">total_failed</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">failed_sids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sid</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">sid_status</span> <span class="o">==</span> <span class="n">fsstruct</span><span class="p">:</span>
+        <span class="n">count_success</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">count_failed</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">count_sids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sid</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">verbose</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;SUCCESS: {0}/{1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">total_success</span><span class="p">,</span> <span class="n">total</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;FAILED: {0}/{1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">total_failed</span><span class="p">,</span> <span class="n">total</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;FAILED SIDS: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">failed_sids</span><span class="p">))</span>
+<span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">verbose</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;COUNT SUCCESS: {0}/{1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">count_success</span><span class="p">,</span> <span class="n">total</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;COUNT FAILED: {0}/{1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">count_failed</span><span class="p">,</span> <span class="n">total</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;COUNT FAILED SIDS: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">count_sids</span><span class="p">))</span>
+
+<span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">subjectid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;TREE &#39;{0}&#39;: &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">subjectid</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">status</span><span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">subjectid</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;{0} | {1} (observed) | {2} (reference)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">key</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">),</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">fsstruct</span><span class="p">[</span><span class="n">key</span><span class="p">])</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p><strong>Total running time of the script:</strong> ( 0 minutes  0.000 seconds)</p>
+<div class="sphx-glr-footer container">
+<div class="sphx-glr-download container">
+<a class="reference download internal" href="../_downloads/pyfreesurfer_datacheck.py" download=""><code class="xref download docutils literal"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">pyfreesurfer_datacheck.py</span></code></a></div>
+<div class="sphx-glr-download container">
+<a class="reference download internal" href="../_downloads/pyfreesurfer_datacheck.ipynb" download=""><code class="xref download docutils literal"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">pyfreesurfer_datacheck.ipynb</span></code></a></div>
+</div>
+<p class="sphx-glr-signature">Gallery generated by Sphinx-Gallery</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+
+    <div class="clearer">
+    </div>
+  </div>
+  
+</div>
+
+<div class="footer">
+    &copy; 2017, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
+</div>
+  </body>
+</html>

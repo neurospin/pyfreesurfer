@@ -1,0 +1,189 @@
+
+
+.. _sphx_glr_auto_gallery_pyfreesurfer_tracall.py:
+
+
+Pyfreesurfer Tracall
+====================
+
+Example automatically generated from package script.
+
+
+
+.. code-block:: python
+
+
+
+    # Standard
+    import os
+    import argparse
+    import datetime
+    import json
+    from pprint import pprint
+    import textwrap
+    from argparse import RawTextHelpFormatter
+
+    # Package
+    import pyfreesurfer
+    from pyfreesurfer import DEFAULT_FREESURFER_PATH
+    from pyfreesurfer.diffusion.tracula import trac_all
+    from pyfreesurfer.wrapper import FSWrapper
+
+
+    # Parameters to keep trace
+    __hopla__ = ["runtime", "inputs", "outputs"]
+
+
+    # Script documentation
+    DOC = """
+    Assuming you have a preprocessed DWI (at least for susceptibility and brain
+    extracted) with bedpostX done, this script runs the Tracula pipeline.
+    It can correct for Eddy currents and register the diffusion to the
+    FreeSurfer space if it is not already done.
+    """
+
+
+    def is_file(filepath):
+        """ Check file's existence - argparse 'type' argument.
+        """
+        if not os.path.isfile(filepath):
+            raise argparse.ArgumentError("File does not exist: %s" % filepath)
+        return filepath
+
+
+    def is_dir(dirpath):
+        """ Check direcory's existence - argparse 'type' argument.
+        """
+        if not os.path.isdir(dirpath):
+            raise argparse.ArgumentError("Directory does not exist: %s" % dirpath)
+        return dirpath
+
+
+    def get_cmd_line_args():
+        """
+        Create a command line argument parser and return a dict mapping
+        <argument name> -> <argument value>.
+        """
+        usage = ("%(prog)s -o <outdir> -s <subject id> -i <path dwi> "
+                 "-b <path bvals> -r <path bvecs> -d <bedpostX dir> [-S <dir>] "
+                 "[-E] [-K] |-G] [-N] [-c <path>] [-v <int>]")
+        prog = "python pyfreesurfer_tracall"
+        parser = argparse.ArgumentParser(
+            prog=prog,
+            usage=usage,
+            description=textwrap.dedent(DOC),
+            formatter_class=RawTextHelpFormatter)
+
+        # Required arguments
+        parser.add_argument("-o", "--outdir", required=True, metavar="<path>",
+                            help="Root directory where to create the subject "
+                                 "output directory. Created if not existing.")
+        parser.add_argument("-s", "--subject-id", required=True, metavar="<id>",
+                            help="Identifier of subject.")
+        parser.add_argument("-i", "--dwi", required=True, type=is_file,
+                            metavar="<path>",
+                            help="The preprocessed (at least for susceptilibity) "
+                                 "Nifti diffusion-weighted volumes.")
+        parser.add_argument("-b", "--bvals", required=True, type=is_file,
+                            metavar="<path>",
+                            help="Path to b-values of diffusion-weighted volumes.")
+        parser.add_argument("-r", "--bvecs", required=True, type=is_file,
+                            metavar="<path>",
+                            help="Path to diffusion-sensitized directions.")
+        parser.add_argument("-d", "--bedpostx-dir", required=True, type=is_dir,
+                            metavar="<path>",
+                            help="BedpostX output directory.")
+
+        # Optional arguments
+        parser.add_argument("-S", "--subjects-dir", metavar="<path>",
+                            help="Path to the FreeSurfer subjects directory. "
+                                 "Required if the environment variable "
+                                 "$SUBJECTS_DIR is not set.")
+        parser.add_argument("-E", "--do-eddy", action="store_true",
+                            help="Apply FSL eddy-current correction.")
+        parser.add_argument("-K", "--dont-rotate-bvecs", action="store_false",
+                            dest="do_rotate_bvecs", default=True,
+                            help="Do NOT rotate bvecs to match eddy-current "
+                                 "correction.")
+        parser.add_argument("-G", "--dont-bbregister", action="store_false",
+                            dest="do_bbregister", default=True,
+                            help="Do NOT apply bbregister. ")
+        parser.add_argument("-N", "--dont-register-mni", action="store_false",
+                            dest="do_register_mni", default=True,
+                            help="Do NOT register T1 to MNI.")
+        parser.add_argument("-T", "--temp-dir", type=is_dir, metavar="<path>",
+                            help="Set the root temporary directory.")
+        parser.add_argument("-c", "--config", type=is_file, metavar="<path>",
+                            dest="fsconfig",
+                            help="the FreeSurfer configuration file. "
+                                 "By default %s." % DEFAULT_FREESURFER_PATH)
+        parser.add_argument("-v", "--verbose", type=int, choices=[0, 1, 2],
+                            default=2, help="Increase the verbosity level: 0 "
+                                            "silent, [1, 2] verbose.")
+
+        # Create a dict of arguments to pass to the 'main' function
+        args = parser.parse_args()
+        kwargs = vars(args)
+        verbose = kwargs.pop("verbose")
+        if kwargs["fsconfig"] is None:
+            kwargs["fsconfig"] = DEFAULT_FREESURFER_PATH
+
+        return kwargs, verbose
+
+
+    # Parse the command line.
+    inputs, verbose = get_cmd_line_args()
+
+    # Runtime informations
+    runtime = dict(tool="pyfreesurfer_tracall",
+                   tool_version=pyfreesurfer.__version__,
+                   fs_version=FSWrapper([], shfile=inputs["fsconfig"]).version,
+                   timestamp=datetime.datetime.now().isoformat())
+
+    if verbose > 0:
+        pprint("[info] Starting trac-all")
+        pprint("[info] Runtime:")
+        pprint(runtime)
+        pprint("[info] Inputs:")
+        pprint(inputs)
+
+    # Run
+    subject_dir = trac_all(**inputs)
+    outputs = dict(subject_dir=subject_dir)
+
+    # Store inputs, runtime and outputs as JSONs in a 'logs' dir in the subject_dir
+    logs_dir = os.path.join(subject_dir, "logs")
+    if not os.path.isdir(logs_dir):
+        os.mkdir(logs_dir)
+    for k, v in dict(inputs=inputs, outputs=outputs, runtime=runtime).items():
+        path_json = os.path.join(logs_dir, "%s_trac-all.json" % k)
+        with open(path_json, "w") as f:
+            json.dump(v, f, sort_keys=True, check_circular=True, indent=4)
+
+**Total running time of the script:** ( 0 minutes  0.000 seconds)
+
+
+
+.. only :: html
+
+ .. container:: sphx-glr-footer
+
+
+  .. container:: sphx-glr-download
+
+     :download:`Download Python source code: pyfreesurfer_tracall.py <pyfreesurfer_tracall.py>`
+
+
+
+  .. container:: sphx-glr-download
+
+     :download:`Download Jupyter notebook: pyfreesurfer_tracall.ipynb <pyfreesurfer_tracall.ipynb>`
+
+
+.. only:: html
+
+ .. rst-class:: sphx-glr-signature
+
+    Gallery generated by Sphinx-Gallery
+
+

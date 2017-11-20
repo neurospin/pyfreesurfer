@@ -1,0 +1,202 @@
+
+
+.. _sphx_glr_auto_gallery_pyfreesurfer_tracall_longitudinal.py:
+
+
+Pyfreesurfer Tracall Longitudinal
+=================================
+
+Example automatically generated from package script.
+
+
+
+.. code-block:: python
+
+
+
+    # Standard
+    import os
+    import argparse
+    import datetime
+    import json
+    from pprint import pprint
+    import textwrap
+    from argparse import RawTextHelpFormatter
+
+    # Package
+    import pyfreesurfer
+    from pyfreesurfer import DEFAULT_FREESURFER_PATH
+    from pyfreesurfer.diffusion.tracula import trac_all_longitudinal
+    from pyfreesurfer.wrapper import FSWrapper
+
+
+    # Parameters to keep trace
+    __hopla__ = ["runtime", "inputs", "outputs"]
+
+
+    # Script documentation
+    DOC = """
+    Assuming you have preprocessed DWIs (at least for susceptibility and brain
+    extracted) with bedpostX done for a subject at multiple timepoints, this script
+    runs the Tracula longitudinal pipeline.
+    It can correct for Eddy currents and register the diffusion to the FreeSurfer
+    space, if it is not already done.
+    """
+
+
+    def is_file(filepath):
+        """ Check file's existence - argparse 'type' argument.
+        """
+        if not os.path.isfile(filepath):
+            raise argparse.ArgumentError("File does not exist: %s" % filepath)
+        return filepath
+
+
+    def is_dir(dirpath):
+        """ Check direcory's existence - argparse 'type' argument.
+        """
+        if not os.path.isdir(dirpath):
+            raise argparse.ArgumentError("Directory does not exist: %s" % dirpath)
+        return dirpath
+
+
+    def get_cmd_line_args():
+        """
+        Create a command line argument parser and return a dict mapping
+        <argument name> -> <argument value>.
+        """
+        usage = ("%(prog)s -o <outdir> -p <sid template> "
+                 "-t <sid tp1> <sid tp2> ... -i <path tp1> <path tp2> ... "
+                 "-b <path tp1> <path tp2> ... -r <path tp1> <path tp2> ... "
+                 "-d <path tp1> <path tp2> ...  [-S <path>] [-E] [-K] |-G] [-N] "
+                 "[-T <path>] [-c <path>] [-v <int>]")
+        prog = "python pyfreesurfer_tracall"
+        parser = argparse.ArgumentParser(
+            prog=prog,
+            usage=usage,
+            description=textwrap.dedent(DOC),
+            formatter_class=RawTextHelpFormatter)
+
+        # Required arguments
+        parser.add_argument("-o", "--outdir", required=True, metavar="<path>",
+                            help="Root directory where to create the subject "
+                                 "output directory. Created if not existing.")
+        parser.add_argument("-p", "--subject-template-id", required=True,
+                            metavar="<id>",
+                            help="Identifier of the subject template.")
+        parser.add_argument("-t", "--subject-timepoint-ids", required=True,
+                            nargs="+", metavar="<sid tp1> <sid tp2> ...",
+                            help="Identifiers of the subject for all the "
+                                 "timepoints.")
+        parser.add_argument("-i", "--dwis", required=True, nargs="+",
+                            metavar="<path tp1> <path tp2> ...",
+                            help="Paths to Nifti diffusion series. In the order "
+                                 "corresponding to <subject_timepoint_ids>.")
+        parser.add_argument("-b", "--bvalss", required=True, nargs="+",
+                            metavar="<path tp1> <path tp2> ...",
+                            help="Paths to b-values of diffusion series. In the "
+                                  "order corresponding to <dwis>.")
+        parser.add_argument("-r", "--bvecss", required=True, nargs="+",
+                            metavar="<path tp1> <path tp2> ...",
+                            help="Paths to diffusion-sensitized directions of "
+                                 "diffusion series. In the order corresponding "
+                                 "to <dwis>.")
+        parser.add_argument("-d", "--bedpostx-dirs", required=True, nargs="+",
+                            metavar="<path tp1> <path tp2> ...",
+                            help="BedpostX output directories. In the order "
+                                 "corresponding to <dwis>.")
+
+        # Optional arguments
+        parser.add_argument("-S", "--subjects-dir", metavar="<path>",
+                            help="Path to the FreeSurfer subjects directory. "
+                                 "Required if the environment variable "
+                                 "$SUBJECTS_DIR is not set.")
+        parser.add_argument("-E", "--do-eddy", action="store_true",
+                            help="Apply FSL eddy-current correction.")
+        parser.add_argument("-K", "--dont-rotate-bvecs", action="store_false",
+                            dest="do_rotate_bvecs", default=True,
+                            help="Do NOT rotate bvecs to match eddy-current "
+                                 "correction.")
+        parser.add_argument("-G", "--dont-bbregister", action="store_false",
+                            dest="do_bbregister", default=True,
+                            help="Do NOT apply bbregister. ")
+        parser.add_argument("-N", "--dont-register-mni", action="store_false",
+                            dest="do_register_mni", default=True,
+                            help="Do NOT register T1 to MNI.")
+        parser.add_argument("-T", "--temp-dir", type=is_dir, metavar="<path>",
+                            help="Set the root temporary directory.")
+        parser.add_argument("-c", "--config", type=is_file, metavar="<path>",
+                            dest="fsconfig",
+                            help="the FreeSurfer configuration file. "
+                                 "By default %s." % DEFAULT_FREESURFER_PATH)
+        parser.add_argument("-v", "--verbose", type=int, choices=[0, 1, 2],
+                            default=2, help="Increase the verbosity level: 0 "
+                                            "silent, [1, 2] verbose.")
+
+        # Create a dict of arguments to pass to the 'main' function
+        args = parser.parse_args()
+        kwargs = vars(args)
+        verbose = kwargs.pop("verbose")
+        if kwargs["fsconfig"] is None:
+            kwargs["fsconfig"] = DEFAULT_FREESURFER_PATH
+
+        return kwargs, verbose
+
+
+    # Parse the command line.
+    inputs, verbose = get_cmd_line_args()
+
+    # Runtime informations
+    runtime = dict(tool="pyfreesurfer_tracall_longitudinal",
+                   tool_version=pyfreesurfer.__version__,
+                   fs_version=FSWrapper([], shfile=inputs["fsconfig"]).version,
+                   timestamp=datetime.datetime.now().isoformat())
+
+    if verbose > 0:
+        pprint("[info] Starting trac-all longitudinal")
+        pprint("[info] Runtime:")
+        pprint(runtime)
+        pprint("[info] Inputs:")
+        pprint(inputs)
+
+    # Run
+    subject_long_outdirs = trac_all_longitudinal(**inputs)
+    outputs = dict(subject_long_outdirs=subject_long_outdirs)
+
+    # Store inputs, runtime and outputs as JSONs in a 'logs' dir in each long dir
+    for subject_long_dir in subject_long_outdirs:
+        logs_dir = os.path.join(subject_long_dir, "logs")
+        if not os.path.isdir(logs_dir):
+            os.mkdir(logs_dir)
+        for k, v in dict(inputs=inputs, outputs=outputs, runtime=runtime).items():
+            path_json = os.path.join(logs_dir, "%s_trac-all_longitudinal.json" % k)
+            with open(path_json, "w") as f:
+                json.dump(v, f, sort_keys=True, check_circular=True, indent=4)
+
+**Total running time of the script:** ( 0 minutes  0.000 seconds)
+
+
+
+.. only :: html
+
+ .. container:: sphx-glr-footer
+
+
+  .. container:: sphx-glr-download
+
+     :download:`Download Python source code: pyfreesurfer_tracall_longitudinal.py <pyfreesurfer_tracall_longitudinal.py>`
+
+
+
+  .. container:: sphx-glr-download
+
+     :download:`Download Jupyter notebook: pyfreesurfer_tracall_longitudinal.ipynb <pyfreesurfer_tracall_longitudinal.ipynb>`
+
+
+.. only:: html
+
+ .. rst-class:: sphx-glr-signature
+
+    Gallery generated by Sphinx-Gallery
+
+

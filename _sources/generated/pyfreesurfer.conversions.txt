@@ -2,8 +2,8 @@
 
 :orphan:
 
-Documentation of *pyfreesurfer.conversions*
-============================================
+API documentation of *pyfreesurfer.conversions*
+================================================
 
 
 This module can be used to convert the FreeSurfer produced data.

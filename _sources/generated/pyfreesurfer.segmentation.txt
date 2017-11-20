@@ -2,8 +2,8 @@
 
 :orphan:
 
-Documentation of *pyfreesurfer.segmentation*
-=============================================
+API documentation of *pyfreesurfer.segmentation*
+=================================================
 
 
 This module provides a fonction to execute the main FreeSurfer cortical

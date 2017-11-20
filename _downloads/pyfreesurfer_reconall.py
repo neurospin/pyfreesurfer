@@ -1,0 +1,230 @@
+"""
+Pyfreesurfer Reconall
+=====================
+
+Example automatically generated from package script.
+"""
+
+
+# System import
+from __future__ import print_function
+import os
+import shutil
+import argparse
+from datetime import datetime
+import json
+from pprint import pprint
+import textwrap
+from argparse import RawTextHelpFormatter
+
+# Bredala import
+try:
+    import bredala
+    bredala.USE_PROFILER = False
+    bredala.register("pyfreesurfer.segmentation.cortical",
+                     names=["recon_all"])
+except:
+    pass
+
+# Pyfreesurfer import
+from pyfreesurfer import __version__ as version
+from pyfreesurfer.segmentation.cortical import recon_all
+from pyfreesurfer.wrapper import FSWrapper
+from pyfreesurfer import DEFAULT_FREESURFER_PATH
+
+
+# Parameters to keep trace
+__hopla__ = ["runtime", "inputs", "outputs"]
+
+
+# Script documentation
+DOC = """
+Freesurfer segmentation
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Performs all the FreeSurfer cortical reconstruction process.
+
+Steps:
+
+1- Motion Correction and Conform
+2- NU (Non-Uniform intensity normalization)
+3- Talairach transform computation
+4- Intensity Normalization 1
+5- Skull Strip
+6- EM Register (linear volumetric registration)
+7- CA Intensity Normalization
+8- CA Non-linear Volumetric Registration
+9- Remove Neck
+10- LTA with Skull
+11- CA Label (Volumetric Labeling, ie Aseg) and Statistics
+12- Intensity Normalization 2 (start here for control points)
+13- White matter segmentation
+14- Edit WM With ASeg
+15- Fill (start here for wm edits)
+16- Tessellation (begins per-hemisphere operations)
+17- Smooth1
+18- Inflate1
+19- QSphere
+20- Automatic Topology Fixer
+21- Final Surfs (start here for brain edits for pial surf)
+22- Smooth2
+23- Inflate2
+24- Spherical Mapping
+25- Spherical Registration
+26- Spherical Registration, Contralateral hemisphere
+27- Map average curvature to subject
+28- Cortical Parcellation - Desikan_Killiany and Christophe (Labeling)
+29- Cortical Parcellation Statistics
+30- Cortical Ribbon Mask
+31- Cortical Parcellation mapping to Aseg
+
+Command:
+
+python $HOME/git/pyfreesurfer/pyfreesurfer/scripts/pyfreesurfer_reconall \
+    -v 2 \
+    -c /i2bm/local/freesurfer/SetUpFreeSurfer.sh \
+    -d /tmp/freesurfer \
+    -s ag110371 \
+    -a /neurospin/senior/nsap/data/V4/nifti/ag110371/000002_3DT1/3DT1.nii.gz \
+    -e
+"""
+
+
+def is_file(filearg):
+    """ Type for argparse - checks that file exists but does not open.
+    """
+    if not os.path.isfile(filearg):
+        raise argparse.ArgumentError(
+            "The file '{0}' does not exist!".format(filearg))
+    return filearg
+
+
+def is_directory(dirarg):
+    """ Type for argparse - checks that directory exists.
+    """
+    if not os.path.isdir(dirarg):
+        raise argparse.ArgumentError(
+            "The directory '{0}' does not exist!".format(dirarg))
+    return dirarg
+
+
+def get_cmd_line_args():
+    """
+    Create a command line argument parser and return a dict mapping
+    <argument name> -> <argument value>.
+    """
+    parser = argparse.ArgumentParser(
+        prog="python pyfreesurfer_reconall",
+        description=textwrap.dedent(DOC),
+        formatter_class=RawTextHelpFormatter)
+
+    # Required arguments
+    required = parser.add_argument_group("required arguments")
+    required.add_argument(
+        "-d", "--fsdir",
+        required=True, metavar="PATH", type=is_directory,
+        help="the FreeSurfer home directory.")
+    required.add_argument(
+        "-s", "--subjectid",
+        required=True,
+        help="the subject identifier.")
+    required.add_argument(
+        "-a", "--anatfile",
+        metavar="FILE", required=True, type=is_file,
+        help="the subject anatomical image to be processed.")
+
+    # Optional arguments
+    parser.add_argument(
+        "-v", "--verbose",
+        type=int, choices=[0, 1, 2], default=0,
+        help="increase the verbosity level: 0 silent, [1, 2] verbose.")
+    parser.add_argument(
+        "-e", "--erase",
+        action="store_true",
+        help="if activated, clean the subject folder.")
+    parser.add_argument(
+        "-c", "--config", dest="fsconfig",
+        metavar="FILE", type=is_file,
+        help="the FreeSurfer configuration file.")
+    parser.add_argument(
+        "-t", "--t2file",
+        metavar="FILE", type=is_file,
+        help="the subject T2 image to be processed.")
+    parser.add_argument(
+        "-f", "--flairfile",
+        metavar="FILE", type=is_file,
+        help="the subject FALIR image to be processed.")
+
+    # Create a dict of arguments to pass to the 'main' function
+    args = parser.parse_args()
+    if args.fsconfig is None:
+        args.fsconfig = DEFAULT_FREESURFER_PATH
+
+    return args
+
+
+#############################################################################
+# Parse the command line.
+
+args = get_cmd_line_args()
+tool = "pyfreesurfer_reconall"
+timestamp = datetime.now().isoformat()
+tool_version = version
+freesurfer_config = args.fsconfig
+freesurfer_version = FSWrapper([], freesurfer_config).version
+params = locals()
+runtime = dict([(name, params[name])
+               for name in ("freesurfer_config", "tool", "tool_version",
+                            "freesurfer_version", "timestamp")])
+if args.verbose > 0:
+    print("[info] Start FreeSurfer recon_all...")
+    print("[info] Directory: {0}.".format(args.fsdir))
+    print("[info] Subject: {0}.".format(args.subjectid))
+    print("[info] Anatomy: {0}.".format(args.anatfile))
+fsdir = args.fsdir
+subjectid = args.subjectid
+anatfile = args.anatfile
+subjdir = os.path.join(fsdir, subjectid)
+t2file = args.t2file
+flairfile = args.flairfile
+params = locals()
+inputs = dict([(name, params[name])
+               for name in ("subjectid", "anatfile", "subjdir", "t2file",
+                            "flairfile")])
+outputs = None
+if os.path.isdir(subjdir) and args.erase:
+    shutil.rmtree(subjdir)
+
+
+#############################################################################
+# Segmentation: all steps
+
+subjdir = recon_all(fsdir,
+                    anatfile,
+                    subjectid,
+                    reconstruction_stage="all",
+                    resume=False,
+                    t2file=t2file,
+                    flairfile=flairfile,  
+                    fsconfig=freesurfer_config)
+if args.verbose > 1:
+    print("[result] In folder: {0}.".format(subjdir))
+
+
+#############################################################################
+# Update the outputs and save them and the inputs in a 'logs' directory.
+
+logdir = os.path.join(subjdir, "logs")
+if not os.path.isdir(logdir):
+    os.mkdir(logdir)
+params = locals()
+outputs = dict([(name, params[name]) for name in ("subjdir", )])
+for name, final_struct in [("inputs", inputs), ("outputs", outputs),
+                           ("runtime", runtime)]:
+    log_file = os.path.join(logdir, "{0}.json".format(name))
+    with open(log_file, "wt") as open_file:
+        json.dump(final_struct, open_file, sort_keys=True, check_circular=True,
+                  indent=4)
+if args.verbose > 1:
+    print("[final]")
+    pprint(outputs)

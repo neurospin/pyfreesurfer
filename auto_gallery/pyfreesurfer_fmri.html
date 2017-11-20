@@ -1,0 +1,496 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+  
+    <title>PYFREESURFER &mdash; pyFreeSurfer</title>
+  <!-- htmltitle is before nature.css - we use this hack to load bootstrap first -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../_static/css/bootstrap.min.css" media="screen" />
+
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="pyFreeSurfer" href="../index.html" />
+  
+   
+       <script type="text/javascript" src="../_static/sidebar.js"></script>
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="../_static/js/bootstrap.min.js" type="text/javascript"></script>
+
+  <script src="../_static/js/angular.min.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    var app = angular.module("navApp", []);
+    app.controller('navCtrl', ['$scope', '$window', function($scope, $window) {
+      $scope.isActive = function (viewLocation) {
+        var rel = $window.location.pathname.split("/")
+        rel = rel[rel.length - 1]
+        rel = rel.split(".")[0]
+        var active = (viewLocation === rel);
+        return active;};
+    }]);
+  </script>
+
+  </head>
+  <body role="document"><div class="banner">
+  <div class="container-fluid banner-container">
+    <div class="row banner-inner">
+      <div class="col-xs-4">
+        <img alt="Logo" src="../_static/pyfreesurfer.png">
+      </div>
+      <div class="col-xs-8">
+            <p>Using FreeSurfer in Python.</p>
+      </div>
+    </div>  
+  </div>
+</div><nav class="navbar navbar-default navbar-static-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+        </a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse" ng-controller="navCtrl" ng-app="navApp">
+      <ul class="nav navbar-nav">
+        <li ng-class="{ active: isActive('index') }"><a href="../index.html">Home</a></li>
+        <li ng-class="{ active: isActive('installation') }"><a href="../generated/installation.html">Installation</a></li>
+        <li ng-class="{ active: isActive('gallery') }"><a href="gallery.html">Gallery</a></li>
+        <li ng-class="{ active: isActive('documentation') }"><a href="../generated/documentation.html">API documentation</a></li>
+        <!--<li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+	        <li><a href="../generated/pyfreesurfer.html">Pyfreesurfer</a></li>
+<li><a href="../generated/pyfreesurfer.utils.html">Pyfreesurfer.utils</a></li>
+<li><a href="../generated/pyfreesurfer.conversions.html">Pyfreesurfer.conversions</a></li>
+<li><a href="../generated/pyfreesurfer.segmentation.html">Pyfreesurfer.segmentation</a></li>
+<li><a href="../generated/pyfreesurfer.diffusion.html">Pyfreesurfer.diffusion</a></li>
+<li><a href="../generated/pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
+          </ul>
+        </li>-->
+        <li><a href="https://github.com/AGrigis/pysphinxdoc">PYSPHINXDOC</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="content-wrapper">
+    <div class="sphinxsidebar">
+      <div class="sphinxsidebarwrapper">
+
+        <!-- info setup -->
+          <p class="doc-version">
+           This documentation is for pyfreesurfer <strong>version 1.2.0</strong>
+          </p>
+        <p class="citing">
+          If you use the software, please do not esitate to 
+          <a &mdash; <a href="https://github.com/neurospin/pyfreesurfer">
+          Report a Bug</a>.
+        </p>
+
+      <!-- toc tree -->
+      <ul>
+<li><a class="reference internal" href="#">Pyfreesurfer Fmri</a></li>
+</ul>
+
+
+      </div>
+    </div>
+  
+
+  <div class="content">
+      
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="pyfreesurfer-fmri">
+<span id="sphx-glr-auto-gallery-pyfreesurfer-fmri-py"></span><h1>Pyfreesurfer Fmri<a class="headerlink" href="#pyfreesurfer-fmri" title="Permalink to this headline">¶</a></h1>
+<p>Example automatically generated from package script.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># System import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
+<span class="kn">import</span> <span class="nn">textwrap</span>
+<span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">RawTextHelpFormatter</span>
+
+<span class="c1"># Bredala import</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">bredala</span>
+    <span class="n">bredala</span><span class="o">.</span><span class="n">USE_PROFILER</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">bredala</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;pyfreesurfer.fmri&quot;</span><span class="p">,</span>
+                     <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;mkpreproc_sess&quot;</span><span class="p">,</span> <span class="s2">&quot;mkmodel_sess&quot;</span><span class="p">,</span> <span class="s2">&quot;mkstat_sess&quot;</span><span class="p">])</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+<span class="c1"># Package import</span>
+<span class="kn">from</span> <span class="nn">pyfreesurfer</span> <span class="kn">import</span> <span class="n">__version__</span> <span class="k">as</span> <span class="n">version</span>
+<span class="kn">from</span> <span class="nn">pyfreesurfer.fmri</span> <span class="kn">import</span> <span class="n">mkpreproc_sess</span>
+<span class="kn">from</span> <span class="nn">pyfreesurfer.fmri</span> <span class="kn">import</span> <span class="n">mkmodel_sess</span>
+<span class="kn">from</span> <span class="nn">pyfreesurfer.fmri</span> <span class="kn">import</span> <span class="n">mkstat_sess</span>
+<span class="kn">from</span> <span class="nn">pyfreesurfer.wrapper</span> <span class="kn">import</span> <span class="n">FSWrapper</span>
+<span class="kn">from</span> <span class="nn">pyfreesurfer</span> <span class="kn">import</span> <span class="n">DEFAULT_FREESURFER_PATH</span>
+
+<span class="c1"># Pyconnectome import</span>
+<span class="kn">from</span> <span class="nn">pyconnectome</span> <span class="kn">import</span> <span class="n">__version__</span> <span class="k">as</span> <span class="n">pyconnectome_version</span>
+<span class="kn">from</span> <span class="nn">pyconnectome.wrapper</span> <span class="kn">import</span> <span class="n">FSLWrapper</span>
+<span class="kn">from</span> <span class="nn">pyconnectome</span> <span class="kn">import</span> <span class="n">DEFAULT_FSL_PATH</span>
+
+
+<span class="c1"># Parameters to keep trace</span>
+<span class="n">__hopla__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;runtime&quot;</span><span class="p">,</span> <span class="s2">&quot;inputs&quot;</span><span class="p">,</span> <span class="s2">&quot;outputs&quot;</span><span class="p">]</span>
+
+
+<span class="c1"># Script documentation</span>
+<span class="n">DOC</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Freesurfer fMRI first level analysis</span>
+
+<span class="s2">* Time-series analysis</span>
+<span class="s2">* Everything inside of a functional subdir (all runs)</span>
+<span class="s2">* Preprocessing</span>
+<span class="s2">* GLM Analysis</span>
+
+<span class="s2">Preprocessing steps.</span>
+<span class="s2">Binding around the FreeSurfer&#39;s &#39;preproc-sess&#39; command.</span>
+
+<span class="s2">* Registration Template Creation</span>
+<span class="s2">* Motion Correction</span>
+<span class="s2">* Slice-timing correction (if using)</span>
+<span class="s2">* Functional-Anatomical Registration</span>
+<span class="s2">* Mask creation</span>
+<span class="s2">* Intensity normalization, Part 1</span>
+<span class="s2">* Resampling raw time series to mni305, lh, and rh</span>
+<span class="s2">* Spatial smoothing</span>
+
+<span class="s2">First Level GLM Analysis steps.</span>
+<span class="s2">Binding around the FreeSurfer&#39;s &#39;mkanalysis-sess&#39;, &#39;mkcontrast-sess&#39; and</span>
+<span class="s2">&#39;selxavg3-sess&#39; commands.</span>
+
+<span class="s2">* Configure Analysis</span>
+<span class="s2">* Create Contrasts</span>
+<span class="s2">* Perform Analysis</span>
+
+<span class="s2">Command example in the IMAGEN data:</span>
+
+<span class="s2">python $HOME/git/pyfreesurfer/pyfreesurfer/scripts/pyfreesurfer_fmri </span><span class="se">\</span>
+<span class="s2">    -v 2 </span><span class="se">\</span>
+<span class="s2">    -o /volatile/tmp/freesurfer_fmri </span><span class="se">\</span>
+<span class="s2">    -d /neurospin/imagen/BL/processed/freesurfer </span><span class="se">\</span>
+<span class="s2">    -s 000000820294 </span><span class="se">\</span>
+<span class="s2">    -f /neurospin/imagen/BL/processed/nifti/000000820294/SessionA/EPI_stop_signal/000000820294s701a1007.nii.gz </span><span class="se">\</span>
+<span class="s2">    -f /neurospin/imagen/BL/processed/nifti/000000820294/SessionA/EPI_stop_signal/000000820294s701a1007.nii.gz </span><span class="se">\</span>
+<span class="s2">    -p /volatile/tmp/freesurfer_fmri/paradigm.txt </span><span class="se">\</span>
+<span class="s2">    -a bold </span><span class="se">\</span>
+<span class="s2">    -t 2.2 </span><span class="se">\</span>
+<span class="s2">    -n 4 </span><span class="se">\</span>
+<span class="s2">    -c /volatile/tmp/freesurfer_fmri/contrasts.json </span><span class="se">\</span>
+<span class="s2">    -R</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">is_file</span><span class="p">(</span><span class="n">filearg</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Type for argparse - checks that file exists but does not open.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filearg</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentError</span><span class="p">(</span>
+            <span class="s2">&quot;The file &#39;{0}&#39; does not exist!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filearg</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">filearg</span>
+
+
+<span class="k">def</span> <span class="nf">is_directory</span><span class="p">(</span><span class="n">dirarg</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Type for argparse - checks that directory exists.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">dirarg</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentError</span><span class="p">(</span>
+            <span class="s2">&quot;The directory &#39;{0}&#39; does not exist!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dirarg</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">dirarg</span>
+
+
+<span class="k">def</span> <span class="nf">get_cmd_line_args</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a command line argument parser and return a dict mapping</span>
+<span class="sd">    &lt;argument name&gt; -&gt; &lt;argument value&gt;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
+        <span class="n">prog</span><span class="o">=</span><span class="s2">&quot;python pyfreesurfer_fmri_preproc&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span><span class="n">DOC</span><span class="p">),</span>
+        <span class="n">formatter_class</span><span class="o">=</span><span class="n">RawTextHelpFormatter</span><span class="p">)</span>
+
+    <span class="c1"># Required arguments</span>
+    <span class="n">required</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s2">&quot;required arguments&quot;</span><span class="p">)</span>
+    <span class="n">required</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-o&quot;</span><span class="p">,</span> <span class="s2">&quot;--outdir&quot;</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;path&gt;&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;the destination folder.&quot;</span><span class="p">)</span>
+    <span class="n">required</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-d&quot;</span><span class="p">,</span> <span class="s2">&quot;--fsdir&quot;</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">is_directory</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;path&gt;&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;the FreeSurfer home directory.&quot;</span><span class="p">)</span>
+    <span class="n">required</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-a&quot;</span><span class="p">,</span> <span class="s2">&quot;--acquisition&quot;</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span> <span class="s2">&quot;rest&quot;</span><span class="p">],</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;choice&gt;&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;the acquisition type.&quot;</span><span class="p">)</span>
+    <span class="n">required</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-s&quot;</span><span class="p">,</span> <span class="s2">&quot;--subjectid&quot;</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;str&gt;&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;the subject identifier.&quot;</span><span class="p">)</span>
+    <span class="n">required</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-f&quot;</span><span class="p">,</span> <span class="s2">&quot;--funcfiles&quot;</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">is_file</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;session files&gt;&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;append&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;the subject functional volumes (one per session) to be &quot;</span>
+             <span class="s2">&quot;processed.&quot;</span><span class="p">)</span>
+    <span class="n">required</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-p&quot;</span><span class="p">,</span> <span class="s2">&quot;--paradigms&quot;</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">is_file</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;session files&gt;&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;append&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;the pragigms file that follow the FreeSurfer convension.&quot;</span><span class="p">)</span>
+    <span class="n">required</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-t&quot;</span><span class="p">,</span> <span class="s2">&quot;--tr&quot;</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;float&gt;&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;the repetition time.&quot;</span><span class="p">)</span>
+    <span class="n">required</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-n&quot;</span><span class="p">,</span> <span class="s2">&quot;--nconditions&quot;</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;int&gt;&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;number of conditions (excluding fixation).&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-c&quot;</span><span class="p">,</span> <span class="s2">&quot;--contrasts&quot;</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">is_file</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;file&gt;&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;a JSON file that contains a list of contrasts with each contrast &quot;</span>
+             <span class="s2">&quot;being a tuple of the form: (&#39;name&#39;, &#39;stat&#39;, [condition list], &quot;</span>
+             <span class="s2">&quot;[condition list ids], [weight list]).&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Optional arguments</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-H&quot;</span><span class="p">,</span> <span class="s2">&quot;--fs-sh&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">is_file</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;path&gt;&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Bash script initializing FreeSurfer&#39;s environment.&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-F&quot;</span><span class="p">,</span> <span class="s2">&quot;--fsl-sh&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">is_file</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;&lt;path&gt;&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Bash script initializing FSL&#39;s environment.&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-R&quot;</span><span class="p">,</span> <span class="s2">&quot;--force&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;if activated, force reprocessing of all stages.&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="s2">&quot;--verbose&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;increase the verbosity level: 0 silent, [1, 2] verbose.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Create a dict of arguments to pass to the &#39;main&#39; function</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">verbose</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;verbose&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;fs_sh&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;fs_sh&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">DEFAULT_FREESURFER_PATH</span>
+    <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;fsl_sh&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;fsl_sh&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">DEFAULT_FSL_PATH</span>
+
+    <span class="k">return</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">verbose</span>
+</pre></div>
+</div>
+<p>Parse the command line.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">inputs</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="n">get_cmd_line_args</span><span class="p">()</span>
+<span class="n">tool</span> <span class="o">=</span> <span class="s2">&quot;pyfreesurfer_fmri&quot;</span>
+<span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+<span class="n">tool_version</span> <span class="o">=</span> <span class="n">version</span>
+<span class="n">fsl_version</span> <span class="o">=</span> <span class="n">FSLWrapper</span><span class="p">([],</span> <span class="n">shfile</span><span class="o">=</span><span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;fsl_sh&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">version</span>
+<span class="n">freesurfer_version</span> <span class="o">=</span> <span class="n">FSWrapper</span><span class="p">([],</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;fs_sh&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">version</span>
+<span class="n">params</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span>
+<span class="n">runtime</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+               <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;tool&quot;</span><span class="p">,</span> <span class="s2">&quot;tool_version&quot;</span><span class="p">,</span> <span class="s2">&quot;fsl_version&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;freesurfer_version&quot;</span><span class="p">,</span> <span class="s2">&quot;timestamp&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;pyconnectome_version&quot;</span><span class="p">)])</span>
+<span class="n">outputs</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="n">pprint</span><span class="p">(</span><span class="s2">&quot;[info] Starting FreeSurfer fMRI preprocessing ...&quot;</span><span class="p">)</span>
+    <span class="n">pprint</span><span class="p">(</span><span class="s2">&quot;[info] Runtime:&quot;</span><span class="p">)</span>
+    <span class="n">pprint</span><span class="p">(</span><span class="n">runtime</span><span class="p">)</span>
+    <span class="n">pprint</span><span class="p">(</span><span class="s2">&quot;[info] Inputs:&quot;</span><span class="p">)</span>
+    <span class="n">pprint</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Copy/rename the functional volumes in order to be compliant with the FreeSurfer
+ontology.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">sessionid_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;outdir&quot;</span><span class="p">],</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;subjectid&quot;</span><span class="p">],</span> <span class="s2">&quot;sessid&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">sessionid_file</span><span class="p">):</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">sessionid_file</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">session_cnt</span><span class="p">,</span> <span class="p">(</span><span class="n">session_paths</span><span class="p">,</span> <span class="n">session_paradigms</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+        <span class="nb">zip</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;funcfiles&quot;</span><span class="p">],</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;paradigms&quot;</span><span class="p">])):</span>
+    <span class="n">sessionid</span> <span class="o">=</span> <span class="s2">&quot;Sess{0:03d}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">session_cnt</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">sessionid_file</span><span class="p">,</span> <span class="s2">&quot;at&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">open_file</span><span class="p">:</span>
+        <span class="n">open_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sessionid</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">run_cnt</span><span class="p">,</span> <span class="p">(</span><span class="n">run_path</span><span class="p">,</span> <span class="n">run_paradigm</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+            <span class="nb">zip</span><span class="p">(</span><span class="n">session_paths</span><span class="p">,</span> <span class="n">session_paradigms</span><span class="p">)):</span>
+        <span class="n">extensions</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">run_path</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="n">extension</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">extensions</span><span class="p">)</span>
+        <span class="n">runid</span> <span class="o">=</span> <span class="s2">&quot;{0:03d}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">run_cnt</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">subjectdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;outdir&quot;</span><span class="p">],</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;subjectid&quot;</span><span class="p">],</span>
+                                  <span class="n">sessionid</span><span class="p">,</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;acquisition&quot;</span><span class="p">],</span> <span class="n">runid</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">subjectdir</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">subjectdir</span><span class="p">)</span>
+        <span class="n">funcfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subjectdir</span><span class="p">,</span> <span class="s2">&quot;f&quot;</span> <span class="o">+</span> <span class="n">extension</span><span class="p">)</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span><span class="n">run_path</span><span class="p">,</span> <span class="n">funcfile</span><span class="p">)</span>
+        <span class="n">parafile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subjectdir</span><span class="p">,</span> <span class="s2">&quot;odd.even.par&quot;</span><span class="p">)</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span><span class="n">run_paradigm</span><span class="p">,</span> <span class="n">parafile</span><span class="p">)</span>
+    <span class="n">subjectname_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;outdir&quot;</span><span class="p">],</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;subjectid&quot;</span><span class="p">],</span>
+                                    <span class="n">sessionid</span><span class="p">,</span> <span class="s2">&quot;subjectname&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">subjectname_file</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">open_file</span><span class="p">:</span>
+        <span class="n">open_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;subjectid&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Preprocessiong</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">lh_fsaverage</span><span class="p">,</span> <span class="n">rh_fsaverage</span><span class="p">,</span> <span class="n">sub_fsaverage</span><span class="p">,</span> <span class="n">bbr_sum</span><span class="p">,</span> <span class="n">mc_plots</span> <span class="o">=</span> <span class="n">mkpreproc_sess</span><span class="p">(</span>
+    <span class="n">sessid</span><span class="o">=</span><span class="n">sessionid_file</span><span class="p">,</span>
+    <span class="n">outdir</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;outdir&quot;</span><span class="p">],</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;subjectid&quot;</span><span class="p">]),</span>
+    <span class="n">fsdir</span><span class="o">=</span><span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;fsdir&quot;</span><span class="p">],</span>
+    <span class="n">fsd</span><span class="o">=</span><span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;acquisition&quot;</span><span class="p">],</span>
+    <span class="n">perrun</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">persession</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+    <span class="n">fwhm</span><span class="o">=</span><span class="mf">5.</span><span class="p">,</span>
+    <span class="n">update</span><span class="o">=</span><span class="ow">not</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;force&quot;</span><span class="p">],</span>
+    <span class="n">force</span><span class="o">=</span><span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;force&quot;</span><span class="p">],</span>
+    <span class="n">sliceorder</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+    <span class="n">surface</span><span class="o">=</span><span class="s2">&quot;lhrh&quot;</span><span class="p">,</span>
+    <span class="n">mni3052mm</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">mni3051mm</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+    <span class="n">nomc</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+    <span class="n">nostc</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+    <span class="n">nosmooth</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+    <span class="n">nomask</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+    <span class="n">noreg</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+    <span class="n">noinorm</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+    <span class="n">fsconfig</span><span class="o">=</span><span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;fs_sh&quot;</span><span class="p">],</span>
+    <span class="n">fslconfig</span><span class="o">=</span><span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;fsl_sh&quot;</span><span class="p">],</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>First level configuration
+refeventdur parameter has no influence on the design matrix. It controls a
+scaling factor so that the beta value (regression coef) will equal to the
+height of the hemodynamic response when viewed in the raw data. This sounds
+like it should be simple but it is actually quite tricky. The bottom line is
+that it is only a scale factor, so it does not affect p-values or
+t-values. Can be set to the mean of the task event durations.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">analysis_names</span> <span class="o">=</span> <span class="n">mkmodel_sess</span><span class="p">(</span>
+    <span class="n">outdir</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;outdir&quot;</span><span class="p">],</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;subjectid&quot;</span><span class="p">]),</span>
+    <span class="n">tr</span><span class="o">=</span><span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;tr&quot;</span><span class="p">],</span>
+    <span class="n">contrasts_file</span><span class="o">=</span><span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;contrasts&quot;</span><span class="p">],</span>
+    <span class="n">funcstem</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">sub_fsaverage</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+    <span class="n">fsd</span><span class="o">=</span><span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;acquisition&quot;</span><span class="p">],</span>
+    <span class="n">perrun</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">persession</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+    <span class="c1">#fwhm=5.,</span>
+    <span class="n">mni3052mm</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">mni3051mm</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+    <span class="n">blocked_design</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">retinototy_design</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+    <span class="n">abblocked_design</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+    <span class="n">spmhrf</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">fslhrf</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+    <span class="n">gammafit</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+    <span class="n">ngammaderiv</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+    <span class="n">fir</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+    <span class="n">nconditions</span><span class="o">=</span><span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;nconditions&quot;</span><span class="p">],</span>
+    <span class="n">refeventdur</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span>
+    <span class="n">polyfit</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">mcextreg</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">nuisreg</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+    <span class="n">nskip</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">fsconfig</span><span class="o">=</span><span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;fs_sh&quot;</span><span class="p">],</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+<span class="c1">#analysis_names= [&#39;odd.even.sm5.0.lh&#39;]</span>
+                 <span class="c1">#&#39;odd.even.sm5.0.rh&#39;]</span>
+                 <span class="c1">#&#39;odd.even.sm5.0.mni305&#39;]</span>
+</pre></div>
+</div>
+<p>First level analysis</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">mkstat_sess</span><span class="p">(</span>
+    <span class="n">sessid</span><span class="o">=</span><span class="n">sessionid_file</span><span class="p">,</span>
+    <span class="n">outdir</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;outdir&quot;</span><span class="p">],</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;subjectid&quot;</span><span class="p">]),</span>
+    <span class="n">fsdir</span><span class="o">=</span><span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;fsdir&quot;</span><span class="p">],</span>
+    <span class="n">analysis_names</span><span class="o">=</span><span class="n">analysis_names</span><span class="p">,</span>
+    <span class="n">svres</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+    <span class="n">svres_unwhitened</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+    <span class="n">run_wise</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+    <span class="n">max_threads</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+    <span class="n">overwrite</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+    <span class="n">fsconfig</span><span class="o">=</span><span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;fs_sh&quot;</span><span class="p">],</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Update the outputs and save them and the inputs in a &#8216;logs&#8217; directory.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">logdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;outdir&quot;</span><span class="p">],</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;subjectid&quot;</span><span class="p">],</span> <span class="s2">&quot;logs&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">logdir</span><span class="p">):</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">logdir</span><span class="p">)</span>
+<span class="n">params</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span>
+<span class="n">outputs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+               <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;lh_fsaverage&quot;</span><span class="p">,</span> <span class="s2">&quot;rh_fsaverage&quot;</span><span class="p">,</span> <span class="s2">&quot;sub_fsaverage&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;bbr_sum&quot;</span><span class="p">,</span> <span class="s2">&quot;mc_plots&quot;</span><span class="p">,</span> <span class="s2">&quot;analysis_names&quot;</span><span class="p">)])</span>
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">final_struct</span> <span class="ow">in</span> <span class="p">[(</span><span class="s2">&quot;inputs&quot;</span><span class="p">,</span> <span class="n">inputs</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;outputs&quot;</span><span class="p">,</span> <span class="n">outputs</span><span class="p">),</span>
+                           <span class="p">(</span><span class="s2">&quot;runtime&quot;</span><span class="p">,</span> <span class="n">runtime</span><span class="p">)]:</span>
+    <span class="n">log_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">logdir</span><span class="p">,</span> <span class="s2">&quot;{0}.json&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">log_file</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">open_file</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">final_struct</span><span class="p">,</span> <span class="n">open_file</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">check_circular</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                  <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;[info] Outputs:&quot;</span><span class="p">)</span>
+    <span class="n">pprint</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Total running time of the script:</strong> ( 0 minutes  0.000 seconds)</p>
+<div class="sphx-glr-footer container">
+<div class="sphx-glr-download container">
+<a class="reference download internal" href="../_downloads/pyfreesurfer_fmri.py" download=""><code class="xref download docutils literal"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">pyfreesurfer_fmri.py</span></code></a></div>
+<div class="sphx-glr-download container">
+<a class="reference download internal" href="../_downloads/pyfreesurfer_fmri.ipynb" download=""><code class="xref download docutils literal"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">pyfreesurfer_fmri.ipynb</span></code></a></div>
+</div>
+<p class="sphx-glr-signature">Gallery generated by Sphinx-Gallery</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+
+    <div class="clearer">
+    </div>
+  </div>
+  
+</div>
+
+<div class="footer">
+    &copy; 2017, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
+</div>
+  </body>
+</html>

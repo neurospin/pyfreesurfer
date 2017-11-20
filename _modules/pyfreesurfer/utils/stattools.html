@@ -15,11 +15,12 @@
     
     <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.0.0',
+        VERSION:     '1.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -52,7 +53,18 @@
   </script>
 
   </head>
-  <body><nav class="navbar navbar-default navbar-static-top">
+  <body role="document"><div class="banner">
+  <div class="container-fluid banner-container">
+    <div class="row banner-inner">
+      <div class="col-xs-4">
+        <img alt="Logo" src="../../../_static/pyfreesurfer.png">
+      </div>
+      <div class="col-xs-8">
+            <p>Using FreeSurfer in Python.</p>
+      </div>
+    </div>  
+  </div>
+</div><nav class="navbar navbar-default navbar-static-top">
   <div class="container-fluid">
     <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -62,38 +74,37 @@
           <span class="icon-bar"></span>
         </button>
         <a class="navbar-brand" href="../../../index.html">
-        <img alt="Logo" src="../../../_static/pyfreesurfer.png">
         </a>
     </div>
     <div id="navbar" class="navbar-collapse collapse" ng-controller="navCtrl" ng-app="navApp">
       <ul class="nav navbar-nav">
         <li ng-class="{ active: isActive('index') }"><a href="../../../index.html">Home</a></li>
         <li ng-class="{ active: isActive('installation') }"><a href="../../../generated/installation.html">Installation</a></li>
-        <li ng-class="{ active: isActive('documentation') }"><a href="../../../generated/documentation.html">Documentation</a></li>
-        <li class="dropdown">
+        <li ng-class="{ active: isActive('gallery') }"><a href="../../../auto_gallery/gallery.html">Gallery</a></li>
+        <li ng-class="{ active: isActive('documentation') }"><a href="../../../generated/documentation.html">API documentation</a></li>
+        <!--<li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></a>
           <ul class="dropdown-menu">
 	        <li><a href="../../../generated/pyfreesurfer.html">Pyfreesurfer</a></li>
-<li><a href="../../../generated/pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
+<li><a href="../../../generated/pyfreesurfer.utils.html">Pyfreesurfer.utils</a></li>
 <li><a href="../../../generated/pyfreesurfer.conversions.html">Pyfreesurfer.conversions</a></li>
 <li><a href="../../../generated/pyfreesurfer.segmentation.html">Pyfreesurfer.segmentation</a></li>
-<li><a href="../../../generated/pyfreesurfer.utils.html">Pyfreesurfer.utils</a></li>
+<li><a href="../../../generated/pyfreesurfer.diffusion.html">Pyfreesurfer.diffusion</a></li>
+<li><a href="../../../generated/pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
           </ul>
-        </li>
+        </li>-->
         <li><a href="https://github.com/AGrigis/pysphinxdoc">PYSPHINXDOC</a></li>
       </ul>
     </div>
   </div>
 </nav>
-
-
 <div class="content-wrapper">
     <div class="sphinxsidebar">
       <div class="sphinxsidebarwrapper">
 
         <!-- info setup -->
           <p class="doc-version">
-           This documentation is for pyfreesurfer <strong>version 1.0.0</strong>
+           This documentation is for pyfreesurfer <strong>version 1.2.0</strong>
           </p>
         <p class="citing">
           If you use the software, please do not esitate to 
@@ -112,29 +123,190 @@
       
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <h1>Source code for pyfreesurfer.utils.stattools</h1><div class="highlight"><pre>
-<span class="c">##########################################################################</span>
-<span class="c"># NSAp - Copyright (C) CEA, 2013 - 2016</span>
-<span class="c"># Distributed under the terms of the CeCILL-B license, as published by</span>
-<span class="c"># the CEA-CNRS-INRIA. Refer to the LICENSE file or to</span>
-<span class="c"># http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html</span>
-<span class="c"># for details.</span>
-<span class="c">##########################################################################</span>
+<span></span><span class="c1">##########################################################################</span>
+<span class="c1"># NSAp - Copyright (C) CEA, 2013 - 2016</span>
+<span class="c1"># Distributed under the terms of the CeCILL-B license, as published by</span>
+<span class="c1"># the CEA-CNRS-INRIA. Refer to the LICENSE file or to</span>
+<span class="c1"># http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html</span>
+<span class="c1"># for details.</span>
+<span class="c1">##########################################################################</span>
 
-<span class="c"># Sytem import</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Modules that provides stat file manipulation tools.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># Sytem import</span>
+<span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">glob</span>
 <span class="kn">import</span> <span class="nn">numpy</span>
-<span class="kn">import</span> <span class="nn">nibabel</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">nibabel</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
 
-<span class="c"># Pyfreesurfer import</span>
-<span class="kn">from</span> <span class="nn">pyfreesurfer</span> <span class="kn">import</span> <span class="n">DEFAULT_FREESURFER_PATH</span>
+<span class="c1"># Pyfreesurfer import</span>
 <span class="kn">from</span> <span class="nn">pyfreesurfer.wrapper</span> <span class="kn">import</span> <span class="n">FSWrapper</span>
+<span class="kn">from</span> <span class="nn">pyfreesurfer</span> <span class="kn">import</span> <span class="n">DEFAULT_FSL_PATH</span>
+<span class="kn">from</span> <span class="nn">pyfreesurfer</span> <span class="kn">import</span> <span class="n">DEFAULT_FREESURFER_PATH</span>
 <span class="kn">from</span> <span class="nn">pyfreesurfer.conversions.surfconvs</span> <span class="kn">import</span> <span class="n">mri_surf2surf</span>
+<span class="kn">from</span> <span class="nn">pyfreesurfer.utils.filetools</span> <span class="kn">import</span> <span class="n">get_or_check_freesurfer_subjects_dir</span>
+
+
+<span class="n">CONFIG_TEMPLATE</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">setenv SUBJECTS_DIR {subjects_dir}</span>
+<span class="s2">set subjlist = ({subjlist})</span>
+<span class="s2">set dtroot = {dtroot}</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="trac_all"><a class="viewcode-back" href="../../../generated/pyfreesurfer.utils.stattools.html#pyfreesurfer.utils.stattools.trac_all">[docs]</a><span class="k">def</span> <span class="nf">trac_all</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="n">subjects_dir</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">temp_dir</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+             <span class="n">fsconfig</span><span class="o">=</span><span class="n">DEFAULT_FREESURFER_PATH</span><span class="p">,</span> <span class="n">fslconfig</span><span class="o">=</span><span class="n">DEFAULT_FSL_PATH</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Anisotropy and diffusivity along the trajectory of a pathway.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    outdir: str</span>
+<span class="sd">        Root directory where to create the subject&#39;s output directory.</span>
+<span class="sd">        Created if not existing.</span>
+<span class="sd">    subjects_dir: str, default None</span>
+<span class="sd">        Path to the FreeSurfer subjects directory. Required if the</span>
+<span class="sd">        environment variable $SUBJECTS_DIR is not set.</span>
+<span class="sd">    temp_dir: str, default None</span>
+<span class="sd">        Directory to use to store temporary files. By default OS tmp dir.</span>
+<span class="sd">    fsconfig: str, default &lt;pyfreesurfer.DEFAULT_FREESURFER_PATH&gt;</span>
+<span class="sd">        Path to the FreeSurfer configuration file.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    statdir: str</span>
+<span class="sd">        The directory containing the FreeSurfer summary files.</span>
+<span class="sd">    outlierfile: str</span>
+<span class="sd">        A file that contains the subjects flagged as outliers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># FreeSurfer $SUBJECTS_DIR has to be passed or set as an env variable</span>
+    <span class="n">subjects_dir</span> <span class="o">=</span> <span class="n">get_or_check_freesurfer_subjects_dir</span><span class="p">(</span><span class="n">subjects_dir</span><span class="p">)</span>
+
+    <span class="c1"># Find all the subjects with a pathway stat file</span>
+    <span class="n">statdirs</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subjects_dir</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="s2">&quot;dpath&quot;</span><span class="p">))</span>
+    <span class="n">subjects</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">statdirs</span><span class="p">])</span>
+    <span class="n">subjects</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subjects</span><span class="p">)</span>
+
+    <span class="c1"># Create directory for temporary files</span>
+    <span class="n">temp_dir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;trac-all_&quot;</span><span class="p">,</span> <span class="nb">dir</span><span class="o">=</span><span class="n">temp_dir</span><span class="p">)</span>
+
+    <span class="c1"># Create configuration file</span>
+    <span class="n">config_str</span> <span class="o">=</span> <span class="n">CONFIG_TEMPLATE</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">subjects_dir</span><span class="o">=</span><span class="n">subjects_dir</span><span class="p">,</span>
+                                        <span class="n">subjlist</span><span class="o">=</span><span class="n">subjects</span><span class="p">,</span>
+                                        <span class="n">dtroot</span><span class="o">=</span><span class="n">subjects_dir</span><span class="p">)</span>
+    <span class="n">path_config</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="s2">&quot;trac-all.dmrirc&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_config</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">config_str</span><span class="p">)</span>
+
+    <span class="c1"># Run Tracula preparation</span>
+    <span class="n">cmd_prep</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;trac-all&quot;</span><span class="p">,</span> <span class="s2">&quot;-stat&quot;</span><span class="p">,</span> <span class="s2">&quot;-c&quot;</span><span class="p">,</span> <span class="n">path_config</span><span class="p">]</span>
+    <span class="n">FSWrapper</span><span class="p">(</span><span class="n">cmd_prep</span><span class="p">,</span> <span class="n">shfile</span><span class="o">=</span><span class="n">fsconfig</span><span class="p">,</span> <span class="n">subjects_dir</span><span class="o">=</span><span class="n">subjects_dir</span><span class="p">,</span>
+              <span class="n">add_fsl_env</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">fsl_sh</span><span class="o">=</span><span class="n">fslconfig</span><span class="p">)()</span>
+
+    <span class="c1"># Move results to destination folder</span>
+    <span class="n">statdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subjects_dir</span><span class="p">,</span> <span class="s2">&quot;stats&quot;</span><span class="p">)</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">statdir</span><span class="p">,</span> <span class="n">outdir</span><span class="p">)</span>
+
+    <span class="c1"># Clean tmp dir</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">)</span>
+
+    <span class="c1"># Detect outliers</span>
+    <span class="n">statdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s2">&quot;stats&quot;</span><span class="p">)</span>
+    <span class="n">outlierfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s2">&quot;outliers.json&quot;</span><span class="p">)</span>
+    <span class="n">logfiles</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">statdir</span><span class="p">,</span> <span class="s2">&quot;*.log&quot;</span><span class="p">))</span>
+    <span class="n">outliers</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;^Found outlier path: .*&quot;</span>
+    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">logfiles</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">open_file</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">regex</span><span class="p">,</span> <span class="n">open_file</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span>
+                                    <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">):</span>
+                <span class="n">outliers</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;Found outlier path: &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">outlierfile</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">open_file</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">outliers</span><span class="p">),</span> <span class="n">open_file</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">statdir</span><span class="p">,</span> <span class="n">outlierfile</span></div>
+
+
+<div class="viewcode-block" id="tractstats2table"><a class="viewcode-back" href="../../../generated/pyfreesurfer.utils.stattools.html#pyfreesurfer.utils.stattools.tractstats2table">[docs]</a><span class="k">def</span> <span class="nf">tractstats2table</span><span class="p">(</span><span class="n">fsdir</span><span class="p">,</span> <span class="n">outdir</span><span class="p">,</span> <span class="n">fsconfig</span><span class="o">=</span><span class="n">DEFAULT_FREESURFER_PATH</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Generate text/ascii tables of FreeSurfer tracula pathways anisotropy</span>
+<span class="sd">    and diffusivity summary from &#39;dpath/&lt;hemi&gt;.&lt;path&gt;/pathstats.overall.txt&#39;</span>
+<span class="sd">    and &#39;dpath/&lt;hemi&gt;.&lt;path&gt;/pathstats.byvoxel.txt&#39;.</span>
+
+<span class="sd">    This can then be easily imported into a spreadsheet and/or stats program.</span>
+
+<span class="sd">    Binding over the FreeSurfer&#39;s &#39;tractstats2table&#39; command.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fsdir: (mandatory)</span>
+<span class="sd">        The freesurfer working directory with all the subjects.</span>
+<span class="sd">    outdir: str (mandatory)</span>
+<span class="sd">        The destination folder.</span>
+<span class="sd">    fsconfig: str (optional)</span>
+<span class="sd">        The FreeSurfer configuration batch.</span>
+
+<span class="sd">    Return</span>
+<span class="sd">    ------</span>
+<span class="sd">    statfiles: list of str</span>
+<span class="sd">        The FreeSurfer summary files.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Check input parameters</span>
+    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="p">(</span><span class="n">fsdir</span><span class="p">,</span> <span class="n">outdir</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;{0}&#39; is not a valid directory.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+
+    <span class="c1"># Parameter that will contain the output group statistics</span>
+    <span class="n">statfiles</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Fist find all the subjects with a pathway stat file</span>
+    <span class="n">pathstatfiles</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fsdir</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="s2">&quot;dpath&quot;</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="s2">&quot;pathstats.overall.txt&quot;</span><span class="p">))</span>
+
+    <span class="c1"># Split these files by pathway names</span>
+    <span class="n">pathwayfiles</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">pathstatfiles</span><span class="p">:</span>
+        <span class="n">pathwayname</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">pathwayname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pathwayfiles</span><span class="p">:</span>
+            <span class="n">pathwayfiles</span><span class="p">[</span><span class="n">pathwayname</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">pathwayfiles</span><span class="p">[</span><span class="n">pathwayname</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="c1"># Save the FreeSurfer current working directory and set the new one</span>
+    <span class="n">fscwd</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="s2">&quot;SUBJECTS_DIR&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+        <span class="n">fscwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SUBJECTS_DIR&quot;</span><span class="p">]</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SUBJECTS_DIR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fsdir</span>
+
+    <span class="c1"># Create the output stat directory</span>
+    <span class="n">fsoutdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s2">&quot;overall_stats&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">fsoutdir</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">fsoutdir</span><span class="p">)</span>
+
+    <span class="c1"># Call freesurfer</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">pathwayfiles</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+        <span class="n">statfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fsoutdir</span><span class="p">,</span> <span class="s2">&quot;{0}.csv&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+        <span class="n">statfiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">statfile</span><span class="p">)</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;tractstats2table&quot;</span><span class="p">,</span> <span class="s2">&quot;--inputs&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">files</span> <span class="o">+</span> <span class="p">[</span>
+            <span class="s2">&quot;--overall&quot;</span><span class="p">,</span> <span class="s2">&quot;--tablefile&quot;</span><span class="p">,</span> <span class="n">statfile</span><span class="p">]</span>
+
+        <span class="n">recon</span> <span class="o">=</span> <span class="n">FSWrapper</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shfile</span><span class="o">=</span><span class="n">fsconfig</span><span class="p">)</span>
+        <span class="n">recon</span><span class="p">()</span>
+
+    <span class="c1"># Restore the FreeSurfer working directory</span>
+    <span class="k">if</span> <span class="n">fscwd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SUBJECTS_DIR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fscwd</span>
+
+    <span class="k">return</span> <span class="n">statfiles</span></div>
 
 
 <div class="viewcode-block" id="population_summary"><a class="viewcode-back" href="../../../generated/pyfreesurfer.utils.stattools.html#pyfreesurfer.utils.stattools.population_summary">[docs]</a><span class="k">def</span> <span class="nf">population_summary</span><span class="p">(</span><span class="n">statsdir</span><span class="p">,</span> <span class="n">sid</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
@@ -156,38 +328,38 @@
 <span class="sd">    popstats: dict</span>
 <span class="sd">        the population statistic or the individual scores.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># Test input parameter</span>
+    <span class="c1"># Test input parameter</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">statsdir</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;&#39;{0}&#39; FreeSurfer home directory does not &quot;</span>
-                         <span class="s">&quot;exists.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">statsdir</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;{0}&#39; FreeSurfer home directory does not &quot;</span>
+                         <span class="s2">&quot;exists.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">statsdir</span><span class="p">))</span>
 
-    <span class="c"># Go through all statistics</span>
+    <span class="c1"># Go through all statistics</span>
     <span class="n">popstats</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s">&quot;lh&quot;</span><span class="p">:</span> <span class="p">{},</span>
-        <span class="s">&quot;rh&quot;</span><span class="p">:</span> <span class="p">{},</span>
-        <span class="s">&quot;aseg&quot;</span><span class="p">:</span> <span class="p">{}</span>
+        <span class="s2">&quot;lh&quot;</span><span class="p">:</span> <span class="p">{},</span>
+        <span class="s2">&quot;rh&quot;</span><span class="p">:</span> <span class="p">{},</span>
+        <span class="s2">&quot;aseg&quot;</span><span class="p">:</span> <span class="p">{}</span>
     <span class="p">}</span>
 
-    <span class="c"># Detect all the files to be processed</span>
-    <span class="n">stats</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">statsdir</span><span class="p">,</span> <span class="s">&quot;*.csv&quot;</span><span class="p">))</span>
+    <span class="c1"># Detect all the files to be processed</span>
+    <span class="n">stats</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">statsdir</span><span class="p">,</span> <span class="s2">&quot;*.csv&quot;</span><span class="p">))</span>
     <span class="k">for</span> <span class="n">fpath</span> <span class="ow">in</span> <span class="n">stats</span><span class="p">:</span>
 
-        <span class="c"># Detect file type</span>
-        <span class="n">basename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">basename</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;aseg&quot;</span><span class="p">):</span>
-            <span class="n">stype</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">sname</span> <span class="o">=</span> <span class="n">basename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;_&quot;</span><span class="p">)</span>
-            <span class="n">hemi</span> <span class="o">=</span> <span class="s">&quot;aseg&quot;</span>
-            <span class="n">subject_header</span> <span class="o">=</span> <span class="s">&quot;Measure:volume&quot;</span>
-        <span class="k">elif</span> <span class="n">basename</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;aparc&quot;</span><span class="p">):</span>
-            <span class="n">stype</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">hemi</span><span class="p">,</span> <span class="n">sname</span> <span class="o">=</span> <span class="n">basename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;_&quot;</span><span class="p">)</span>
-            <span class="n">subject_header</span> <span class="o">=</span> <span class="s">&quot;{0}.{1}.{2}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hemi</span><span class="p">,</span> <span class="n">stype</span><span class="p">,</span> <span class="n">sname</span><span class="p">)</span>
+        <span class="c1"># Detect file type</span>
+        <span class="n">basename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">basename</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;aseg&quot;</span><span class="p">):</span>
+            <span class="n">stype</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">sname</span> <span class="o">=</span> <span class="n">basename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+            <span class="n">hemi</span> <span class="o">=</span> <span class="s2">&quot;aseg&quot;</span>
+            <span class="n">subject_header</span> <span class="o">=</span> <span class="s2">&quot;Measure:volume&quot;</span>
+        <span class="k">elif</span> <span class="n">basename</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;aparc&quot;</span><span class="p">):</span>
+            <span class="n">stype</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">hemi</span><span class="p">,</span> <span class="n">sname</span> <span class="o">=</span> <span class="n">basename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+            <span class="n">subject_header</span> <span class="o">=</span> <span class="s2">&quot;{0}.{1}.{2}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hemi</span><span class="p">,</span> <span class="n">stype</span><span class="p">,</span> <span class="n">sname</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">continue</span>
 
-        <span class="c"># Parse file</span>
+        <span class="c1"># Parse file</span>
         <span class="k">if</span> <span class="n">sname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">popstats</span><span class="p">[</span><span class="n">hemi</span><span class="p">]:</span>
             <span class="n">popstats</span><span class="p">[</span><span class="n">hemi</span><span class="p">][</span><span class="n">sname</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="s">&quot;rt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">openfile</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">openfile</span><span class="p">:</span>
             <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">openfile</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
                 <span class="n">subject</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">subject_header</span><span class="p">)</span>
@@ -201,14 +373,14 @@
             <span class="n">mean</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
             <span class="n">std</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
             <span class="n">popstats</span><span class="p">[</span><span class="n">hemi</span><span class="p">][</span><span class="n">sname</span><span class="p">][</span><span class="n">region_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s">&quot;values&quot;</span><span class="p">:</span> <span class="n">values</span><span class="p">,</span>
-                <span class="s">&quot;m&quot;</span><span class="p">:</span> <span class="n">mean</span><span class="p">,</span>
-                <span class="s">&quot;s&quot;</span><span class="p">:</span> <span class="n">std</span>
+                <span class="s2">&quot;values&quot;</span><span class="p">:</span> <span class="n">values</span><span class="p">,</span>
+                <span class="s2">&quot;m&quot;</span><span class="p">:</span> <span class="n">mean</span><span class="p">,</span>
+                <span class="s2">&quot;s&quot;</span><span class="p">:</span> <span class="n">std</span>
             <span class="p">}</span>
 
-    <span class="k">return</span> <span class="n">popstats</span>
+    <span class="k">return</span> <span class="n">popstats</span></div>
 
-</div>
+
 <div class="viewcode-block" id="aparcstats2table"><a class="viewcode-back" href="../../../generated/pyfreesurfer.utils.stattools.html#pyfreesurfer.utils.stattools.aparcstats2table">[docs]</a><span class="k">def</span> <span class="nf">aparcstats2table</span><span class="p">(</span><span class="n">fsdir</span><span class="p">,</span> <span class="n">outdir</span><span class="p">,</span> <span class="n">fsconfig</span><span class="o">=</span><span class="n">DEFAULT_FREESURFER_PATH</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Generate text/ascii tables of freesurfer parcellation stats data</span>
 <span class="sd">    &#39;?h.aparc.stats&#39;.</span>
@@ -231,51 +403,51 @@
 <span class="sd">    statfiles: list of str</span>
 <span class="sd">        The freesurfer summary stats.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># Check input parameters</span>
+    <span class="c1"># Check input parameters</span>
     <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="p">(</span><span class="n">fsdir</span><span class="p">,</span> <span class="n">outdir</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;&#39;{0}&#39; is not a valid directory.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;{0}&#39; is not a valid directory.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
 
-    <span class="c"># Parameter that will contain the output stats</span>
+    <span class="c1"># Parameter that will contain the output stats</span>
     <span class="n">statfiles</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="c"># Fist find all the subjects with a stat dir</span>
-    <span class="n">statdirs</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fsdir</span><span class="p">,</span> <span class="s">&quot;*&quot;</span><span class="p">,</span> <span class="s">&quot;stats&quot;</span><span class="p">))</span>
-    <span class="n">subjects</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">statdirs</span><span class="p">]</span>
+    <span class="c1"># Fist find all the subjects with a stat dir</span>
+    <span class="n">statdirs</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fsdir</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="s2">&quot;stats&quot;</span><span class="p">))</span>
+    <span class="n">subjects</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">statdirs</span><span class="p">]</span>
 
-    <span class="c"># Save the FreeSurfer current working directory and set the new one</span>
+    <span class="c1"># Save the FreeSurfer current working directory and set the new one</span>
     <span class="n">fscwd</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="k">if</span> <span class="s">&quot;SUBJECTS_DIR&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
-        <span class="n">fscwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&quot;SUBJECTS_DIR&quot;</span><span class="p">]</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&quot;SUBJECTS_DIR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fsdir</span>
+    <span class="k">if</span> <span class="s2">&quot;SUBJECTS_DIR&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+        <span class="n">fscwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SUBJECTS_DIR&quot;</span><span class="p">]</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SUBJECTS_DIR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fsdir</span>
 
-    <span class="c"># Create the output stat directory</span>
-    <span class="n">fsoutdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s">&quot;stats&quot;</span><span class="p">)</span>
+    <span class="c1"># Create the output stat directory</span>
+    <span class="n">fsoutdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s2">&quot;stats&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">fsoutdir</span><span class="p">):</span>
         <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">fsoutdir</span><span class="p">)</span>
 
-    <span class="c"># Call freesurfer</span>
-    <span class="k">for</span> <span class="n">hemi</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;lh&quot;</span><span class="p">,</span> <span class="s">&quot;rh&quot;</span><span class="p">]:</span>
-        <span class="k">for</span> <span class="n">meas</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;area&quot;</span><span class="p">,</span> <span class="s">&quot;volume&quot;</span><span class="p">,</span> <span class="s">&quot;thickness&quot;</span><span class="p">,</span> <span class="s">&quot;thicknessstd&quot;</span><span class="p">,</span>
-                     <span class="s">&quot;meancurv&quot;</span><span class="p">,</span> <span class="s">&quot;gauscurv&quot;</span><span class="p">,</span> <span class="s">&quot;foldind&quot;</span><span class="p">,</span> <span class="s">&quot;curvind&quot;</span><span class="p">]:</span>
+    <span class="c1"># Call freesurfer</span>
+    <span class="k">for</span> <span class="n">hemi</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;lh&quot;</span><span class="p">,</span> <span class="s2">&quot;rh&quot;</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">meas</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;area&quot;</span><span class="p">,</span> <span class="s2">&quot;volume&quot;</span><span class="p">,</span> <span class="s2">&quot;thickness&quot;</span><span class="p">,</span> <span class="s2">&quot;thicknessstd&quot;</span><span class="p">,</span>
+                     <span class="s2">&quot;meancurv&quot;</span><span class="p">,</span> <span class="s2">&quot;gauscurv&quot;</span><span class="p">,</span> <span class="s2">&quot;foldind&quot;</span><span class="p">,</span> <span class="s2">&quot;curvind&quot;</span><span class="p">]:</span>
 
             <span class="n">statfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                <span class="n">fsoutdir</span><span class="p">,</span> <span class="s">&quot;aparc_stats_{0}_{1}.csv&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hemi</span><span class="p">,</span> <span class="n">meas</span><span class="p">))</span>
+                <span class="n">fsoutdir</span><span class="p">,</span> <span class="s2">&quot;aparc_stats_{0}_{1}.csv&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hemi</span><span class="p">,</span> <span class="n">meas</span><span class="p">))</span>
             <span class="n">statfiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">statfile</span><span class="p">)</span>
-            <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;aparcstats2table&quot;</span><span class="p">,</span> <span class="s">&quot;--subjects&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">subjects</span> <span class="o">+</span> <span class="p">[</span>
-                <span class="s">&quot;--hemi&quot;</span><span class="p">,</span> <span class="n">hemi</span><span class="p">,</span> <span class="s">&quot;--meas&quot;</span><span class="p">,</span> <span class="n">meas</span><span class="p">,</span> <span class="s">&quot;--tablefile&quot;</span><span class="p">,</span> <span class="n">statfile</span><span class="p">,</span>
-                <span class="s">&quot;--delimiter&quot;</span><span class="p">,</span> <span class="s">&quot;comma&quot;</span><span class="p">,</span> <span class="s">&quot;--parcid-only&quot;</span><span class="p">]</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;aparcstats2table&quot;</span><span class="p">,</span> <span class="s2">&quot;--subjects&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">subjects</span> <span class="o">+</span> <span class="p">[</span>
+                <span class="s2">&quot;--hemi&quot;</span><span class="p">,</span> <span class="n">hemi</span><span class="p">,</span> <span class="s2">&quot;--meas&quot;</span><span class="p">,</span> <span class="n">meas</span><span class="p">,</span> <span class="s2">&quot;--tablefile&quot;</span><span class="p">,</span> <span class="n">statfile</span><span class="p">,</span>
+                <span class="s2">&quot;--delimiter&quot;</span><span class="p">,</span> <span class="s2">&quot;comma&quot;</span><span class="p">,</span> <span class="s2">&quot;--parcid-only&quot;</span><span class="p">]</span>
 
             <span class="n">recon</span> <span class="o">=</span> <span class="n">FSWrapper</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shfile</span><span class="o">=</span><span class="n">fsconfig</span><span class="p">)</span>
             <span class="n">recon</span><span class="p">()</span>
 
-    <span class="c"># Restore the FreeSurfer working directory</span>
+    <span class="c1"># Restore the FreeSurfer working directory</span>
     <span class="k">if</span> <span class="n">fscwd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&quot;SUBJECTS_DIR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fscwd</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SUBJECTS_DIR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fscwd</span>
 
-    <span class="k">return</span> <span class="n">statfiles</span>
+    <span class="k">return</span> <span class="n">statfiles</span></div>
 
-</div>
+
 <div class="viewcode-block" id="asegstats2table"><a class="viewcode-back" href="../../../generated/pyfreesurfer.utils.stattools.html#pyfreesurfer.utils.stattools.asegstats2table">[docs]</a><span class="k">def</span> <span class="nf">asegstats2table</span><span class="p">(</span><span class="n">fsdir</span><span class="p">,</span> <span class="n">outdir</span><span class="p">,</span> <span class="n">fsconfig</span><span class="o">=</span><span class="n">DEFAULT_FREESURFER_PATH</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Generate text/ascii tables of freesurfer parcellation stats data</span>
 <span class="sd">    &#39;aseg.stats&#39;.</span>
@@ -298,51 +470,51 @@
 <span class="sd">    statfiles: list of str</span>
 <span class="sd">        The freesurfer summary stats.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># Check input parameters</span>
+    <span class="c1"># Check input parameters</span>
     <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="p">(</span><span class="n">fsdir</span><span class="p">,</span> <span class="n">outdir</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;&#39;{0}&#39; is not a valid directory.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;{0}&#39; is not a valid directory.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
 
-    <span class="c"># Parameter that will contain the output stats</span>
+    <span class="c1"># Parameter that will contain the output stats</span>
     <span class="n">statfiles</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="c"># Fist find all the subjects with a stat dir</span>
-    <span class="n">statdirs</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fsdir</span><span class="p">,</span> <span class="s">&quot;*&quot;</span><span class="p">,</span> <span class="s">&quot;stats&quot;</span><span class="p">))</span>
-    <span class="n">subjects</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">statdirs</span><span class="p">]</span>
+    <span class="c1"># Fist find all the subjects with a stat dir</span>
+    <span class="n">statdirs</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fsdir</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="s2">&quot;stats&quot;</span><span class="p">))</span>
+    <span class="n">subjects</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">statdirs</span><span class="p">]</span>
 
-    <span class="c"># Save the FreeSurfer current working directory and set the new one</span>
+    <span class="c1"># Save the FreeSurfer current working directory and set the new one</span>
     <span class="n">fscwd</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="k">if</span> <span class="s">&quot;SUBJECTS_DIR&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
-        <span class="n">fscwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&quot;SUBJECTS_DIR&quot;</span><span class="p">]</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&quot;SUBJECTS_DIR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fsdir</span>
+    <span class="k">if</span> <span class="s2">&quot;SUBJECTS_DIR&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+        <span class="n">fscwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SUBJECTS_DIR&quot;</span><span class="p">]</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SUBJECTS_DIR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fsdir</span>
 
-    <span class="c"># Create the output stat directory</span>
-    <span class="n">fsoutdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s">&quot;stats&quot;</span><span class="p">)</span>
+    <span class="c1"># Create the output stat directory</span>
+    <span class="n">fsoutdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s2">&quot;stats&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">fsoutdir</span><span class="p">):</span>
         <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">fsoutdir</span><span class="p">)</span>
 
-    <span class="c"># Call freesurfer</span>
-    <span class="n">statfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fsoutdir</span><span class="p">,</span> <span class="s">&quot;aseg_stats_volume.csv&quot;</span><span class="p">)</span>
+    <span class="c1"># Call freesurfer</span>
+    <span class="n">statfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fsoutdir</span><span class="p">,</span> <span class="s2">&quot;aseg_stats_volume.csv&quot;</span><span class="p">)</span>
     <span class="n">statfiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">statfile</span><span class="p">)</span>
-    <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;asegstats2table&quot;</span><span class="p">,</span> <span class="s">&quot;--subjects&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">subjects</span> <span class="o">+</span> <span class="p">[</span>
-        <span class="s">&quot;--meas&quot;</span><span class="p">,</span> <span class="s">&quot;volume&quot;</span><span class="p">,</span> <span class="s">&quot;--tablefile&quot;</span><span class="p">,</span> <span class="n">statfile</span><span class="p">,</span> <span class="s">&quot;--delimiter&quot;</span><span class="p">,</span> <span class="s">&quot;comma&quot;</span><span class="p">]</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;asegstats2table&quot;</span><span class="p">,</span> <span class="s2">&quot;--subjects&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">subjects</span> <span class="o">+</span> <span class="p">[</span>
+        <span class="s2">&quot;--meas&quot;</span><span class="p">,</span> <span class="s2">&quot;volume&quot;</span><span class="p">,</span> <span class="s2">&quot;--tablefile&quot;</span><span class="p">,</span> <span class="n">statfile</span><span class="p">,</span> <span class="s2">&quot;--delimiter&quot;</span><span class="p">,</span> <span class="s2">&quot;comma&quot;</span><span class="p">]</span>
     <span class="n">recon</span> <span class="o">=</span> <span class="n">FSWrapper</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shfile</span><span class="o">=</span><span class="n">fsconfig</span><span class="p">)</span>
     <span class="n">recon</span><span class="p">()</span>
 
-    <span class="c"># Restore the FreeSurfer working directory</span>
+    <span class="c1"># Restore the FreeSurfer working directory</span>
     <span class="k">if</span> <span class="n">fscwd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&quot;SUBJECTS_DIR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fscwd</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SUBJECTS_DIR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fscwd</span>
 
-    <span class="k">return</span> <span class="n">statfiles</span>
+    <span class="k">return</span> <span class="n">statfiles</span></div>
 
-</div>
+
 <div class="viewcode-block" id="textures2table"><a class="viewcode-back" href="../../../generated/pyfreesurfer.utils.stattools.html#pyfreesurfer.utils.stattools.textures2table">[docs]</a><span class="k">def</span> <span class="nf">textures2table</span><span class="p">(</span>
         <span class="n">regex</span><span class="p">,</span>
         <span class="n">ico_order</span><span class="p">,</span>
         <span class="n">fsdir</span><span class="p">,</span>
         <span class="n">outdir</span><span class="p">,</span>
         <span class="n">keep_individual_textures</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-        <span class="n">save_mode</span><span class="o">=</span><span class="s">&quot;numpy&quot;</span><span class="p">,</span>
+        <span class="n">save_mode</span><span class="o">=</span><span class="s2">&quot;numpy&quot;</span><span class="p">,</span>
         <span class="n">fsconfig</span><span class="o">=</span><span class="n">DEFAULT_FREESURFER_PATH</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Generate text/ascii tables of freesurfer textures data.</span>
 
@@ -378,79 +550,81 @@
 <span class="sd">    textures_files: list of str</span>
 <span class="sd">        a list of file containing the selected subjects summary texture values.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># Check input parameters</span>
+    <span class="c1"># Check input parameters</span>
     <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="p">(</span><span class="n">fsdir</span><span class="p">,</span> <span class="n">outdir</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;&#39;{0}&#39; is not a valid directory.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
-    <span class="k">if</span> <span class="n">save_mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;numpy&quot;</span><span class="p">,</span> <span class="s">&quot;csv&quot;</span><span class="p">,</span> <span class="s">&quot;all&quot;</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;&#39;{0}&#39; is not a valid save option must be &quot;</span>
-                         <span class="s">&quot;in [&#39;numpy&#39;, &#39;csv&#39;, &#39;all&#39;]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">save_mode</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;{0}&#39; is not a valid directory.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">save_mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;numpy&quot;</span><span class="p">,</span> <span class="s2">&quot;csv&quot;</span><span class="p">,</span> <span class="s2">&quot;all&quot;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;{0}&#39; is not a valid save option must be &quot;</span>
+                         <span class="s2">&quot;in [&#39;numpy&#39;, &#39;csv&#39;, &#39;all&#39;]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">save_mode</span><span class="p">))</span>
 
-    <span class="c"># Get the requested subject textures from the regex</span>
+    <span class="c1"># Get the requested subject textures from the regex</span>
     <span class="n">textures</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fsdir</span><span class="p">,</span> <span class="n">regex</span><span class="p">))</span>
 
-    <span class="c"># Resample each texture file</span>
+    <span class="c1"># Resample each texture file</span>
     <span class="n">basename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span>
-    <span class="n">fsoutdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s">&quot;textures&quot;</span><span class="p">)</span>
+    <span class="n">fsoutdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s2">&quot;textures&quot;</span><span class="p">)</span>
     <span class="n">surfacesdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fsoutdir</span><span class="p">,</span> <span class="n">basename</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">surfacesdir</span><span class="p">):</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">surfacesdir</span><span class="p">)</span>
     <span class="n">textures_map</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">texturefile</span> <span class="ow">in</span> <span class="n">textures</span><span class="p">:</span>
 
-        <span class="c"># Get the subject id</span>
-        <span class="n">sid</span> <span class="o">=</span> <span class="n">texturefile</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">fsdir</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+        <span class="c1"># Get the subject id</span>
+        <span class="n">sid</span> <span class="o">=</span> <span class="n">texturefile</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">fsdir</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
         <span class="n">sid</span> <span class="o">=</span> <span class="n">sid</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="c"># Get the hemisphere</span>
-        <span class="n">hemi</span> <span class="o">=</span> <span class="n">basename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># Get the hemisphere</span>
+        <span class="n">hemi</span> <span class="o">=</span> <span class="n">basename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="c"># Create the destination resamples texture file</span>
-        <span class="n">resampled_texturefile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">surfacesdir</span><span class="p">,</span> <span class="s">&quot;{0}_{1}.mgz&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="c1"># Create the destination resamples texture file</span>
+        <span class="n">resampled_texturefile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">surfacesdir</span><span class="p">,</span> <span class="s2">&quot;{0}_{1}.mgz&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">sid</span><span class="p">,</span> <span class="n">basename</span><span class="p">))</span>
 
-        <span class="c"># Reasmple the surface</span>
+        <span class="c1"># Reasmple the surface</span>
         <span class="n">mri_surf2surf</span><span class="p">(</span><span class="n">hemi</span><span class="p">,</span> <span class="n">texturefile</span><span class="p">,</span> <span class="n">resampled_texturefile</span><span class="p">,</span>
                       <span class="n">ico_order</span><span class="o">=</span><span class="n">ico_order</span><span class="p">,</span> <span class="n">fsdir</span><span class="o">=</span><span class="n">fsdir</span><span class="p">,</span> <span class="n">sid</span><span class="o">=</span><span class="n">sid</span><span class="p">,</span>
                       <span class="n">fsconfig</span><span class="o">=</span><span class="n">fsconfig</span><span class="p">)</span>
 
-        <span class="c"># Check that the resampled texture has the expected size</span>
+        <span class="c1"># Check that the resampled texture has the expected size</span>
         <span class="n">profile_array</span> <span class="o">=</span> <span class="n">nibabel</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">resampled_texturefile</span><span class="p">)</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
         <span class="n">profile_dim</span> <span class="o">=</span> <span class="n">profile_array</span><span class="o">.</span><span class="n">ndim</span>
         <span class="n">profile_shape</span> <span class="o">=</span> <span class="n">profile_array</span><span class="o">.</span><span class="n">shape</span>
         <span class="k">if</span> <span class="n">profile_dim</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s">&quot;Expected profile texture array of dimension 3 not &quot;</span>
-                <span class="s">&quot;&#39;{0}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">profile_dim</span><span class="p">))</span>
+                <span class="s2">&quot;Expected profile texture array of dimension 3 not &quot;</span>
+                <span class="s2">&quot;&#39;{0}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">profile_dim</span><span class="p">))</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">profile_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">profile_shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s">&quot;Expected profile texture array of shape (*, 1, 1) not &quot;</span>
-                <span class="s">&quot;&#39;{0}&#39;.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">profile_shape</span><span class="p">))</span>
+                <span class="s2">&quot;Expected profile texture array of shape (*, 1, 1) not &quot;</span>
+                <span class="s2">&quot;&#39;{0}&#39;.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">profile_shape</span><span class="p">))</span>
 
-        <span class="c"># Organize the resampled textures in a single file</span>
+        <span class="c1"># Organize the resampled textures in a single file</span>
         <span class="k">if</span> <span class="n">sid</span> <span class="ow">in</span> <span class="n">textures_map</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Subject &#39;{0}&#39; already treated. Check the intput &quot;</span>
-                             <span class="s">&quot;&#39;regex&#39;.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sid</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Subject &#39;{0}&#39; already treated. Check the intput &quot;</span>
+                             <span class="s2">&quot;&#39;regex&#39;.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sid</span><span class="p">))</span>
         <span class="n">textures_map</span><span class="p">[</span><span class="n">sid</span><span class="p">]</span> <span class="o">=</span> <span class="n">profile_array</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">single</span><span class="p">)</span>
 
-    <span class="c"># Remove surfaces folder</span>
+    <span class="c1"># Remove surfaces folder</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">keep_individual_textures</span><span class="p">:</span>
         <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">surfacesdir</span><span class="p">)</span>
 
-    <span class="c"># Save textures in CSV or in Numpy</span>
+    <span class="c1"># Save textures in CSV or in Numpy</span>
     <span class="n">textures_files</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">if</span> <span class="n">save_mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;csv&quot;</span><span class="p">,</span> <span class="s">&quot;all&quot;</span><span class="p">]:</span>
-        <span class="n">textures_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fsoutdir</span><span class="p">,</span> <span class="n">basename</span> <span class="o">+</span> <span class="s">&quot;.csv&quot;</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">textures_file</span><span class="p">,</span> <span class="s">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">open_file</span><span class="p">:</span>
-            <span class="n">csv_writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">open_file</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s">&quot;,&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">save_mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;csv&quot;</span><span class="p">,</span> <span class="s2">&quot;all&quot;</span><span class="p">]:</span>
+        <span class="n">textures_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fsoutdir</span><span class="p">,</span> <span class="n">basename</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span>
+                                     <span class="nb">str</span><span class="p">(</span><span class="n">ico_order</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.csv&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">textures_file</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">open_file</span><span class="p">:</span>
+            <span class="n">csv_writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">open_file</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">sid</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">textures_map</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
                 <span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="n">sid</span><span class="p">]</span>
                 <span class="n">row</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
-                    <span class="p">[</span><span class="s">&quot;{0:.4f}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">textures_map</span><span class="p">[</span><span class="n">sid</span><span class="p">]])</span>
+                    <span class="p">[</span><span class="s2">&quot;{0:.4f}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">textures_map</span><span class="p">[</span><span class="n">sid</span><span class="p">]])</span>
                 <span class="n">csv_writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
         <span class="n">textures_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">textures_file</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">save_mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;numpy&quot;</span><span class="p">,</span> <span class="s">&quot;all&quot;</span><span class="p">]:</span>
-        <span class="n">textures_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fsoutdir</span><span class="p">,</span> <span class="n">basename</span> <span class="o">+</span> <span class="s">&quot;.npz&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">save_mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;numpy&quot;</span><span class="p">,</span> <span class="s2">&quot;all&quot;</span><span class="p">]:</span>
+        <span class="n">textures_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fsoutdir</span><span class="p">,</span> <span class="n">basename</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span>
+                                     <span class="nb">str</span><span class="p">(</span><span class="n">ico_order</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.npz&quot;</span><span class="p">)</span>
         <span class="n">numpy</span><span class="o">.</span><span class="n">savez</span><span class="p">(</span><span class="n">textures_file</span><span class="p">,</span> <span class="o">**</span><span class="n">textures_map</span><span class="p">)</span>
         <span class="n">textures_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">textures_file</span><span class="p">)</span>
 
@@ -460,6 +634,7 @@
           </div>
         </div>
       </div>
+
     <div class="clearer">
     </div>
   </div>
@@ -467,7 +642,7 @@
 </div>
 
 <div class="footer">
-    &copy; 2016, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
+    &copy; 2017, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
 </div>
   </body>
 </html>

@@ -2,8 +2,8 @@
 
 :orphan:
 
-Documentation of *pyfreesurfer.plots*
-======================================
+API documentation of *pyfreesurfer.plots*
+==========================================
 
 
 This module can be used to render the produced FreeSurfer data.
@@ -18,13 +18,19 @@ This module can be used to render the produced FreeSurfer data.
     <tr class='row-odd'>
     <td><a class='reference internal' href='pyfreesurfer.plots.polar.html'><em>pyfreesurfer.plots.polar</em></a></td>
     <td>
-    
+        <p>Modules that provides polar plot tools.</p>
     </td>
     </tr>
     <tr class='row-even'>
+    <td><a class='reference internal' href='pyfreesurfer.plots.formatting.html'><em>pyfreesurfer.plots.formatting</em></a></td>
+    <td>
+        <p>Modules that provides features manipulation tools.</p>
+    </td>
+    </tr>
+    <tr class='row-odd'>
     <td><a class='reference internal' href='pyfreesurfer.plots.slicer.html'><em>pyfreesurfer.plots.slicer</em></a></td>
     <td>
-    
+        <p>Modules that provides image manipulation tools.</p>
     </td>
     </tr>
     </tbody>

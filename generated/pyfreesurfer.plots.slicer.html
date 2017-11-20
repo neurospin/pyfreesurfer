@@ -15,11 +15,12 @@
     
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.0.0',
+        VERSION:     '1.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -51,7 +52,18 @@
   </script>
 
   </head>
-  <body><nav class="navbar navbar-default navbar-static-top">
+  <body role="document"><div class="banner">
+  <div class="container-fluid banner-container">
+    <div class="row banner-inner">
+      <div class="col-xs-4">
+        <img alt="Logo" src="../_static/pyfreesurfer.png">
+      </div>
+      <div class="col-xs-8">
+            <p>Using FreeSurfer in Python.</p>
+      </div>
+    </div>  
+  </div>
+</div><nav class="navbar navbar-default navbar-static-top">
   <div class="container-fluid">
     <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -61,38 +73,37 @@
           <span class="icon-bar"></span>
         </button>
         <a class="navbar-brand" href="../index.html">
-        <img alt="Logo" src="../_static/pyfreesurfer.png">
         </a>
     </div>
     <div id="navbar" class="navbar-collapse collapse" ng-controller="navCtrl" ng-app="navApp">
       <ul class="nav navbar-nav">
         <li ng-class="{ active: isActive('index') }"><a href="../index.html">Home</a></li>
         <li ng-class="{ active: isActive('installation') }"><a href="installation.html">Installation</a></li>
-        <li ng-class="{ active: isActive('documentation') }"><a href="documentation.html">Documentation</a></li>
-        <li class="dropdown">
+        <li ng-class="{ active: isActive('gallery') }"><a href="../auto_gallery/gallery.html">Gallery</a></li>
+        <li ng-class="{ active: isActive('documentation') }"><a href="documentation.html">API documentation</a></li>
+        <!--<li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></a>
           <ul class="dropdown-menu">
 	        <li><a href="pyfreesurfer.html">Pyfreesurfer</a></li>
-<li><a href="pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
+<li><a href="pyfreesurfer.utils.html">Pyfreesurfer.utils</a></li>
 <li><a href="pyfreesurfer.conversions.html">Pyfreesurfer.conversions</a></li>
 <li><a href="pyfreesurfer.segmentation.html">Pyfreesurfer.segmentation</a></li>
-<li><a href="pyfreesurfer.utils.html">Pyfreesurfer.utils</a></li>
+<li><a href="pyfreesurfer.diffusion.html">Pyfreesurfer.diffusion</a></li>
+<li><a href="pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
           </ul>
-        </li>
+        </li>-->
         <li><a href="https://github.com/AGrigis/pysphinxdoc">PYSPHINXDOC</a></li>
       </ul>
     </div>
   </div>
 </nav>
-
-
 <div class="content-wrapper">
     <div class="sphinxsidebar">
       <div class="sphinxsidebarwrapper">
 
         <!-- info setup -->
           <p class="doc-version">
-           This documentation is for pyfreesurfer <strong>version 1.0.0</strong>
+           This documentation is for pyfreesurfer <strong>version 1.2.0</strong>
           </p>
         <p class="citing">
           If you use the software, please do not esitate to 
@@ -113,11 +124,12 @@
       
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
-  <span class="target" id="module-pyfreesurfer.plots.slicer"></span><dl class="function">
+  <span class="target" id="module-pyfreesurfer.plots.slicer"></span><p>Modules that provides image manipulation tools.</p>
+<dl class="function">
 <dt id="pyfreesurfer.plots.slicer.tkmedit_slice">
-<tt class="descclassname">pyfreesurfer.plots.slicer.</tt><tt class="descname">tkmedit_slice</tt><big>(</big><em>fsdir</em>, <em>sid</em>, <em>outdir</em>, <em>stype='edges'</em>, <em>cut_axis='C'</em>, <em>slice_interval=(0</em>, <em>255</em>, <em>1)</em>, <em>path_lut=None</em>, <em>fsconfig='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em><big>)</big><a class="reference internal" href="../_modules/pyfreesurfer/plots/slicer.html#tkmedit_slice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.plots.slicer.tkmedit_slice" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pyfreesurfer.plots.slicer.</code><code class="descname">tkmedit_slice</code><span class="sig-paren">(</span><em>fsdir</em>, <em>sid</em>, <em>outdir</em>, <em>stype='edges'</em>, <em>cut_axis='C'</em>, <em>slice_interval=(0</em>, <em>255</em>, <em>1)</em>, <em>path_lut=None</em>, <em>fsconfig='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/plots/slicer.html#tkmedit_slice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.plots.slicer.tkmedit_slice" title="Permalink to this definition">¶</a></dt>
 <dd><p>Slice the anatomical volume overlayed with the pial and white surfaces.
 Wrapping around the &#8216;tkmedit&#8217; command.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -172,6 +184,7 @@ for the &#8216;aparc&#8217; and &#8216;aseg&#8217; slicer.</p>
           </div>
         </div>
       </div>
+
     <div class="clearer">
     </div>
   </div>
@@ -179,7 +192,7 @@ for the &#8216;aparc&#8217; and &#8216;aseg&#8217; slicer.</p>
 </div>
 
 <div class="footer">
-    &copy; 2016, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
+    &copy; 2017, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
 </div>
   </body>
 </html>

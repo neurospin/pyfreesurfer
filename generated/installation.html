@@ -15,11 +15,12 @@
     
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.0.0',
+        VERSION:     '1.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +30,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="pyFreeSurfer" href="../index.html" />
-    <link rel="next" title="Documentation of PYFREESURFER" href="documentation.html" />
+    <link rel="next" title="API documentation of PYFREESURFER" href="documentation.html" />
     <link rel="prev" title="pyFreeSurfer" href="../index.html" />
   
    
@@ -53,7 +54,18 @@
   </script>
 
   </head>
-  <body><nav class="navbar navbar-default navbar-static-top">
+  <body role="document"><div class="banner">
+  <div class="container-fluid banner-container">
+    <div class="row banner-inner">
+      <div class="col-xs-4">
+        <img alt="Logo" src="../_static/pyfreesurfer.png">
+      </div>
+      <div class="col-xs-8">
+            <p>Using FreeSurfer in Python.</p>
+      </div>
+    </div>  
+  </div>
+</div><nav class="navbar navbar-default navbar-static-top">
   <div class="container-fluid">
     <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -63,38 +75,37 @@
           <span class="icon-bar"></span>
         </button>
         <a class="navbar-brand" href="../index.html">
-        <img alt="Logo" src="../_static/pyfreesurfer.png">
         </a>
     </div>
     <div id="navbar" class="navbar-collapse collapse" ng-controller="navCtrl" ng-app="navApp">
       <ul class="nav navbar-nav">
         <li ng-class="{ active: isActive('index') }"><a href="../index.html">Home</a></li>
         <li ng-class="{ active: isActive('installation') }"><a href="#">Installation</a></li>
-        <li ng-class="{ active: isActive('documentation') }"><a href="documentation.html">Documentation</a></li>
-        <li class="dropdown">
+        <li ng-class="{ active: isActive('gallery') }"><a href="../auto_gallery/gallery.html">Gallery</a></li>
+        <li ng-class="{ active: isActive('documentation') }"><a href="documentation.html">API documentation</a></li>
+        <!--<li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></a>
           <ul class="dropdown-menu">
 	        <li><a href="pyfreesurfer.html">Pyfreesurfer</a></li>
-<li><a href="pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
+<li><a href="pyfreesurfer.utils.html">Pyfreesurfer.utils</a></li>
 <li><a href="pyfreesurfer.conversions.html">Pyfreesurfer.conversions</a></li>
 <li><a href="pyfreesurfer.segmentation.html">Pyfreesurfer.segmentation</a></li>
-<li><a href="pyfreesurfer.utils.html">Pyfreesurfer.utils</a></li>
+<li><a href="pyfreesurfer.diffusion.html">Pyfreesurfer.diffusion</a></li>
+<li><a href="pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
           </ul>
-        </li>
+        </li>-->
         <li><a href="https://github.com/AGrigis/pysphinxdoc">PYSPHINXDOC</a></li>
       </ul>
     </div>
   </div>
 </nav>
-
-
 <div class="content-wrapper">
     <div class="sphinxsidebar">
       <div class="sphinxsidebarwrapper">
 
         <!-- info setup -->
           <p class="doc-version">
-           This documentation is for pyfreesurfer <strong>version 1.0.0</strong>
+           This documentation is for pyfreesurfer <strong>version 1.2.0</strong>
           </p>
         <p class="citing">
           If you use the software, please do not esitate to 
@@ -123,16 +134,16 @@
       
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="installing-pyfreesurfer">
 <span id="install-guid"></span><h1>Installing <cite>pyfreesurfer</cite><a class="headerlink" href="#installing-pyfreesurfer" title="Permalink to this headline">¶</a></h1>
 <p>This tutorial will walk you through the process of intalling PYFREESURFER...</p>
 <blockquote>
 <div><ul class="simple">
-<li><a class="reference internal" href="#install-release"><em>Install an official release</em></a>. This
+<li><a class="reference internal" href="#install-release"><span>Install an official release</span></a>. This
 is the best approach for users who want a stable version.</li>
-<li><a class="reference internal" href="#install-development"><em>Install the latest development version</em></a>. This is best for users who want to contribute
+<li><a class="reference internal" href="#install-development"><span>Install the latest development version</span></a>. This is best for users who want to contribute
 to the project.</li>
 </ul>
 </div></blockquote>
@@ -141,18 +152,25 @@ to the project.</li>
 <div class="section" id="install-the-python-package-with-pip">
 <h3>Install the python package with <em>pip</em><a class="headerlink" href="#install-the-python-package-with-pip" title="Permalink to this headline">¶</a></h3>
 <p><strong>Install the package without the root privilege</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">user</span> <span class="n">pyfreesurfer</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">user</span> <span class="n">pyfreesurfer</span>
 </pre></div>
 </div>
 <p><strong>Install the package with the root privilege</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">sudo</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">pyfreesurfer</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sudo</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">pyfreesurfer</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="section" id="installing-the-current-version">
 <span id="install-development"></span><h2>Installing the current version<a class="headerlink" href="#installing-the-current-version" title="Permalink to this headline">¶</a></h2>
-<p>Clone the project at <a class="reference external" href="https://github.com/neurospin/pyfreesurfer">https://github.com/neurospin/pyfreesurfer</a>.</p>
+<p><strong>Clone the project</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">neurospin</span><span class="o">/</span><span class="n">pyfreesurfer</span>
+</pre></div>
+</div>
+<p><strong>Install in the package directory created by the previous step</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">develop</span> <span class="o">--</span><span class="n">user</span>
+</pre></div>
+</div>
 </div>
 </div>
 
@@ -160,6 +178,7 @@ to the project.</li>
           </div>
         </div>
       </div>
+
     <div class="clearer">
     </div>
   </div>
@@ -167,7 +186,7 @@ to the project.</li>
 </div>
 
 <div class="footer">
-    &copy; 2016, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
+    &copy; 2017, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
 </div>
   </body>
 </html>

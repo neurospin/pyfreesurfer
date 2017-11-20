@@ -15,11 +15,12 @@
     
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.0.0',
+        VERSION:     '1.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -51,7 +52,18 @@
   </script>
 
   </head>
-  <body><nav class="navbar navbar-default navbar-static-top">
+  <body role="document"><div class="banner">
+  <div class="container-fluid banner-container">
+    <div class="row banner-inner">
+      <div class="col-xs-4">
+        <img alt="Logo" src="../_static/pyfreesurfer.png">
+      </div>
+      <div class="col-xs-8">
+            <p>Using FreeSurfer in Python.</p>
+      </div>
+    </div>  
+  </div>
+</div><nav class="navbar navbar-default navbar-static-top">
   <div class="container-fluid">
     <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -61,38 +73,37 @@
           <span class="icon-bar"></span>
         </button>
         <a class="navbar-brand" href="../index.html">
-        <img alt="Logo" src="../_static/pyfreesurfer.png">
         </a>
     </div>
     <div id="navbar" class="navbar-collapse collapse" ng-controller="navCtrl" ng-app="navApp">
       <ul class="nav navbar-nav">
         <li ng-class="{ active: isActive('index') }"><a href="../index.html">Home</a></li>
         <li ng-class="{ active: isActive('installation') }"><a href="installation.html">Installation</a></li>
-        <li ng-class="{ active: isActive('documentation') }"><a href="documentation.html">Documentation</a></li>
-        <li class="dropdown">
+        <li ng-class="{ active: isActive('gallery') }"><a href="../auto_gallery/gallery.html">Gallery</a></li>
+        <li ng-class="{ active: isActive('documentation') }"><a href="documentation.html">API documentation</a></li>
+        <!--<li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></a>
           <ul class="dropdown-menu">
 	        <li><a href="pyfreesurfer.html">Pyfreesurfer</a></li>
-<li><a href="pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
+<li><a href="#">Pyfreesurfer.utils</a></li>
 <li><a href="pyfreesurfer.conversions.html">Pyfreesurfer.conversions</a></li>
 <li><a href="pyfreesurfer.segmentation.html">Pyfreesurfer.segmentation</a></li>
-<li><a href="#">Pyfreesurfer.utils</a></li>
+<li><a href="pyfreesurfer.diffusion.html">Pyfreesurfer.diffusion</a></li>
+<li><a href="pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
           </ul>
-        </li>
+        </li>-->
         <li><a href="https://github.com/AGrigis/pysphinxdoc">PYSPHINXDOC</a></li>
       </ul>
     </div>
   </div>
 </nav>
-
-
 <div class="content-wrapper">
     <div class="sphinxsidebar">
       <div class="sphinxsidebarwrapper">
 
         <!-- info setup -->
           <p class="doc-version">
-           This documentation is for pyfreesurfer <strong>version 1.0.0</strong>
+           This documentation is for pyfreesurfer <strong>version 1.2.0</strong>
           </p>
         <p class="citing">
           If you use the software, please do not esitate to 
@@ -102,7 +113,7 @@
 
       <!-- toc tree -->
       <ul>
-<li><a class="reference internal" href="#">Documentation of <em>pyfreesurfer.utils</em></a></li>
+<li><a class="reference internal" href="#">API documentation of <em>pyfreesurfer.utils</em></a></li>
 </ul>
 
 
@@ -114,43 +125,43 @@
       
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
-  <div class="section" id="documentation-of-pyfreesurfer-utils">
-<h1>Documentation of <em>pyfreesurfer.utils</em><a class="headerlink" href="#documentation-of-pyfreesurfer-utils" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="api-documentation-of-pyfreesurfer-utils">
+<h1>API documentation of <em>pyfreesurfer.utils</em><a class="headerlink" href="#api-documentation-of-pyfreesurfer-utils" title="Permalink to this headline">¶</a></h1>
 <p>Utility functions wrapped from the FreeSurfer package.</p>
 <br/>    <!-- Block section -->
 <table border='1' class='docutils' style='width:100%'>
 <colgroup><col width='25%'/><col width='75%'/></colgroup>
 <tbody valign='top'>
 <tr class='row-odd'>
-<td><a class='reference internal' href='pyfreesurfer.utils.regtools.html'><em>pyfreesurfer.utils.regtools</em></a></td>
-<td>
-    <p>Wrappers for the FreeSurfer's registration utilities.</p>
-</td>
-</tr>
-<tr class='row-even'>
-<td><a class='reference internal' href='pyfreesurfer.utils.openctm.html'><em>pyfreesurfer.utils.openctm</em></a></td>
-<td>
-
-</td>
-</tr>
-<tr class='row-odd'>
 <td><a class='reference internal' href='pyfreesurfer.utils.filetools.html'><em>pyfreesurfer.utils.filetools</em></a></td>
 <td>
-
+    <p>Modules that provides file manipulation tools.</p>
 </td>
 </tr>
 <tr class='row-even'>
-<td><a class='reference internal' href='pyfreesurfer.utils.surftools.html'><em>pyfreesurfer.utils.surftools</em></a></td>
+<td><a class='reference internal' href='pyfreesurfer.utils.stattools.html'><em>pyfreesurfer.utils.stattools</em></a></td>
 <td>
-
+    <p>Modules that provides stat file manipulation tools.</p>
 </td>
 </tr>
 <tr class='row-odd'>
-<td><a class='reference internal' href='pyfreesurfer.utils.stattools.html'><em>pyfreesurfer.utils.stattools</em></a></td>
+<td><a class='reference internal' href='pyfreesurfer.utils.openctm.html'><em>pyfreesurfer.utils.openctm</em></a></td>
 <td>
-
+    <p>Modules that provides openctm support.</p>
+</td>
+</tr>
+<tr class='row-even'>
+<td><a class='reference internal' href='pyfreesurfer.utils.regtools.html'><em>pyfreesurfer.utils.regtools</em></a></td>
+<td>
+    <p>Modules that provides registration tools.</p>
+</td>
+</tr>
+<tr class='row-odd'>
+<td><a class='reference internal' href='pyfreesurfer.utils.surftools.html'><em>pyfreesurfer.utils.surftools</em></a></td>
+<td>
+    <p>Modules that provides surface manipulation tools.</p>
 </td>
 </tr>
 </tbody>
@@ -162,6 +173,7 @@
           </div>
         </div>
       </div>
+
     <div class="clearer">
     </div>
   </div>
@@ -169,7 +181,7 @@
 </div>
 
 <div class="footer">
-    &copy; 2016, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
+    &copy; 2017, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
 </div>
   </body>
 </html>

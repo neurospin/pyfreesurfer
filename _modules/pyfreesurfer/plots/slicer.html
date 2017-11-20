@@ -15,11 +15,12 @@
     
     <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.0.0',
+        VERSION:     '1.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -52,7 +53,18 @@
   </script>
 
   </head>
-  <body><nav class="navbar navbar-default navbar-static-top">
+  <body role="document"><div class="banner">
+  <div class="container-fluid banner-container">
+    <div class="row banner-inner">
+      <div class="col-xs-4">
+        <img alt="Logo" src="../../../_static/pyfreesurfer.png">
+      </div>
+      <div class="col-xs-8">
+            <p>Using FreeSurfer in Python.</p>
+      </div>
+    </div>  
+  </div>
+</div><nav class="navbar navbar-default navbar-static-top">
   <div class="container-fluid">
     <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -62,38 +74,37 @@
           <span class="icon-bar"></span>
         </button>
         <a class="navbar-brand" href="../../../index.html">
-        <img alt="Logo" src="../../../_static/pyfreesurfer.png">
         </a>
     </div>
     <div id="navbar" class="navbar-collapse collapse" ng-controller="navCtrl" ng-app="navApp">
       <ul class="nav navbar-nav">
         <li ng-class="{ active: isActive('index') }"><a href="../../../index.html">Home</a></li>
         <li ng-class="{ active: isActive('installation') }"><a href="../../../generated/installation.html">Installation</a></li>
-        <li ng-class="{ active: isActive('documentation') }"><a href="../../../generated/documentation.html">Documentation</a></li>
-        <li class="dropdown">
+        <li ng-class="{ active: isActive('gallery') }"><a href="../../../auto_gallery/gallery.html">Gallery</a></li>
+        <li ng-class="{ active: isActive('documentation') }"><a href="../../../generated/documentation.html">API documentation</a></li>
+        <!--<li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></a>
           <ul class="dropdown-menu">
 	        <li><a href="../../../generated/pyfreesurfer.html">Pyfreesurfer</a></li>
-<li><a href="../../../generated/pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
+<li><a href="../../../generated/pyfreesurfer.utils.html">Pyfreesurfer.utils</a></li>
 <li><a href="../../../generated/pyfreesurfer.conversions.html">Pyfreesurfer.conversions</a></li>
 <li><a href="../../../generated/pyfreesurfer.segmentation.html">Pyfreesurfer.segmentation</a></li>
-<li><a href="../../../generated/pyfreesurfer.utils.html">Pyfreesurfer.utils</a></li>
+<li><a href="../../../generated/pyfreesurfer.diffusion.html">Pyfreesurfer.diffusion</a></li>
+<li><a href="../../../generated/pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
           </ul>
-        </li>
+        </li>-->
         <li><a href="https://github.com/AGrigis/pysphinxdoc">PYSPHINXDOC</a></li>
       </ul>
     </div>
   </div>
 </nav>
-
-
 <div class="content-wrapper">
     <div class="sphinxsidebar">
       <div class="sphinxsidebarwrapper">
 
         <!-- info setup -->
           <p class="doc-version">
-           This documentation is for pyfreesurfer <strong>version 1.0.0</strong>
+           This documentation is for pyfreesurfer <strong>version 1.2.0</strong>
           </p>
         <p class="citing">
           If you use the software, please do not esitate to 
@@ -112,42 +123,46 @@
       
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <h1>Source code for pyfreesurfer.plots.slicer</h1><div class="highlight"><pre>
-<span class="c">##########################################################################</span>
-<span class="c"># NSAp - Copyright (C) CEA, 2016</span>
-<span class="c"># Distributed under the terms of the CeCILL-B license, as published by</span>
-<span class="c"># the CEA-CNRS-INRIA. Refer to the LICENSE file or to</span>
-<span class="c"># http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html</span>
-<span class="c"># for details.</span>
-<span class="c">##########################################################################</span>
+<span></span><span class="c1">##########################################################################</span>
+<span class="c1"># NSAp - Copyright (C) CEA, 2016</span>
+<span class="c1"># Distributed under the terms of the CeCILL-B license, as published by</span>
+<span class="c1"># the CEA-CNRS-INRIA. Refer to the LICENSE file or to</span>
+<span class="c1"># http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html</span>
+<span class="c1"># for details.</span>
+<span class="c1">##########################################################################</span>
 
-<span class="c"># System import</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Modules that provides image manipulation tools.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># System import</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">glob</span>
 
-<span class="c"># Pyfreesurfer import</span>
+<span class="c1"># Pyfreesurfer import</span>
 <span class="kn">import</span> <span class="nn">pyfreesurfer</span>
 <span class="kn">from</span> <span class="nn">pyfreesurfer.utils.filetools</span> <span class="kn">import</span> <span class="n">parse_fs_lut</span>
 <span class="kn">from</span> <span class="nn">pyfreesurfer.wrapper</span> <span class="kn">import</span> <span class="n">FSWrapper</span>
 <span class="kn">from</span> <span class="nn">pyfreesurfer</span> <span class="kn">import</span> <span class="n">DEFAULT_FREESURFER_PATH</span>
 
 
-<span class="c"># Define the axis mapping</span>
+<span class="c1"># Define the axis mapping</span>
 <span class="n">AXIS_MAP</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s">&quot;C&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="s">&quot;A&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s">&quot;S&quot;</span><span class="p">:</span> <span class="mi">2</span>
+    <span class="s2">&quot;C&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;S&quot;</span><span class="p">:</span> <span class="mi">2</span>
 <span class="p">}</span>
 <span class="n">AXIS_NAME</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s">&quot;C&quot;</span><span class="p">:</span> <span class="s">&quot;coronal&quot;</span><span class="p">,</span>
-    <span class="s">&quot;A&quot;</span><span class="p">:</span> <span class="s">&quot;axial&quot;</span><span class="p">,</span>
-    <span class="s">&quot;S&quot;</span><span class="p">:</span> <span class="s">&quot;sagittal&quot;</span>
+    <span class="s2">&quot;C&quot;</span><span class="p">:</span> <span class="s2">&quot;coronal&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="s2">&quot;axial&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;S&quot;</span><span class="p">:</span> <span class="s2">&quot;sagittal&quot;</span>
 <span class="p">}</span>
 
 
-<div class="viewcode-block" id="tkmedit_slice"><a class="viewcode-back" href="../../../generated/pyfreesurfer.plots.slicer.html#pyfreesurfer.plots.slicer.tkmedit_slice">[docs]</a><span class="k">def</span> <span class="nf">tkmedit_slice</span><span class="p">(</span><span class="n">fsdir</span><span class="p">,</span> <span class="n">sid</span><span class="p">,</span> <span class="n">outdir</span><span class="p">,</span> <span class="n">stype</span><span class="o">=</span><span class="s">&quot;edges&quot;</span><span class="p">,</span> <span class="n">cut_axis</span><span class="o">=</span><span class="s">&quot;C&quot;</span><span class="p">,</span>
+<div class="viewcode-block" id="tkmedit_slice"><a class="viewcode-back" href="../../../generated/pyfreesurfer.plots.slicer.html#pyfreesurfer.plots.slicer.tkmedit_slice">[docs]</a><span class="k">def</span> <span class="nf">tkmedit_slice</span><span class="p">(</span><span class="n">fsdir</span><span class="p">,</span> <span class="n">sid</span><span class="p">,</span> <span class="n">outdir</span><span class="p">,</span> <span class="n">stype</span><span class="o">=</span><span class="s2">&quot;edges&quot;</span><span class="p">,</span> <span class="n">cut_axis</span><span class="o">=</span><span class="s2">&quot;C&quot;</span><span class="p">,</span>
                   <span class="n">slice_interval</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">path_lut</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                   <span class="n">fsconfig</span><span class="o">=</span><span class="n">DEFAULT_FREESURFER_PATH</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Slice the anatomical volume overlayed with the pial and white surfaces.</span>
@@ -178,94 +193,94 @@
 <span class="sd">    slices: list of str</span>
 <span class="sd">        the generated PNG slices.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># Check input parameters</span>
-    <span class="k">if</span> <span class="n">stype</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;edges&quot;</span><span class="p">,</span> <span class="s">&quot;aparc&quot;</span><span class="p">,</span> <span class="s">&quot;aseg&quot;</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Unrecognize slicing type &#39;{0}&#39;. Implemented options &quot;</span>
-                         <span class="s">&quot;are [&#39;edges&#39;, &#39;aparc&#39;, &#39;aseg&#39;].&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stype</span><span class="p">))</span>
-    <span class="k">if</span> <span class="n">stype</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;aparc&quot;</span><span class="p">,</span> <span class="s">&quot;aseg&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">path_lut</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Need to specify the &#39;path_lut&#39; parameter when the &quot;</span>
-                         <span class="s">&quot;slicing is set to &#39;{0}&#39;.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stype</span><span class="p">))</span>
-    <span class="k">if</span> <span class="n">stype</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;aparc&quot;</span><span class="p">,</span> <span class="s">&quot;aseg&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path_lut</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;&#39;{0}&#39; lookup table path does not &quot;</span>
-                         <span class="s">&quot;exists.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path_lut</span><span class="p">))</span>
+    <span class="c1"># Check input parameters</span>
+    <span class="k">if</span> <span class="n">stype</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;edges&quot;</span><span class="p">,</span> <span class="s2">&quot;aparc&quot;</span><span class="p">,</span> <span class="s2">&quot;aseg&quot;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unrecognize slicing type &#39;{0}&#39;. Implemented options &quot;</span>
+                         <span class="s2">&quot;are [&#39;edges&#39;, &#39;aparc&#39;, &#39;aseg&#39;].&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stype</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">stype</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;aparc&quot;</span><span class="p">,</span> <span class="s2">&quot;aseg&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">path_lut</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Need to specify the &#39;path_lut&#39; parameter when the &quot;</span>
+                         <span class="s2">&quot;slicing is set to &#39;{0}&#39;.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stype</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">stype</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;aparc&quot;</span><span class="p">,</span> <span class="s2">&quot;aseg&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path_lut</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;{0}&#39; lookup table path does not &quot;</span>
+                         <span class="s2">&quot;exists.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path_lut</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">cut_axis</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">AXIS_MAP</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s">&quot;&#39;{0}&#39; axis is not recognized: use {1}.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cut_axis</span><span class="p">,</span>
+            <span class="s2">&quot;&#39;{0}&#39; axis is not recognized: use {1}.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cut_axis</span><span class="p">,</span>
                                                             <span class="n">AXIS_MAP</span><span class="p">))</span>
     <span class="n">subjdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fsdir</span><span class="p">,</span> <span class="n">sid</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">subjdir</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;&#39;{0}&#39; is not a valid FreeSurfer subject &quot;</span>
-                         <span class="s">&quot;directory.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">subjdir</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;{0}&#39; is not a valid FreeSurfer subject &quot;</span>
+                         <span class="s2">&quot;directory.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">subjdir</span><span class="p">))</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">outdir</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;&#39;{0}&#39; is not a valid destination directory.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;{0}&#39; is not a valid destination directory.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">outdir</span><span class="p">))</span>
 
-    <span class="c"># Check T1 file existence</span>
-    <span class="n">anat_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subjdir</span><span class="p">,</span> <span class="s">&quot;mri&quot;</span><span class="p">,</span> <span class="s">&quot;nu.mgz&quot;</span><span class="p">)</span>
+    <span class="c1"># Check T1 file existence</span>
+    <span class="n">anat_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subjdir</span><span class="p">,</span> <span class="s2">&quot;mri&quot;</span><span class="p">,</span> <span class="s2">&quot;nu.mgz&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">anat_file</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;&#39;{0}&#39; FreeSurfer anatomical file is &quot;</span>
-                         <span class="s">&quot;missing.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">anat_file</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;{0}&#39; FreeSurfer anatomical file is &quot;</span>
+                         <span class="s2">&quot;missing.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">anat_file</span><span class="p">))</span>
 
-    <span class="c"># Generate/execute the tcl slicer script for each axis</span>
-    <span class="n">fsvar</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;SUBJECTS_DIR&quot;</span><span class="p">)</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&quot;SUBJECTS_DIR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fsdir</span>
-    <span class="k">if</span> <span class="n">stype</span> <span class="o">==</span> <span class="s">&quot;edges&quot;</span><span class="p">:</span>
+    <span class="c1"># Generate/execute the tcl slicer script for each axis</span>
+    <span class="n">fsvar</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SUBJECTS_DIR&quot;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SUBJECTS_DIR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fsdir</span>
+    <span class="k">if</span> <span class="n">stype</span> <span class="o">==</span> <span class="s2">&quot;edges&quot;</span><span class="p">:</span>
         <span class="n">path_template</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">pyfreesurfer</span><span class="o">.</span><span class="n">__file__</span><span class="p">),</span> <span class="s">&quot;plots&quot;</span><span class="p">,</span>
-            <span class="s">&quot;tkmedit_slicer_edges.tcl&quot;</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">pyfreesurfer</span><span class="o">.</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;plots&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tkmedit_slicer_edges.tcl&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">path_template</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">pyfreesurfer</span><span class="o">.</span><span class="n">__file__</span><span class="p">),</span> <span class="s">&quot;plots&quot;</span><span class="p">,</span>
-            <span class="s">&quot;tkmedit_slicer_labels.tcl&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">stype</span> <span class="o">==</span> <span class="s">&quot;aparc&quot;</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">pyfreesurfer</span><span class="o">.</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;plots&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tkmedit_slicer_labels.tcl&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">stype</span> <span class="o">==</span> <span class="s2">&quot;aparc&quot;</span><span class="p">:</span>
         <span class="n">fs_lut_names</span><span class="p">,</span> <span class="n">fs_lut_colors</span> <span class="o">=</span> <span class="n">parse_fs_lut</span><span class="p">(</span><span class="n">path_lut</span><span class="p">)</span>
-        <span class="n">path_lut</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s">&quot;CustomFreeSurferColorLUT.txt&quot;</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_lut</span><span class="p">,</span> <span class="s">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">open_file</span><span class="p">:</span>
+        <span class="n">path_lut</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s2">&quot;CustomFreeSurferColorLUT.txt&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_lut</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">open_file</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">fs_lut_names</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
                 <span class="n">name</span> <span class="o">=</span> <span class="n">fs_lut_names</span><span class="p">[</span><span class="n">label</span><span class="p">]</span>
                 <span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">fs_lut_colors</span><span class="p">[</span><span class="n">label</span><span class="p">]</span>
                 <span class="n">a</span> <span class="o">=</span> <span class="mi">255</span>
                 <span class="k">if</span> <span class="n">label</span> <span class="o">&gt;=</span> <span class="mi">1000</span><span class="p">:</span>
                     <span class="n">a</span> <span class="o">=</span> <span class="mi">0</span>
-                <span class="n">open_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;{0}{1}{2}{3}{4}{5}</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="nb">str</span><span class="p">(</span><span class="n">label</span><span class="p">)</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">),</span> <span class="n">name</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">),</span>
-                    <span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">g</span><span class="p">)</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">),</span>
-                    <span class="nb">str</span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)))</span>
+                <span class="n">open_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;{0}{1}{2}{3}{4}{5}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">label</span><span class="p">)</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="n">name</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">),</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">g</span><span class="p">)</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">),</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)))</span>
     <span class="n">path_script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span>
-                               <span class="s">&quot;tkmedit_slicer_{0}.tcl&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cut_axis</span><span class="p">))</span>
-    <span class="n">rgb_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s">&quot;slice-{0}-$slice.rgb&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cut_axis</span><span class="p">))</span>
+                               <span class="s2">&quot;tkmedit_slicer_{0}.tcl&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cut_axis</span><span class="p">))</span>
+    <span class="n">rgb_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s2">&quot;slice-{0}-$slice.rgb&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cut_axis</span><span class="p">))</span>
     <span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s">&quot;ORIENT&quot;</span><span class="p">:</span> <span class="n">AXIS_MAP</span><span class="p">[</span><span class="n">cut_axis</span><span class="p">],</span>
-        <span class="s">&quot;START&quot;</span><span class="p">:</span> <span class="n">slice_interval</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-        <span class="s">&quot;END&quot;</span><span class="p">:</span> <span class="n">slice_interval</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-        <span class="s">&quot;INCR&quot;</span><span class="p">:</span> <span class="n">slice_interval</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
-        <span class="s">&quot;RGBFILE&quot;</span><span class="p">:</span> <span class="n">rgb_file</span>
+        <span class="s2">&quot;ORIENT&quot;</span><span class="p">:</span> <span class="n">AXIS_MAP</span><span class="p">[</span><span class="n">cut_axis</span><span class="p">],</span>
+        <span class="s2">&quot;START&quot;</span><span class="p">:</span> <span class="n">slice_interval</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="s2">&quot;END&quot;</span><span class="p">:</span> <span class="n">slice_interval</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="s2">&quot;INCR&quot;</span><span class="p">:</span> <span class="n">slice_interval</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="s2">&quot;RGBFILE&quot;</span><span class="p">:</span> <span class="n">rgb_file</span>
     <span class="p">}</span>
-    <span class="k">if</span> <span class="n">stype</span> <span class="o">!=</span> <span class="s">&quot;edges&quot;</span><span class="p">:</span>
-        <span class="n">config</span><span class="p">[</span><span class="s">&quot;LOOKUPTABLE&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">path_lut</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_template</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">open_file</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">stype</span> <span class="o">!=</span> <span class="s2">&quot;edges&quot;</span><span class="p">:</span>
+        <span class="n">config</span><span class="p">[</span><span class="s2">&quot;LOOKUPTABLE&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">path_lut</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_template</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">open_file</span><span class="p">:</span>
         <span class="n">script</span> <span class="o">=</span> <span class="n">open_file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span> <span class="o">%</span> <span class="n">config</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_script</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">open_file</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_script</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">open_file</span><span class="p">:</span>
         <span class="n">open_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">script</span><span class="p">)</span>
-    <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;tkmedit&quot;</span><span class="p">,</span> <span class="n">sid</span><span class="p">,</span> <span class="s">&quot;nu.mgz&quot;</span><span class="p">,</span> <span class="s">&quot;-tcl&quot;</span><span class="p">,</span> <span class="n">path_script</span><span class="p">]</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;tkmedit&quot;</span><span class="p">,</span> <span class="n">sid</span><span class="p">,</span> <span class="s2">&quot;nu.mgz&quot;</span><span class="p">,</span> <span class="s2">&quot;-tcl&quot;</span><span class="p">,</span> <span class="n">path_script</span><span class="p">]</span>
     <span class="n">process</span> <span class="o">=</span> <span class="n">FSWrapper</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shfile</span><span class="o">=</span><span class="n">fsconfig</span><span class="p">)</span>
     <span class="n">process</span><span class="p">()</span>
 
-    <span class="c"># Convert RGB files to PNG files with ImageMagik</span>
+    <span class="c1"># Convert RGB files to PNG files with ImageMagik</span>
     <span class="n">slices</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">rgb_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;$slice&quot;</span><span class="p">,</span> <span class="s">&quot;*&quot;</span><span class="p">)):</span>
-        <span class="n">png_file</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;.rgb&quot;</span><span class="p">,</span> <span class="s">&quot;.png&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">rgb_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;$slice&quot;</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">)):</span>
+        <span class="n">png_file</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.rgb&quot;</span><span class="p">,</span> <span class="s2">&quot;.png&quot;</span><span class="p">)</span>
         <span class="n">slices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">png_file</span><span class="p">)</span>
-        <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;convert&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">png_file</span><span class="p">]</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;convert&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">png_file</span><span class="p">]</span>
         <span class="n">process</span> <span class="o">=</span> <span class="n">FSWrapper</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shfile</span><span class="o">=</span><span class="n">fsconfig</span><span class="p">)</span>
         <span class="n">process</span><span class="p">()</span>
         <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
-    <span class="c"># Restore environ</span>
+    <span class="c1"># Restore environ</span>
     <span class="k">if</span> <span class="n">fsvar</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&quot;SUBJECTS_DIR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fsvar</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SUBJECTS_DIR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fsvar</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">del</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&quot;SUBJECTS_DIR&quot;</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SUBJECTS_DIR&quot;</span><span class="p">]</span>
 
     <span class="k">return</span> <span class="n">slices</span></div>
 </pre></div>
@@ -273,6 +288,7 @@
           </div>
         </div>
       </div>
+
     <div class="clearer">
     </div>
   </div>
@@ -280,7 +296,7 @@
 </div>
 
 <div class="footer">
-    &copy; 2016, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
+    &copy; 2017, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
 </div>
   </body>
 </html>

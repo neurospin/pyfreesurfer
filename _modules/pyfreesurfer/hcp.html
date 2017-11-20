@@ -1,0 +1,588 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+  
+    <title>PYFREESURFER &mdash; pyFreeSurfer</title>
+  <!-- htmltitle is before nature.css - we use this hack to load bootstrap first -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../../_static/css/bootstrap.min.css" media="screen" />
+
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="pyFreeSurfer" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" />
+  
+   
+       <script type="text/javascript" src="../../_static/sidebar.js"></script>
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="../../_static/js/bootstrap.min.js" type="text/javascript"></script>
+
+  <script src="../../_static/js/angular.min.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    var app = angular.module("navApp", []);
+    app.controller('navCtrl', ['$scope', '$window', function($scope, $window) {
+      $scope.isActive = function (viewLocation) {
+        var rel = $window.location.pathname.split("/")
+        rel = rel[rel.length - 1]
+        rel = rel.split(".")[0]
+        var active = (viewLocation === rel);
+        return active;};
+    }]);
+  </script>
+
+  </head>
+  <body role="document"><div class="banner">
+  <div class="container-fluid banner-container">
+    <div class="row banner-inner">
+      <div class="col-xs-4">
+        <img alt="Logo" src="../../_static/pyfreesurfer.png">
+      </div>
+      <div class="col-xs-8">
+            <p>Using FreeSurfer in Python.</p>
+      </div>
+    </div>  
+  </div>
+</div><nav class="navbar navbar-default navbar-static-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+        </a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse" ng-controller="navCtrl" ng-app="navApp">
+      <ul class="nav navbar-nav">
+        <li ng-class="{ active: isActive('index') }"><a href="../../index.html">Home</a></li>
+        <li ng-class="{ active: isActive('installation') }"><a href="../../generated/installation.html">Installation</a></li>
+        <li ng-class="{ active: isActive('gallery') }"><a href="../../auto_gallery/gallery.html">Gallery</a></li>
+        <li ng-class="{ active: isActive('documentation') }"><a href="../../generated/documentation.html">API documentation</a></li>
+        <!--<li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+	        <li><a href="../../generated/pyfreesurfer.html">Pyfreesurfer</a></li>
+<li><a href="../../generated/pyfreesurfer.utils.html">Pyfreesurfer.utils</a></li>
+<li><a href="../../generated/pyfreesurfer.conversions.html">Pyfreesurfer.conversions</a></li>
+<li><a href="../../generated/pyfreesurfer.segmentation.html">Pyfreesurfer.segmentation</a></li>
+<li><a href="../../generated/pyfreesurfer.diffusion.html">Pyfreesurfer.diffusion</a></li>
+<li><a href="../../generated/pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
+          </ul>
+        </li>-->
+        <li><a href="https://github.com/AGrigis/pysphinxdoc">PYSPHINXDOC</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="content-wrapper">
+    <div class="sphinxsidebar">
+      <div class="sphinxsidebarwrapper">
+
+        <!-- info setup -->
+          <p class="doc-version">
+           This documentation is for pyfreesurfer <strong>version 1.2.0</strong>
+          </p>
+        <p class="citing">
+          If you use the software, please do not esitate to 
+          <a &mdash; <a href="https://github.com/neurospin/pyfreesurfer">
+          Report a Bug</a>.
+        </p>
+
+      <!-- toc tree -->
+      
+
+      </div>
+    </div>
+  
+
+  <div class="content">
+      
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pyfreesurfer.hcp</h1><div class="highlight"><pre>
+<span></span><span class="ch">#! /usr/bin/env python</span>
+<span class="c1">##########################################################################</span>
+<span class="c1"># NSAp - Copyright (C) CEA, 2013-2016</span>
+<span class="c1"># Distributed under the terms of the CeCILL-B license, as published by</span>
+<span class="c1"># the CEA-CNRS-INRIA. Refer to the LICENSE file or to</span>
+<span class="c1"># http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html</span>
+<span class="c1"># for details.</span>
+<span class="c1">##########################################################################</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Wrapper around the HCP prefreesurfer, freesurfer and postfreesurfer</span>
+<span class="sd">scripts.</span>
+
+<span class="sd">**Requirements for this module**</span>
+
+<span class="sd">Installed versions of:</span>
+
+<span class="sd">- FSL (version 5.0.6),</span>
+<span class="sd">- FreeSurfer (version 5.3.0-HCP),</span>
+<span class="sd">- gradunwarp (HCP version 1.0.2) if doing gradient distortion correction</span>
+
+<span class="sd">Environment:</span>
+
+<span class="sd">- FSLDIR</span>
+<span class="sd">- FREESURFER_HOME</span>
+<span class="sd">- HCPPIPEDIR</span>
+<span class="sd">- CARET7DIR</span>
+<span class="sd">- PATH (to be able to find gradient_unwarp.py)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># System import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="c1"># Pyfreesurfer import</span>
+<span class="kn">from</span> <span class="nn">pyfreesurfer.wrapper</span> <span class="kn">import</span> <span class="n">HCPWrapper</span>
+<span class="kn">from</span> <span class="nn">.info</span> <span class="kn">import</span> <span class="n">DEFAULT_WORKBENCH_PATH</span>
+<span class="kn">from</span> <span class="nn">.info</span> <span class="kn">import</span> <span class="n">DEFAULT_FREESURFER_PATH</span>
+<span class="kn">from</span> <span class="nn">.info</span> <span class="kn">import</span> <span class="n">DEFAULT_FSL_PATH</span>
+
+
+<div class="viewcode-block" id="prefreesurfer_hcp"><a class="viewcode-back" href="../../generated/pyfreesurfer.hcp.html#pyfreesurfer.hcp.prefreesurfer_hcp">[docs]</a><span class="k">def</span> <span class="nf">prefreesurfer_hcp</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="n">fmapmag</span><span class="p">,</span> <span class="n">fmapphase</span><span class="p">,</span> <span class="n">hcpdir</span><span class="p">,</span>
+                      <span class="n">brainsize</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span> <span class="n">fmapgeneralelectric</span><span class="o">=</span><span class="s2">&quot;NONE&quot;</span><span class="p">,</span> <span class="n">echodiff</span><span class="o">=</span><span class="mf">2.46</span><span class="p">,</span>
+                      <span class="n">SEPhaseNeg</span><span class="o">=</span><span class="s2">&quot;NONE&quot;</span><span class="p">,</span> <span class="n">SEPhasePos</span><span class="o">=</span><span class="s2">&quot;NONE&quot;</span><span class="p">,</span> <span class="n">echospacing</span><span class="o">=</span><span class="s2">&quot;NONE&quot;</span><span class="p">,</span>
+                      <span class="n">seunwarpdir</span><span class="o">=</span><span class="s2">&quot;NONE&quot;</span><span class="p">,</span> <span class="n">t1samplespacing</span><span class="o">=</span><span class="mf">0.0000074</span><span class="p">,</span>
+                      <span class="n">t2samplespacing</span><span class="o">=</span><span class="mf">0.0000021</span><span class="p">,</span> <span class="n">unwarpdir</span><span class="o">=</span><span class="s2">&quot;z&quot;</span><span class="p">,</span>
+                      <span class="n">gdcoeffs</span><span class="o">=</span><span class="s2">&quot;NONE&quot;</span><span class="p">,</span> <span class="n">avgrdcmethod</span><span class="o">=</span><span class="s2">&quot;SiemensFieldMap&quot;</span><span class="p">,</span>
+                      <span class="n">topupconfig</span><span class="o">=</span><span class="s2">&quot;NONE&quot;</span><span class="p">,</span> <span class="n">wbcommand</span><span class="o">=</span><span class="n">DEFAULT_WORKBENCH_PATH</span><span class="p">,</span>
+                      <span class="n">fslconfig</span><span class="o">=</span><span class="n">DEFAULT_FSL_PATH</span><span class="p">,</span>
+                      <span class="n">fsconfig</span><span class="o">=</span><span class="n">DEFAULT_FREESURFER_PATH</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Performs all the HCP PreFreeSurfer steps.</span>
+
+<span class="sd">    1. To average any image repeats (i.e. multiple T1w or T2w images</span>
+<span class="sd">       available).</span>
+<span class="sd">    2. To create a native, undistorted structural volume space for the subject</span>
+<span class="sd">       Subject images in this native space will be distortion corrected</span>
+<span class="sd">       for gradient and b0 distortions and rigidly aligned to the axes</span>
+<span class="sd">       of the MNI space. &#39;Native, undistorted structural volume space&#39;</span>
+<span class="sd">       is sometimes shortened to the &#39;subject&#39;s native space&#39; or simply</span>
+<span class="sd">       &#39;native space&#39;.</span>
+<span class="sd">    3. To provide an initial robust brain extraction.</span>
+<span class="sd">    4. To align the T1w and T2w structural images (register them to the native</span>
+<span class="sd">       space).</span>
+<span class="sd">    5. To perform bias field correction.</span>
+<span class="sd">    6. To register the subject&#39;s native space to the MNI space.</span>
+
+<span class="sd">    At least one T1 weighted image and one T2 weighted image are required for</span>
+<span class="sd">    this script to work.</span>
+
+<span class="sd">    The main output directories are:</span>
+
+<span class="sd">    * The t1w_folder: which is created by concatenating the following three</span>
+<span class="sd">      option values: --path/--subject/--t1</span>
+<span class="sd">    * The t2w_folder: which is created by concatenating the following three</span>
+<span class="sd">      option values: --path/--subject/--t2</span>
+<span class="sd">    * The atlas_space_folder: /path/subject/MNINonLinear</span>
+
+<span class="sd">    The full list of output directories is:</span>
+
+<span class="sd">    * /t1w_folder/T1w?_GradientDistortionUnwarp</span>
+<span class="sd">    * /t1w_folder/AverageT1wImages</span>
+<span class="sd">    * /t1w_folder/ACPCAlignment</span>
+<span class="sd">    * /t1w_folder/BrainExtraction_FNIRTbased</span>
+<span class="sd">    * /t1w_folder/xfms - transformation matrices and warp fields</span>
+<span class="sd">    * /t2w_folder/T2w?_GradientDistortionUnwarp</span>
+<span class="sd">    * /t2w_folder/AverageT1wImages</span>
+<span class="sd">    * /t2w_folder/ACPCAlignment</span>
+<span class="sd">    * /t2w_folder/BrainExtraction_FNIRTbased</span>
+<span class="sd">    * /t2w_folder/xfms - transformation matrices and warp fields</span>
+<span class="sd">    * /t2w_folder/T2wToT1wDistortionCorrectAndReg</span>
+<span class="sd">    * /t1w_folder/BiasFieldCorrection_sqrtT1wXT1w</span>
+<span class="sd">    * /atlas_space_folder</span>
+<span class="sd">    * /atlas_space_folder/xfms</span>
+
+<span class="sd">    The following settings for AvgrdcSTRING, MagnitudeInputName,</span>
+<span class="sd">    PhaseInputName, and TE are for using the Siemens specific Gradient Echo</span>
+<span class="sd">    Field Maps that are collected and used in the standard HCP protocol.</span>
+
+<span class="sd">    The values set below are for the HCP Protocol using the Siemens Connectom</span>
+<span class="sd">    Scanner: t1samplespacing=0.0000074, t2samplespacing=0.0000021,</span>
+<span class="sd">    unwarpdir=&#39;z&#39;.</span>
+
+<span class="sd">    **References**</span>
+
+<span class="sd">    [HCP]: http://www.humanconnectome.org</span>
+<span class="sd">    [GlasserEtAl]: http://www.ncbi.nlm.nih.gov/pubmed/23668970</span>
+<span class="sd">    [FSL]: http://fsl.fmrib.ox.ac.uk</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path: str (mandatory)</span>
+<span class="sd">        path to study data folder (~ to FreeSurfer home directory). Used with</span>
+<span class="sd">        --subject input to create full path to root directory for all outputs</span>
+<span class="sd">        generated as path/subject.</span>
+<span class="sd">    subject: str (mandatory)</span>
+<span class="sd">        subject ID. Used with --path input to create full path to root</span>
+<span class="sd">        directory for all outputs generated as path/subject.</span>
+<span class="sd">    t1: list of str (mandatory)</span>
+<span class="sd">        list of full paths to T1-weighted structural images for the subject.</span>
+<span class="sd">    t2: list of str (mandatory)</span>
+<span class="sd">        list of full paths to T2-weighted structural images for the subject.</span>
+<span class="sd">    brainsize: int (optional, default 150)</span>
+<span class="sd">        brain size estimate in mm, 150 for humans.</span>
+<span class="sd">    fmapmag: str (mandatory)</span>
+<span class="sd">        Siemens Gradient Echo Fieldmap magnitude file.</span>
+<span class="sd">    fmapphase: str (mandatory)</span>
+<span class="sd">        Siemens Gradient Echo Fieldmap phase file.</span>
+<span class="sd">    hcpdir: str (mandatory)</span>
+<span class="sd">        the path to the HCP project containing the script of interest.</span>
+<span class="sd">    fmapgeneralelectric: str (optional, default &#39;NONE&#39;)</span>
+<span class="sd">        general Electric Gradient Echo Field Map file.</span>
+<span class="sd">        Two volumes in one file: 1. field map in deg, 2. magnitude.</span>
+<span class="sd">    echodiff: float (optional, default 2.46)</span>
+<span class="sd">        delta TE in ms for field map or &#39;NONE&#39; if not used.</span>
+<span class="sd">        2.46 for 3T scanner or 1.02ms for 7T.</span>
+<span class="sd">    SEPhaseNeg: str (optional, default &#39;NONE&#39;)</span>
+<span class="sd">        for spin echo field map, path to volume with a negative phase encoding</span>
+<span class="sd">        direction (LR in HCP data), set to &#39;NONE&#39; if not using Spin Echo Field</span>
+<span class="sd">        Maps.</span>
+<span class="sd">    SEPhasePos: str (optional, default &#39;NONE&#39;)</span>
+<span class="sd">        for spin echo field map, path to volume with a positive phase encoding</span>
+<span class="sd">        direction (RL in HCP data), set to &#39;NONE&#39; if not using Spin Echo Field</span>
+<span class="sd">        Maps.</span>
+<span class="sd">    echospacing: str (optional, default &#39;NONE&#39;)</span>
+<span class="sd">        echo Spacing or Dwelltime of Spin Echo Field Map or &#39;NONE&#39; if not used.</span>
+<span class="sd">    seunwarpdir: str (optional, default &#39;NONE&#39;)</span>
+<span class="sd">        phase encoding direction of the spin echo field map.</span>
+<span class="sd">        (Only applies when using a spin echo field map.)</span>
+<span class="sd">    t1samplespacing: float (optional, default 0.0000074)</span>
+<span class="sd">        T1 image sample spacing.</span>
+<span class="sd">        Set to NONE if not doing readout distortion correction.</span>
+<span class="sd">    t2samplespacing: float (optional, default 0.0000021)</span>
+<span class="sd">        T2 image sample spacing, &#39;NONE&#39; if not used.</span>
+<span class="sd">        Set to NONE if not doing readout distortion correction.</span>
+<span class="sd">    unwarpdir: str (optional, default &#39;z&#39;)</span>
+<span class="sd">        readout direction of the T1w and T2w images (Used with either a</span>
+<span class="sd">        gradient echo field map or a spin echo field map).</span>
+<span class="sd">        Set NONE if not doing readout distortion correction.</span>
+<span class="sd">    gdcoeffs: str (optional, default &#39;NONE&#39;)</span>
+<span class="sd">        file containing gradient distortion coefficients.</span>
+<span class="sd">        Set to NONE to skip gradient distortion correction.</span>
+<span class="sd">    avgrdcmethod: str (optional, default &#39;SiemensFieldMap&#39;)</span>
+<span class="sd">        averaging and readout distortion correction method.</span>
+<span class="sd">    topupconfig: str (optional, default &#39;NONE&#39;)</span>
+<span class="sd">        configuration file for topup or &#39;NONE&#39; if not used.</span>
+<span class="sd">    wbcommand: str (optional, default DEFAULT_WORKBENCH_PATH)</span>
+<span class="sd">        the path containing the wbcommand.</span>
+<span class="sd">    fslconfig: str (optional, default NeuroSpin path)</span>
+<span class="sd">        the path to the FSL &#39;fsl.sh&#39; configuration file.</span>
+<span class="sd">    fsconfig: str (optional, default NeuroSpin path)</span>
+<span class="sd">        the path to the FreeSurfer configuration file.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    t1w_folder: str</span>
+<span class="sd">        the destination folder.</span>
+<span class="sd">    t1_img: str</span>
+<span class="sd">        the preprocessed T1w image.</span>
+<span class="sd">    t1_img_brain: str</span>
+<span class="sd">        the preprocessed T1w image brain.</span>
+<span class="sd">    t2_img: str</span>
+<span class="sd">        the preprocessed T2w image.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Check input parameters: directories</span>
+    <span class="k">for</span> <span class="n">directory</span> <span class="ow">in</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">hcpdir</span><span class="p">,</span> <span class="n">wbcommand</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;&#39;{0}&#39; is not a valid directory.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">directory</span><span class="p">))</span>
+
+    <span class="c1"># Check input parameters: filenames</span>
+    <span class="n">filenames</span> <span class="o">=</span> <span class="n">t1</span> <span class="o">+</span> <span class="n">t2</span>
+    <span class="k">if</span> <span class="n">fmapmag</span> <span class="o">!=</span> <span class="s2">&quot;NONE&quot;</span><span class="p">:</span>
+        <span class="n">filenames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fmapmag</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">fmapphase</span> <span class="o">!=</span> <span class="s2">&quot;NONE&quot;</span><span class="p">:</span>
+        <span class="n">filenames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fmapphase</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;{0}&#39; is not a valid file.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+
+    <span class="c1"># High resolution T1w MNI template</span>
+    <span class="n">t1w_template</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">hcpdir</span><span class="p">,</span> <span class="s2">&quot;global&quot;</span><span class="p">,</span> <span class="s2">&quot;templates&quot;</span><span class="p">,</span> <span class="s2">&quot;MNI152_T1_0.7mm.nii.gz&quot;</span><span class="p">)</span>
+    <span class="c1"># High resolution brain extracted MNI template</span>
+    <span class="n">t1w_template_brain</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">hcpdir</span><span class="p">,</span> <span class="s2">&quot;global&quot;</span><span class="p">,</span> <span class="s2">&quot;templates&quot;</span><span class="p">,</span> <span class="s2">&quot;MNI152_T1_0.7mm_brain.nii.gz&quot;</span><span class="p">)</span>
+    <span class="c1"># High resolution MNI brain mask template</span>
+    <span class="n">template_mask</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">hcpdir</span><span class="p">,</span> <span class="s2">&quot;global&quot;</span><span class="p">,</span> <span class="s2">&quot;templates&quot;</span><span class="p">,</span> <span class="s2">&quot;MNI152_T1_0.7mm_brain_mask.nii.gz&quot;</span><span class="p">)</span>
+    <span class="c1"># Low resolution T1w MNI template</span>
+    <span class="n">t1w_template_2mm</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">hcpdir</span><span class="p">,</span> <span class="s2">&quot;global&quot;</span><span class="p">,</span> <span class="s2">&quot;templates&quot;</span><span class="p">,</span> <span class="s2">&quot;MNI152_T1_2mm.nii.gz&quot;</span><span class="p">)</span>
+    <span class="c1"># Low resolution MNI brain mask template</span>
+    <span class="n">template_2mm_mask</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">hcpdir</span><span class="p">,</span> <span class="s2">&quot;global&quot;</span><span class="p">,</span> <span class="s2">&quot;templates&quot;</span><span class="p">,</span> <span class="s2">&quot;MNI152_T1_2mm_brain_mask_dil.nii.gz&quot;</span><span class="p">)</span>
+    <span class="c1"># High resolution T2w MNI Template</span>
+    <span class="n">t2w_template</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">hcpdir</span><span class="p">,</span> <span class="s2">&quot;global&quot;</span><span class="p">,</span> <span class="s2">&quot;templates&quot;</span><span class="p">,</span> <span class="s2">&quot;MNI152_T2_0.7mm.nii.gz&quot;</span><span class="p">)</span>
+    <span class="c1"># High resolution T2w brain extracted MNI Template</span>
+    <span class="n">t2w_template_brain</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">hcpdir</span><span class="p">,</span> <span class="s2">&quot;global&quot;</span><span class="p">,</span> <span class="s2">&quot;templates&quot;</span><span class="p">,</span> <span class="s2">&quot;MNI152_T2_0.7mm_brain.nii.gz&quot;</span><span class="p">)</span>
+    <span class="c1"># Low resolution T2w MNI Template</span>
+    <span class="n">t2w_template_2mm</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">hcpdir</span><span class="p">,</span> <span class="s2">&quot;global&quot;</span><span class="p">,</span> <span class="s2">&quot;templates&quot;</span><span class="p">,</span> <span class="s2">&quot;MNI152_T2_2mm.nii.gz&quot;</span><span class="p">)</span>
+    <span class="c1"># FNIRT 2mm T1w configuration</span>
+    <span class="n">fnirtconfig</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">hcpdir</span><span class="p">,</span>
+        <span class="s2">&quot;global&quot;</span><span class="p">,</span> <span class="s2">&quot;config&quot;</span><span class="p">,</span> <span class="s2">&quot;T1_2_MNI152_2mm.cnf&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Command path</span>
+    <span class="n">prefs_pipeline</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">hcpdir</span><span class="p">,</span> <span class="s2">&quot;PreFreeSurfer&quot;</span><span class="p">,</span> <span class="s2">&quot;PreFreeSurferPipeline.sh&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Define HCP command</span>
+    <span class="n">prefs_cmd</span> <span class="o">=</span> <span class="p">[</span><span class="n">prefs_pipeline</span><span class="p">,</span>
+                 <span class="s2">&quot;--path&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span>
+                 <span class="s2">&quot;--subject&quot;</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span>
+                 <span class="s2">&quot;--t1&quot;</span><span class="p">,</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t1</span><span class="p">),</span>
+                 <span class="s2">&quot;--t2&quot;</span><span class="p">,</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t2</span><span class="p">),</span>
+                 <span class="s2">&quot;--t1template&quot;</span><span class="p">,</span> <span class="n">t1w_template</span><span class="p">,</span>
+                 <span class="s2">&quot;--t1templatebrain&quot;</span><span class="p">,</span> <span class="n">t1w_template_brain</span><span class="p">,</span>
+                 <span class="s2">&quot;--t1template2mm&quot;</span><span class="p">,</span> <span class="n">t1w_template_2mm</span><span class="p">,</span>
+                 <span class="s2">&quot;--t2template&quot;</span><span class="p">,</span> <span class="n">t2w_template</span><span class="p">,</span>
+                 <span class="s2">&quot;--t2templatebrain&quot;</span><span class="p">,</span> <span class="n">t2w_template_brain</span><span class="p">,</span>
+                 <span class="s2">&quot;--t2template2mm&quot;</span><span class="p">,</span> <span class="n">t2w_template_2mm</span><span class="p">,</span>
+                 <span class="s2">&quot;--templatemask&quot;</span><span class="p">,</span> <span class="n">template_mask</span><span class="p">,</span>
+                 <span class="s2">&quot;--template2mmmask&quot;</span><span class="p">,</span> <span class="n">template_2mm_mask</span><span class="p">,</span>
+                 <span class="s2">&quot;--brainsize&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">brainsize</span><span class="p">),</span>
+                 <span class="s2">&quot;--fnirtconfig&quot;</span><span class="p">,</span> <span class="n">fnirtconfig</span><span class="p">,</span>
+                 <span class="s2">&quot;--fmapmag&quot;</span><span class="p">,</span> <span class="n">fmapmag</span><span class="p">,</span>
+                 <span class="s2">&quot;--fmapphase&quot;</span><span class="p">,</span> <span class="n">fmapphase</span><span class="p">,</span>
+                 <span class="s2">&quot;--fmapgeneralelectric&quot;</span><span class="p">,</span> <span class="n">fmapgeneralelectric</span><span class="p">,</span>
+                 <span class="s2">&quot;--echodiff&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">echodiff</span><span class="p">),</span>
+                 <span class="s2">&quot;--SEPhaseNeg&quot;</span><span class="p">,</span> <span class="n">SEPhaseNeg</span><span class="p">,</span>
+                 <span class="s2">&quot;--SEPhasePos&quot;</span><span class="p">,</span> <span class="n">SEPhasePos</span><span class="p">,</span>
+                 <span class="s2">&quot;--echospacing&quot;</span><span class="p">,</span> <span class="n">echospacing</span><span class="p">,</span>
+                 <span class="s2">&quot;--seunwarpdir&quot;</span><span class="p">,</span> <span class="n">seunwarpdir</span><span class="p">,</span>
+                 <span class="s2">&quot;--t1samplespacing&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">t1samplespacing</span><span class="p">),</span>
+                 <span class="s2">&quot;--t2samplespacing&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">t2samplespacing</span><span class="p">),</span>
+                 <span class="s2">&quot;--unwarpdir&quot;</span><span class="p">,</span> <span class="n">unwarpdir</span><span class="p">,</span>
+                 <span class="s2">&quot;--gdcoeffs&quot;</span><span class="p">,</span> <span class="n">gdcoeffs</span><span class="p">,</span>
+                 <span class="s2">&quot;--avgrdcmethod&quot;</span><span class="p">,</span> <span class="n">avgrdcmethod</span><span class="p">,</span>
+                 <span class="s2">&quot;--topupconfig&quot;</span><span class="p">,</span> <span class="n">topupconfig</span><span class="p">]</span>
+
+    <span class="c1"># Define the HCP environment variable</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">HCPWrapper</span><span class="p">(</span>
+        <span class="n">env</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;HCPPIPEDIR&quot;</span><span class="p">:</span> <span class="n">hcpdir</span><span class="p">,</span>
+            <span class="s2">&quot;HCPPIPEDIR_PreFS&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">hcpdir</span><span class="p">,</span> <span class="s2">&quot;PreFreeSurfer&quot;</span><span class="p">,</span>
+                                             <span class="s2">&quot;scripts&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;HCPPIPEDIR_Global&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">hcpdir</span><span class="p">,</span> <span class="s2">&quot;global&quot;</span><span class="p">,</span> <span class="s2">&quot;scripts&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;HCPPIPEDIR_Templates&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">hcpdir</span><span class="p">,</span> <span class="s2">&quot;global&quot;</span> <span class="s2">&quot;templates&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;HCPPIPEDIR_Config&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">hcpdir</span><span class="p">,</span> <span class="s2">&quot;global&quot;</span><span class="p">,</span> <span class="s2">&quot;config&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;CARET7DIR&quot;</span><span class="p">:</span> <span class="n">wbcommand</span><span class="p">,</span>
+            <span class="s2">&quot;PATH&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PATH&quot;</span><span class="p">]},</span>
+        <span class="n">fslconfig</span><span class="o">=</span><span class="n">fslconfig</span><span class="p">,</span>
+        <span class="n">fsconfig</span><span class="o">=</span><span class="n">fsconfig</span><span class="p">)</span>
+
+    <span class="c1"># Execute the HCP command</span>
+    <span class="n">process</span><span class="p">(</span><span class="n">prefs_cmd</span><span class="p">)</span>
+
+    <span class="c1"># T1w folder</span>
+    <span class="n">t1w_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="s2">&quot;T1w&quot;</span><span class="p">)</span>
+    <span class="c1"># T1w FreeSurfer Input (Full Resolution)</span>
+    <span class="n">t1_img</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t1w_folder</span><span class="p">,</span> <span class="s2">&quot;T1w_acpc_dc_restore.nii.gz&quot;</span><span class="p">)</span>
+    <span class="c1"># T1w FreeSurfer Input (Full Resolution)</span>
+    <span class="n">t1_img_brain</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t1w_folder</span><span class="p">,</span> <span class="s2">&quot;T1w_acpc_dc_restore_brain.nii.gz&quot;</span><span class="p">)</span>
+    <span class="c1"># T2w FreeSurfer Input (Full Resolution)</span>
+    <span class="n">t2_img</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t1w_folder</span><span class="p">,</span> <span class="s2">&quot;T2w_acpc_dc_restore.nii.gz&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">t1w_folder</span><span class="p">,</span> <span class="n">t1_img</span><span class="p">,</span> <span class="n">t1_img_brain</span><span class="p">,</span> <span class="n">t2_img</span></div>
+
+
+<div class="viewcode-block" id="freesurfer_hcp"><a class="viewcode-back" href="../../generated/pyfreesurfer.hcp.html#pyfreesurfer.hcp.freesurfer_hcp">[docs]</a><span class="k">def</span> <span class="nf">freesurfer_hcp</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="n">t1w_folder</span><span class="p">,</span> <span class="n">t1_img</span><span class="p">,</span> <span class="n">t1_img_brain</span><span class="p">,</span> <span class="n">t2_img</span><span class="p">,</span> <span class="n">hcpdir</span><span class="p">,</span>
+                   <span class="n">wbcommand</span><span class="o">=</span><span class="n">DEFAULT_WORKBENCH_PATH</span><span class="p">,</span>
+                   <span class="n">fslconfig</span><span class="o">=</span><span class="n">DEFAULT_FSL_PATH</span><span class="p">,</span>
+                   <span class="n">fsconfig</span><span class="o">=</span><span class="n">DEFAULT_FREESURFER_PATH</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Performs all the HCP FreeSurfer steps.</span>
+
+<span class="sd">    1. Make Spline Interpolated Downsample to 1mm.</span>
+<span class="sd">    2. Initial recon-all steps (with flags that are part of &quot;-autorecon1&quot;, with</span>
+<span class="sd">       the exception of -skullstrip).</span>
+<span class="sd">    3. Generate brain mask.</span>
+<span class="sd">    4. Call recon-all to run most of the &quot;-autorecon2&quot; stages, but turning off</span>
+<span class="sd">       smooth2, inflate2, curvstats, and segstats stages.</span>
+<span class="sd">    5. High resolution white matter and fine tune T2w to T1w registration.</span>
+<span class="sd">    6. Intermediate Recon-all Steps.</span>
+<span class="sd">    7. High resolution pial matter (adjusts the pial surface based on the the</span>
+<span class="sd">       T2w image).</span>
+<span class="sd">    8. Final recon-all steps.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    subject: str (mandatory)</span>
+<span class="sd">        the current subject identifier.</span>
+<span class="sd">    t1w_folder: str (mandatory)</span>
+<span class="sd">        the FreeSurfer working directory with all the subjects.</span>
+<span class="sd">    t1_img: str (mandatory)</span>
+<span class="sd">        the input anatomical image to be segmented with FreeSurfer</span>
+<span class="sd">        (Full Resolution).</span>
+<span class="sd">    t1_img_brain: str (mandatory)</span>
+<span class="sd">        the input anatomical brain image to be segmented with FreeSurfer</span>
+<span class="sd">        (Full Resolution).</span>
+<span class="sd">    t2_img: str (mandatory)</span>
+<span class="sd">        the input T2 image (Full Resolution).</span>
+<span class="sd">    hcpdir: str (mandatory)</span>
+<span class="sd">        the path to the HCP project containing the script of interest.</span>
+<span class="sd">    wbcommand: str (optional, default DEFAULT_WORKBENCH_PATH)</span>
+<span class="sd">        the path containing the wbcommand.</span>
+<span class="sd">    fslconfig: str (optional, default NeuroSpin path)</span>
+<span class="sd">        the path to the FSL &#39;fsl.sh&#39; configuration file.</span>
+<span class="sd">    fsconfig: str (optional, default NeuroSpin path)</span>
+<span class="sd">        the path to the FreeSurfer configuration file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Check input parameters: directories</span>
+    <span class="k">for</span> <span class="n">directory</span> <span class="ow">in</span> <span class="p">(</span><span class="n">t1w_folder</span><span class="p">,</span> <span class="n">hcpdir</span><span class="p">,</span> <span class="n">wbcommand</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;{0}&#39; is not a valid directory.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                             <span class="n">directory</span><span class="p">))</span>
+
+    <span class="c1"># Check input parameters: filenames</span>
+    <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="p">(</span><span class="n">t1_img</span><span class="p">,</span> <span class="n">t1_img_brain</span><span class="p">,</span> <span class="n">t2_img</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;{0}&#39; is not a valid filename.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                             <span class="n">filename</span><span class="p">))</span>
+
+    <span class="c1"># Command path</span>
+    <span class="n">fs_pipeline</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">hcpdir</span><span class="p">,</span> <span class="s2">&quot;FreeSurfer&quot;</span><span class="p">,</span> <span class="s2">&quot;FreeSurferPipeline.sh&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Define HCP command</span>
+    <span class="n">fs_cmd</span> <span class="o">=</span> <span class="p">[</span><span class="n">fs_pipeline</span><span class="p">,</span>
+              <span class="s2">&quot;--subject&quot;</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span>
+              <span class="s2">&quot;--subjectDIR&quot;</span><span class="p">,</span> <span class="n">t1w_folder</span><span class="p">,</span>
+              <span class="s2">&quot;--t1&quot;</span><span class="p">,</span> <span class="n">t1_img</span><span class="p">,</span>
+              <span class="s2">&quot;--t1brain&quot;</span><span class="p">,</span> <span class="n">t1_img_brain</span><span class="p">,</span>
+              <span class="s2">&quot;--t2&quot;</span><span class="p">,</span> <span class="n">t2_img</span><span class="p">]</span>
+
+    <span class="c1"># Define the HCP environment variables</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">HCPWrapper</span><span class="p">(</span>
+        <span class="n">env</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;HCPPIPEDIR&quot;</span><span class="p">:</span> <span class="n">hcpdir</span><span class="p">,</span>
+            <span class="s2">&quot;HCPPIPEDIR_FS&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">hcpdir</span><span class="p">,</span> <span class="s2">&quot;FreeSurfer&quot;</span><span class="p">,</span> <span class="s2">&quot;scripts&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;CARET7DIR&quot;</span><span class="p">:</span> <span class="n">wbcommand</span><span class="p">},</span>
+        <span class="n">fslconfig</span><span class="o">=</span><span class="n">fslconfig</span><span class="p">,</span>
+        <span class="n">fsconfig</span><span class="o">=</span><span class="n">fsconfig</span><span class="p">)</span>
+
+    <span class="c1"># Execute the HCP command</span>
+    <span class="n">process</span><span class="p">(</span><span class="n">fs_cmd</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="postfreesurfer_hcp"><a class="viewcode-back" href="../../generated/pyfreesurfer.hcp.html#pyfreesurfer.hcp.postfreesurfer_hcp">[docs]</a><span class="k">def</span> <span class="nf">postfreesurfer_hcp</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">hcpdir</span><span class="p">,</span>
+                       <span class="n">wbcommand</span><span class="o">=</span><span class="n">DEFAULT_WORKBENCH_PATH</span><span class="p">,</span>
+                       <span class="n">fslconfig</span><span class="o">=</span><span class="n">DEFAULT_FSL_PATH</span><span class="p">,</span>
+                       <span class="n">fsconfig</span><span class="o">=</span><span class="n">DEFAULT_FREESURFER_PATH</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Performs all the HCP PostFreeSurfer steps.</span>
+
+<span class="sd">    1. Conversion of FreeSurfer Volumes and Surfaces to NIFTI and GIFTI and</span>
+<span class="sd">       Create Caret Files and Registration.</span>
+<span class="sd">    2. Create FreeSurfer ribbon file at full resolution.</span>
+<span class="sd">    3. Myelin Mapping.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path: str (mandatory)</span>
+<span class="sd">        the FreeSurfer working directory with all the subjects.</span>
+<span class="sd">    subject: str (mandatory)</span>
+<span class="sd">        the current subject identifier.</span>
+<span class="sd">    hcpdir: str (mandatory)</span>
+<span class="sd">        the path to the HCP project containing the script of interest.</span>
+<span class="sd">    wbcommand: str (optional, default DEFAULT_WORKBENCH_PATH)</span>
+<span class="sd">        the path containing the wbcommand.</span>
+<span class="sd">    fslconfig: str (optional, default NeuroSpin path)</span>
+<span class="sd">        the path to the FSL &#39;fsl.sh&#39; configuration file.</span>
+<span class="sd">    fsconfig: str (optional, default NeuroSpin path)</span>
+<span class="sd">        the path to the FreeSurfer configuration file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">directory</span> <span class="ow">in</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">hcpdir</span><span class="p">,</span> <span class="n">wbcommand</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;{0}&#39; is not a valid directory.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                             <span class="n">directory</span><span class="p">))</span>
+
+    <span class="n">surf_atlas_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">hcpdir</span><span class="p">,</span> <span class="s2">&quot;global&quot;</span><span class="p">,</span> <span class="s2">&quot;templates&quot;</span><span class="p">,</span> <span class="s2">&quot;standard_mesh_atlases&quot;</span><span class="p">)</span>
+    <span class="n">grayordinates_space_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">hcpdir</span><span class="p">,</span> <span class="s2">&quot;global&quot;</span><span class="p">,</span> <span class="s2">&quot;templates&quot;</span><span class="p">,</span> <span class="s2">&quot;91282_Greyordinates&quot;</span><span class="p">)</span>
+    <span class="n">subcortical_gray_labels</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">hcpdir</span><span class="p">,</span> <span class="s2">&quot;global&quot;</span><span class="p">,</span> <span class="s2">&quot;config&quot;</span><span class="p">,</span> <span class="s2">&quot;FreeSurferSubcorticalLabelTableLut.txt&quot;</span><span class="p">)</span>
+    <span class="n">freeSurfer_labels</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">hcpdir</span><span class="p">,</span> <span class="s2">&quot;global&quot;</span><span class="p">,</span> <span class="s2">&quot;config&quot;</span><span class="p">,</span> <span class="s2">&quot;FreeSurferAllLut.txt&quot;</span><span class="p">)</span>
+    <span class="n">reference_myelin_maps</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">hcpdir</span><span class="p">,</span> <span class="s2">&quot;global&quot;</span><span class="p">,</span> <span class="s2">&quot;templates&quot;</span><span class="p">,</span> <span class="s2">&quot;standard_mesh_atlases&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Conte69.MyelinMap_BC.164k_fs_LR.dscalar.nii&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Command path</span>
+    <span class="n">postfs_pipeline</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">hcpdir</span><span class="p">,</span> <span class="s2">&quot;PostFreeSurfer&quot;</span><span class="p">,</span> <span class="s2">&quot;PostFreeSurferPipeline.sh&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Define HCP command</span>
+    <span class="n">postfs_cmd</span> <span class="o">=</span> <span class="p">[</span><span class="n">postfs_pipeline</span><span class="p">,</span>
+                  <span class="s2">&quot;--path&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span>
+                  <span class="s2">&quot;--subject&quot;</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span>
+                  <span class="s2">&quot;--surfatlasdir&quot;</span><span class="p">,</span> <span class="n">surf_atlas_dir</span><span class="p">,</span>
+                  <span class="s2">&quot;--grayordinatesdir&quot;</span><span class="p">,</span> <span class="n">grayordinates_space_dir</span><span class="p">,</span>
+                  <span class="s2">&quot;--grayordinatesres&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span>
+                  <span class="s2">&quot;--hiresmesh&quot;</span><span class="p">,</span> <span class="mi">164</span><span class="p">,</span>
+                  <span class="s2">&quot;--lowresmesh&quot;</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span>
+                  <span class="s2">&quot;--subcortgraylabels&quot;</span><span class="p">,</span> <span class="n">subcortical_gray_labels</span><span class="p">,</span>
+                  <span class="s2">&quot;--freesurferlabels&quot;</span><span class="p">,</span> <span class="n">freeSurfer_labels</span><span class="p">,</span>
+                  <span class="s2">&quot;--refmyelinmaps&quot;</span><span class="p">,</span> <span class="n">reference_myelin_maps</span><span class="p">,</span>
+                  <span class="s2">&quot;--regname&quot;</span><span class="p">,</span> <span class="s2">&quot;FS&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Define the HCP environment variables</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">HCPWrapper</span><span class="p">(</span>
+        <span class="n">env</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;HCPPIPEDIR&quot;</span><span class="p">:</span> <span class="n">hcpdir</span><span class="p">,</span>
+            <span class="s2">&quot;HCPPIPEDIR_PostFS&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">hcpdir</span><span class="p">,</span> <span class="s2">&quot;PostFreeSurfer&quot;</span><span class="p">,</span>
+                                              <span class="s2">&quot;scripts&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;CARET7DIR&quot;</span><span class="p">:</span> <span class="n">wbcommand</span><span class="p">},</span>
+        <span class="n">fslconfig</span><span class="o">=</span><span class="n">fslconfig</span><span class="p">,</span>
+        <span class="n">fsconfig</span><span class="o">=</span><span class="n">fsconfig</span><span class="p">)</span>
+
+    <span class="c1"># Execute the HCP command</span>
+    <span class="n">process</span><span class="p">(</span><span class="n">postfs_cmd</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+
+    <div class="clearer">
+    </div>
+  </div>
+  
+</div>
+
+<div class="footer">
+    &copy; 2017, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
+</div>
+  </body>
+</html>

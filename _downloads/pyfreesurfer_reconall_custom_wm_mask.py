@@ -1,0 +1,134 @@
+"""
+Pyfreesurfer Reconall Custom Wm Mask
+====================================
+
+Example automatically generated from package script.
+"""
+
+
+# Standard
+import os
+import argparse
+import datetime
+import json
+from pprint import pprint
+import textwrap
+from argparse import RawTextHelpFormatter
+
+# Package
+import pyfreesurfer
+from pyfreesurfer import DEFAULT_FREESURFER_PATH
+from pyfreesurfer.segmentation.cortical import recon_all_custom_wm_mask
+from pyfreesurfer.wrapper import FSWrapper
+
+
+# Parameters to keep trace
+__hopla__ = ["runtime", "inputs", "outputs"]
+
+# Script documentation
+DOC = """
+Assuming you have run recon-all (at least upto wm.mgz creation), this
+script allows to rerun recon-all using a custom white matter mask.
+The mask has to be in the subject's FreeSurfer space (1mm iso + aligned with
+brain.mgz) with values in [0; 1] (i.e. probability of being white matter).
+"""
+
+
+def is_file(filepath):
+    """ Check file's existence - argparse 'type' argument.
+    """
+    if not os.path.isfile(filepath):
+        raise argparse.ArgumentError("File does not exist: %s" % filepath)
+    return filepath
+
+
+def is_dir(dirpath):
+    """ Check direcory's existence - argparse 'type' argument.
+    """
+    if not os.path.isdir(dirpath):
+        raise argparse.ArgumentError("Directory does not exist: %s" % dirpath)
+    return dirpath
+
+
+def get_cmd_line_args():
+    """
+    Create a command line argument parser and return a dict mapping
+    <argument name> -> <argument value>.
+    """
+    usage = ("%(prog)s -s <subject id> -w <path> [-k] [-S <dir>] "
+             "[-T <path>] [-c <path>] [-v <int>]")
+    prog = "python pyfreesurfer_reconall_custom_wm_mask"
+    parser = argparse.ArgumentParser(
+        prog=prog,
+        usage=usage,
+        description=textwrap.dedent(DOC),
+        formatter_class=RawTextHelpFormatter)
+
+    # Required arguments
+    parser.add_argument("-s", "--subject-id", required=True, metavar="<id>",
+                        help="Identifier of subject.")
+    whelp = ("Path to the custom white matter mask. It has to be in the "
+             "subject's FreeSurfer space (1mm iso + aligned with brain.mgz) "
+             "with values in [0; 1] (i.e. probability of being white matter). "
+             "For example, tt can be the 'brain_pve_2.nii.gz' white matter "
+             "probability map created by FSL Fast.")
+    parser.add_argument("-w", "--wm-mask", required=True, metavar="<path>",
+                        help=whelp)
+
+    # Optional arguments
+    parser.add_argument("-k", "--keep-orig", action="store_true",
+                        help="Save original 'wm.seg.mgz' as 'wm.seg.orig.mgz' "
+                             "instead of overwriting it.")
+    parser.add_argument("-S", "--subjects-dir", metavar="<path>",
+                        help="Path to the FreeSurfer subjects directory. "
+                             "Required if the environment variable "
+                             "$SUBJECTS_DIR is not set.")
+    parser.add_argument("-T", "--temp-dir", type=is_dir, metavar="<path>",
+                        help="Directory to use to store temporary files. "
+                             "By default OS tmp dir.")
+    parser.add_argument("-c", "--config", type=is_file, metavar="<path>",
+                        dest="fsconfig",
+                        help="the FreeSurfer configuration file. "
+                             "By default %s." % DEFAULT_FREESURFER_PATH)
+    parser.add_argument("-v", "--verbose", type=int, choices=[0, 1, 2],
+                        default=2, help="Increase the verbosity level: 0 "
+                                        "silent, [1, 2] verbose.")
+
+    # Create a dict of arguments to pass to the 'main' function
+    args = parser.parse_args()
+    kwargs = vars(args)
+    verbose = kwargs.pop("verbose")
+    if kwargs["fsconfig"] is None:
+        kwargs["fsconfig"] = DEFAULT_FREESURFER_PATH
+
+    return kwargs, verbose
+
+
+# Parse the command line.
+inputs, verbose = get_cmd_line_args()
+
+# Runtime informations
+runtime = dict(tool="pyfreesurfer_reconall_custom_wm_mask",
+               tool_version=pyfreesurfer.__version__,
+               fs_version=FSWrapper([], shfile=inputs["fsconfig"]).version,
+               timestamp=datetime.datetime.now().isoformat())
+
+if verbose > 0:
+    pprint("[info] Starting recon-all with custom white matter mask")
+    pprint("[info] Runtime:")
+    pprint(runtime)
+    pprint("[info] Inputs:")
+    pprint(inputs)
+
+# Run
+subject_dir = recon_all_custom_wm_mask(**inputs)
+outputs = dict(subject_dir=subject_dir)
+
+# Store inputs, runtime and outputs as JSONs in a 'logs' dir in the subject_dir
+logs_dir = os.path.join(subject_dir, "logs")
+if not os.path.isdir(logs_dir):
+    os.mkdir(logs_dir)
+for k, v in dict(inputs=inputs, outputs=outputs, runtime=runtime).items():
+    path_json = os.path.join(logs_dir, "%s_recon_all_custom_wm_mask.json" % k)
+    with open(path_json, "w") as f:
+        json.dump(v, f, sort_keys=True, check_circular=True, indent=4)

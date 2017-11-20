@@ -1,0 +1,283 @@
+:orphan:
+
+pyfreesurfer usage examples
+===========================
+
+.. contents:: **Contents**
+    :local:
+    :depth: 1
+
+Tutorial examples
+-----------------
+
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Example automatically generated from package script. ">
+
+.. only:: html
+
+    .. figure:: /auto_gallery/images/thumb/sphx_glr_pyfreesurfer_reconall_custom_wm_mask_thumb.png
+
+        :ref:`sphx_glr_auto_gallery_pyfreesurfer_reconall_custom_wm_mask.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_gallery/pyfreesurfer_reconall_custom_wm_mask
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Example automatically generated from package script. ">
+
+.. only:: html
+
+    .. figure:: /auto_gallery/images/thumb/sphx_glr_pyfreesurfer_stats_thumb.png
+
+        :ref:`sphx_glr_auto_gallery_pyfreesurfer_stats.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_gallery/pyfreesurfer_stats
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Example automatically generated from package script. ">
+
+.. only:: html
+
+    .. figure:: /auto_gallery/images/thumb/sphx_glr_pyfreesurfer_reconall_longitudinal_thumb.png
+
+        :ref:`sphx_glr_auto_gallery_pyfreesurfer_reconall_longitudinal.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_gallery/pyfreesurfer_reconall_longitudinal
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Example automatically generated from package script. ">
+
+.. only:: html
+
+    .. figure:: /auto_gallery/images/thumb/sphx_glr_pyfreesurfer_datacheck_thumb.png
+
+        :ref:`sphx_glr_auto_gallery_pyfreesurfer_datacheck.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_gallery/pyfreesurfer_datacheck
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Example automatically generated from package script. ">
+
+.. only:: html
+
+    .. figure:: /auto_gallery/images/thumb/sphx_glr_pyfreesurfer_tracall_thumb.png
+
+        :ref:`sphx_glr_auto_gallery_pyfreesurfer_tracall.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_gallery/pyfreesurfer_tracall
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Example automatically generated from package script. ">
+
+.. only:: html
+
+    .. figure:: /auto_gallery/images/thumb/sphx_glr_pyfreesurfer_reconall_thumb.png
+
+        :ref:`sphx_glr_auto_gallery_pyfreesurfer_reconall.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_gallery/pyfreesurfer_reconall
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Example automatically generated from package script. ">
+
+.. only:: html
+
+    .. figure:: /auto_gallery/images/thumb/sphx_glr_pyfreesurfer_tracall_longitudinal_thumb.png
+
+        :ref:`sphx_glr_auto_gallery_pyfreesurfer_tracall_longitudinal.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_gallery/pyfreesurfer_tracall_longitudinal
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Example automatically generated from package script. ">
+
+.. only:: html
+
+    .. figure:: /auto_gallery/images/thumb/sphx_glr_pyfreesurfer_textures_thumb.png
+
+        :ref:`sphx_glr_auto_gallery_pyfreesurfer_textures.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_gallery/pyfreesurfer_textures
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Example automatically generated from package script. ">
+
+.. only:: html
+
+    .. figure:: /auto_gallery/images/thumb/sphx_glr_pyfreesurfer_qualitycheck_thumb.png
+
+        :ref:`sphx_glr_auto_gallery_pyfreesurfer_qualitycheck.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_gallery/pyfreesurfer_qualitycheck
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Example automatically generated from package script. ">
+
+.. only:: html
+
+    .. figure:: /auto_gallery/images/thumb/sphx_glr_pyfreesurfer_fmri_thumb.png
+
+        :ref:`sphx_glr_auto_gallery_pyfreesurfer_fmri.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_gallery/pyfreesurfer_fmri
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Example automatically generated from package script. ">
+
+.. only:: html
+
+    .. figure:: /auto_gallery/images/thumb/sphx_glr_pyfreesurfer_conversion_thumb.png
+
+        :ref:`sphx_glr_auto_gallery_pyfreesurfer_conversion.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_gallery/pyfreesurfer_conversion
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Example automatically generated from package script. ">
+
+.. only:: html
+
+    .. figure:: /auto_gallery/images/thumb/sphx_glr_pyfreesurfer_hcp_thumb.png
+
+        :ref:`sphx_glr_auto_gallery_pyfreesurfer_hcp.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_gallery/pyfreesurfer_hcp
+.. raw:: html
+
+    <div style='clear:both'></div>
+
+
+
+.. only :: html
+
+ .. container:: sphx-glr-footer
+
+
+  .. container:: sphx-glr-download
+
+    :download:`Download all examples in Python source code: auto_gallery_python.zip <//home/ag239446/Desktop/pyfreesurfer/source/auto_gallery/auto_gallery_python.zip>`
+
+
+
+  .. container:: sphx-glr-download
+
+    :download:`Download all examples in Jupyter notebooks: auto_gallery_jupyter.zip <//home/ag239446/Desktop/pyfreesurfer/source/auto_gallery/auto_gallery_jupyter.zip>`
+
+
+.. only:: html
+
+ .. rst-class:: sphx-glr-signature
+
+    Gallery generated by Sphinx-Gallery
+
+

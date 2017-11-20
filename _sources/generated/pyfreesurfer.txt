@@ -2,8 +2,8 @@
 
 :orphan:
 
-Documentation of *pyfreesurfer*
-================================
+API documentation of *pyfreesurfer*
+====================================
 
 
 Package to wrap the FreeSurfer software and simplify scripting calls.
@@ -22,19 +22,47 @@ In the root location of the module are implemented:
     <tr class='row-odd'>
     <td><a class='reference internal' href='pyfreesurfer.exceptions.html'><em>pyfreesurfer.exceptions</em></a></td>
     <td>
-    
+        <p>Module that defines the package exceptions.</p>
     </td>
     </tr>
     <tr class='row-even'>
-    <td><a class='reference internal' href='pyfreesurfer.configuration.html'><em>pyfreesurfer.configuration</em></a></td>
+    <td><a class='reference internal' href='pyfreesurfer.fmri.html'><em>pyfreesurfer.fmri</em></a></td>
     <td>
-    
+        <p>fMRI data processing on the cortical surface using the FreeSurfer package.</p>
     </td>
     </tr>
     <tr class='row-odd'>
+    <td><a class='reference internal' href='pyfreesurfer.configuration.html'><em>pyfreesurfer.configuration</em></a></td>
+    <td>
+        <p>Modules that provides tools to configure FreeSurfer.</p>
+    </td>
+    </tr>
+    <tr class='row-even'>
     <td><a class='reference internal' href='pyfreesurfer.wrapper.html'><em>pyfreesurfer.wrapper</em></a></td>
     <td>
-    
+        <p>Modules that provides tools to wrap FreeSurfer commands.</p>
+    </td>
+    </tr>
+    <tr class='row-odd'>
+    <td><a class='reference internal' href='pyfreesurfer.hcp.html'><em>pyfreesurfer.hcp</em></a></td>
+    <td>
+        <p>Wrapper around the HCP prefreesurfer, freesurfer and postfreesurfer
+    scripts.</p>
+    <p><strong>Requirements for this module</strong></p>
+    <p>Installed versions of:</p>
+    <ul class="simple">
+    <li>FSL (version 5.0.6),</li>
+    <li>FreeSurfer (version 5.3.0-HCP),</li>
+    <li>gradunwarp (HCP version 1.0.2) if doing gradient distortion correction</li>
+    </ul>
+    <p>Environment:</p>
+    <ul class="simple">
+    <li>FSLDIR</li>
+    <li>FREESURFER_HOME</li>
+    <li>HCPPIPEDIR</li>
+    <li>CARET7DIR</li>
+    <li>PATH (to be able to find gradient_unwarp.py)</li>
+    </ul>
     </td>
     </tr>
     </tbody>

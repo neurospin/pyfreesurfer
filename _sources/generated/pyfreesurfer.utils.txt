@@ -2,8 +2,8 @@
 
 :orphan:
 
-Documentation of *pyfreesurfer.utils*
-======================================
+API documentation of *pyfreesurfer.utils*
+==========================================
 
 
 Utility functions wrapped from the FreeSurfer package.
@@ -16,33 +16,33 @@ Utility functions wrapped from the FreeSurfer package.
     <colgroup><col width='25%'/><col width='75%'/></colgroup>
     <tbody valign='top'>
     <tr class='row-odd'>
-    <td><a class='reference internal' href='pyfreesurfer.utils.regtools.html'><em>pyfreesurfer.utils.regtools</em></a></td>
-    <td>
-        <p>Wrappers for the FreeSurfer's registration utilities.</p>
-    </td>
-    </tr>
-    <tr class='row-even'>
-    <td><a class='reference internal' href='pyfreesurfer.utils.openctm.html'><em>pyfreesurfer.utils.openctm</em></a></td>
-    <td>
-    
-    </td>
-    </tr>
-    <tr class='row-odd'>
     <td><a class='reference internal' href='pyfreesurfer.utils.filetools.html'><em>pyfreesurfer.utils.filetools</em></a></td>
     <td>
-    
+        <p>Modules that provides file manipulation tools.</p>
     </td>
     </tr>
     <tr class='row-even'>
-    <td><a class='reference internal' href='pyfreesurfer.utils.surftools.html'><em>pyfreesurfer.utils.surftools</em></a></td>
+    <td><a class='reference internal' href='pyfreesurfer.utils.stattools.html'><em>pyfreesurfer.utils.stattools</em></a></td>
     <td>
-    
+        <p>Modules that provides stat file manipulation tools.</p>
     </td>
     </tr>
     <tr class='row-odd'>
-    <td><a class='reference internal' href='pyfreesurfer.utils.stattools.html'><em>pyfreesurfer.utils.stattools</em></a></td>
+    <td><a class='reference internal' href='pyfreesurfer.utils.openctm.html'><em>pyfreesurfer.utils.openctm</em></a></td>
     <td>
-    
+        <p>Modules that provides openctm support.</p>
+    </td>
+    </tr>
+    <tr class='row-even'>
+    <td><a class='reference internal' href='pyfreesurfer.utils.regtools.html'><em>pyfreesurfer.utils.regtools</em></a></td>
+    <td>
+        <p>Modules that provides registration tools.</p>
+    </td>
+    </tr>
+    <tr class='row-odd'>
+    <td><a class='reference internal' href='pyfreesurfer.utils.surftools.html'><em>pyfreesurfer.utils.surftools</em></a></td>
+    <td>
+        <p>Modules that provides surface manipulation tools.</p>
     </td>
     </tr>
     </tbody>

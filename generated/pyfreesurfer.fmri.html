@@ -1,0 +1,466 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+  
+    <title>PYFREESURFER &mdash; pyFreeSurfer</title>
+  <!-- htmltitle is before nature.css - we use this hack to load bootstrap first -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../_static/css/bootstrap.min.css" media="screen" />
+
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="pyFreeSurfer" href="../index.html" />
+  
+   
+       <script type="text/javascript" src="../_static/sidebar.js"></script>
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="../_static/js/bootstrap.min.js" type="text/javascript"></script>
+
+  <script src="../_static/js/angular.min.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    var app = angular.module("navApp", []);
+    app.controller('navCtrl', ['$scope', '$window', function($scope, $window) {
+      $scope.isActive = function (viewLocation) {
+        var rel = $window.location.pathname.split("/")
+        rel = rel[rel.length - 1]
+        rel = rel.split(".")[0]
+        var active = (viewLocation === rel);
+        return active;};
+    }]);
+  </script>
+
+  </head>
+  <body role="document"><div class="banner">
+  <div class="container-fluid banner-container">
+    <div class="row banner-inner">
+      <div class="col-xs-4">
+        <img alt="Logo" src="../_static/pyfreesurfer.png">
+      </div>
+      <div class="col-xs-8">
+            <p>Using FreeSurfer in Python.</p>
+      </div>
+    </div>  
+  </div>
+</div><nav class="navbar navbar-default navbar-static-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+        </a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse" ng-controller="navCtrl" ng-app="navApp">
+      <ul class="nav navbar-nav">
+        <li ng-class="{ active: isActive('index') }"><a href="../index.html">Home</a></li>
+        <li ng-class="{ active: isActive('installation') }"><a href="installation.html">Installation</a></li>
+        <li ng-class="{ active: isActive('gallery') }"><a href="../auto_gallery/gallery.html">Gallery</a></li>
+        <li ng-class="{ active: isActive('documentation') }"><a href="documentation.html">API documentation</a></li>
+        <!--<li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+	        <li><a href="pyfreesurfer.html">Pyfreesurfer</a></li>
+<li><a href="pyfreesurfer.utils.html">Pyfreesurfer.utils</a></li>
+<li><a href="pyfreesurfer.conversions.html">Pyfreesurfer.conversions</a></li>
+<li><a href="pyfreesurfer.segmentation.html">Pyfreesurfer.segmentation</a></li>
+<li><a href="pyfreesurfer.diffusion.html">Pyfreesurfer.diffusion</a></li>
+<li><a href="pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
+          </ul>
+        </li>-->
+        <li><a href="https://github.com/AGrigis/pysphinxdoc">PYSPHINXDOC</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="content-wrapper">
+    <div class="sphinxsidebar">
+      <div class="sphinxsidebarwrapper">
+
+        <!-- info setup -->
+          <p class="doc-version">
+           This documentation is for pyfreesurfer <strong>version 1.2.0</strong>
+          </p>
+        <p class="citing">
+          If you use the software, please do not esitate to 
+          <a &mdash; <a href="https://github.com/neurospin/pyfreesurfer">
+          Report a Bug</a>.
+        </p>
+
+      <!-- toc tree -->
+      <ul class="simple">
+</ul>
+
+
+      </div>
+    </div>
+  
+
+  <div class="content">
+      
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="module-pyfreesurfer.fmri"></span><p>fMRI data processing on the cortical surface using the FreeSurfer package.</p>
+<dl class="function">
+<dt id="pyfreesurfer.fmri.mkmodel_sess">
+<code class="descclassname">pyfreesurfer.fmri.</code><code class="descname">mkmodel_sess</code><span class="sig-paren">(</span><em>outdir</em>, <em>tr</em>, <em>contrasts_file</em>, <em>funcstem=None</em>, <em>fsd='bold'</em>, <em>perrun=True</em>, <em>persession=False</em>, <em>fwhm=5.0</em>, <em>mni3052mm=True</em>, <em>mni3051mm=False</em>, <em>blocked_design=True</em>, <em>retinototy_design=False</em>, <em>abblocked_design=False</em>, <em>spmhrf=0</em>, <em>fslhrf=None</em>, <em>gammafit=None</em>, <em>ngammaderiv=None</em>, <em>fir=None</em>, <em>nconditions=None</em>, <em>refeventdur=None</em>, <em>polyfit=2</em>, <em>mcextreg=True</em>, <em>nuisreg=None</em>, <em>nskip=4</em>, <em>fsconfig='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em>, <em>verbose=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/fmri.html#mkmodel_sess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.fmri.mkmodel_sess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configure First Level GLM Analysis for event-related and blocked
+design.</p>
+<p>Not yet implemented possibilities are abblocked and retinotopy design.</p>
+<p>Binding around the FreeSurfer&#8217;s &#8216;mkanalysis-sess &#8216; and &#8216;mkcontrast-sess&#8217;
+commands.</p>
+<p>Requires matlab or octave</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>outdir: str (mandatory)</strong></p>
+<blockquote>
+<div><p>the folder where the organized FreeSurfer data are.</p>
+</div></blockquote>
+<p><strong>tr: float (mandatory)</strong></p>
+<blockquote>
+<div><p>TR value in seconds.</p>
+</div></blockquote>
+<p><strong>contrasts_file: str (mandatory)</strong></p>
+<blockquote>
+<div><p>a JSON file that contains a list of contrasts with each contrast
+being a tuple of the form: (&#8216;name&#8217;, &#8216;stat&#8217;, [condition list],
+[condition list ids], [weight list]).</p>
+</div></blockquote>
+<p><strong>funcstem: str (optional, default None)</strong></p>
+<blockquote>
+<div><p>override default basename, need to specify extension.
+The FWHM is no relevant when you have specified a funcstem</p>
+</div></blockquote>
+<p><strong>fsd: str (optional, default &#8216;bold&#8217;)</strong></p>
+<blockquote>
+<div><p>the folder name that contains the &#8216;f.nii.gz&#8217; functional volume.</p>
+</div></blockquote>
+<p><strong>perrun: bool (optional, default True)</strong></p>
+<blockquote>
+<div><p>motion cor and reg to middle TP of each run.</p>
+</div></blockquote>
+<p><strong>persession: bool (optional, default False)</strong></p>
+<blockquote>
+<div><p>motion cor and reg to 1st TP of 1st run.</p>
+</div></blockquote>
+<p><strong>fwhm: float (optional, default 5)</strong></p>
+<blockquote>
+<div><p>FWHM : smoothing level (mm)</p>
+</div></blockquote>
+<p><strong>mni3052mm: bool (optional, default True)</strong></p>
+<blockquote>
+<div><p>sample raw data to mni305 at 2mm.</p>
+</div></blockquote>
+<p><strong>mni3051mm: bool (optional, default False)</strong></p>
+<blockquote>
+<div><p>sample raw data to mni305 at 1mm.</p>
+</div></blockquote>
+<p><strong>spmhrf: int (optional, default 0)</strong></p>
+<blockquote>
+<div><p>assume SPM HRF with nderiv derivatives.</p>
+</div></blockquote>
+<p><strong>fslhrf: int (optional, default None)</strong></p>
+<blockquote>
+<div><p>assume FSL HRF with nderiv derivatives</p>
+</div></blockquote>
+<p><strong>gammafit: 2-uplet (optional, default None)</strong></p>
+<blockquote>
+<div><p>assume IRF is a gamma function (gfDelta gfTau) -&gt; (2.25 1.25).</p>
+</div></blockquote>
+<p><strong>ngammaderiv: int (optional, default None)</strong></p>
+<blockquote>
+<div><p>number of derivatives to gamma function.</p>
+</div></blockquote>
+<p><strong>fir: 2-uplet (optional, default None)</strong></p>
+<blockquote>
+<div><p>event prestimulus and total time window (sec) for FIR designs</p>
+</div></blockquote>
+<p><strong>nconditions: int (optional, default None)</strong></p>
+<blockquote>
+<div><p>number of conditions (excluding fixation).</p>
+</div></blockquote>
+<p><strong>refeventdur: int (optional, default None)</strong></p>
+<blockquote>
+<div><p>duration (sec) of reference event for scaling.</p>
+</div></blockquote>
+<p><strong>polyfit: int (optional, default 2)</strong></p>
+<blockquote>
+<div><p>fit trend with polynomial of order N: 0 mean offset, 1 temporal trend,
+2 quadratic trend.</p>
+</div></blockquote>
+<p><strong>mcextreg: bool (optional, default True)</strong></p>
+<blockquote>
+<div><p>use motion parameters as external nuissance regressors.</p>
+</div></blockquote>
+<p><strong>nuisreg: 2-uplet (optional, default None)</strong></p>
+<blockquote>
+<div><p>external nuisance regressor file and number of regressors to include
+(extreg n).</p>
+</div></blockquote>
+<p><strong>nskip: int (optional, default 4)</strong></p>
+<blockquote>
+<div><p>skip the first N time points in each run</p>
+</div></blockquote>
+<p><strong>fsconfig: str (optional, default DEFAULT_FREESURFER_PATH)</strong></p>
+<blockquote>
+<div><p>the FreeSurfer configuration batch.</p>
+</div></blockquote>
+<p><strong>verbose: int (optional, default 0)</strong></p>
+<blockquote>
+<div><p>the verbosity level.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">analysis_names: list of str</p>
+<blockquote class="last">
+<div><p>the configured model names.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyfreesurfer.fmri.mkpreproc_sess">
+<code class="descclassname">pyfreesurfer.fmri.</code><code class="descname">mkpreproc_sess</code><span class="sig-paren">(</span><em>sessid</em>, <em>outdir</em>, <em>fsdir</em>, <em>fsd='bold'</em>, <em>perrun=True</em>, <em>persession=False</em>, <em>fwhm=5.0</em>, <em>update=True</em>, <em>force=False</em>, <em>sliceorder=None</em>, <em>surface='lhrh'</em>, <em>mni3052mm=True</em>, <em>mni3051mm=False</em>, <em>nomc=False</em>, <em>nostc=False</em>, <em>nosmooth=False</em>, <em>nomask=False</em>, <em>noreg=False</em>, <em>noinorm=False</em>, <em>fsconfig='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em>, <em>fslconfig='/etc/fsl/5.0/fsl.sh'</em>, <em>verbose=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/fmri.html#mkpreproc_sess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.fmri.mkpreproc_sess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs all the FreeSurfer fMRI preprocessing steps.</p>
+<p>Binding around the FreeSurfer&#8217;s &#8216;preproc-sess&#8217; command.</p>
+<p>Processing stages:</p>
+<ul class="simple">
+<li>motion correction (MC)</li>
+<li>slice-timing correction (STC)</li>
+<li>smoothing</li>
+<li>intensity normalization (INorm)</li>
+<li>brain mask creation</li>
+</ul>
+<p>Note: MC and INorm require matlab but none of the other stages does.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>sessid: str (mandatory)</strong></p>
+<blockquote>
+<div><p>the session id file or string.</p>
+</div></blockquote>
+<p><strong>outdir: str (mandatory)</strong></p>
+<blockquote>
+<div><p>the folder where the organized FreeSurfer data are.</p>
+</div></blockquote>
+<p><strong>fsdir: str (mandatory)</strong></p>
+<blockquote>
+<div><p>the FreeSurfer working home directory.</p>
+</div></blockquote>
+<p><strong>fsd: str (optional, default &#8216;bold&#8217;)</strong></p>
+<blockquote>
+<div><p>the folder name that contains the &#8216;f.nii.gz&#8217; functional volume.</p>
+</div></blockquote>
+<p><strong>perrun: bool (optional, default True)</strong></p>
+<blockquote>
+<div><p>motion cor and reg to middle TP of each run.</p>
+</div></blockquote>
+<p><strong>persession: bool (optional, default False)</strong></p>
+<blockquote>
+<div><p>motion cor and reg to 1st TP of 1st run.</p>
+</div></blockquote>
+<p><strong>fwhm: float (optional, default 5)</strong></p>
+<blockquote>
+<div><p>FWHM : smoothing level (mm)</p>
+</div></blockquote>
+<p><strong>update: bool (optional, default True)</strong></p>
+<blockquote>
+<div><p>only run a stage if input is newer than output.</p>
+</div></blockquote>
+<p><strong>force: bool (optional, default False)</strong></p>
+<blockquote>
+<div><p>force reprocessing of all stages (turns off -update).</p>
+</div></blockquote>
+<p><strong>sliceorder: list of int (optional, default None)</strong></p>
+<blockquote>
+<div><p>turn on slice timing correction with the given slice order.</p>
+</div></blockquote>
+<p><strong>surface: str (optional, default &#8216;lhrh&#8217;)</strong></p>
+<blockquote>
+<div><p>&#8216;self&#8217; or &#8216;fsaverage&#8217; followed by hemi &#8216;lh&#8217;, &#8216;rh&#8217; or &#8216;lhrh&#8217;.</p>
+</div></blockquote>
+<p><strong>mni3052mm: bool (optional, default True)</strong></p>
+<blockquote>
+<div><p>sample raw data to mni305 at 2mm.</p>
+</div></blockquote>
+<p><strong>mni3051mm: bool (optional, default False)</strong></p>
+<blockquote>
+<div><p>sample raw data to mni305 at 1mm.</p>
+</div></blockquote>
+<p><strong>nomc: bool (optional, default False)</strong></p>
+<blockquote>
+<div><p>don&#8217;t do motion correction.</p>
+</div></blockquote>
+<p><strong>nostc: bool (optional, default False)</strong></p>
+<blockquote>
+<div><p>don&#8217;t do slice-timing correction.</p>
+</div></blockquote>
+<p><strong>nosmooth: bool (optional, default False)</strong></p>
+<blockquote>
+<div><p>don&#8217;t do smoothing.</p>
+</div></blockquote>
+<p><strong>nomask: bool (optional, default False)</strong></p>
+<blockquote>
+<div><p>don&#8217;t make brain mask.</p>
+</div></blockquote>
+<p><strong>noreg: bool (optional, default False)</strong></p>
+<blockquote>
+<div><p>don&#8217;t do registration.</p>
+</div></blockquote>
+<p><strong>noinorm: bool (optional, default False)</strong></p>
+<blockquote>
+<div><p>don&#8217;t do inorm.</p>
+</div></blockquote>
+<p><strong>fsconfig: str (optional, default DEFAULT_FREESURFER_PATH)</strong></p>
+<blockquote>
+<div><p>the FreeSurfer configuration batch.</p>
+</div></blockquote>
+<p><strong>fslconfig: str (optional, default DEFAULT_FSL_PATH)</strong></p>
+<blockquote>
+<div><p>the FSL configuration batch.</p>
+</div></blockquote>
+<p><strong>verbose: int (optional, default 0)</strong></p>
+<blockquote>
+<div><p>the verbosity level.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">lh_fsaverage: list of str</p>
+<blockquote>
+<div><p>left hemisphere of fsaverage.</p>
+</div></blockquote>
+<p>rh_fsaverage: list of str</p>
+<blockquote>
+<div><p>right hemisphere of fsaverage.</p>
+</div></blockquote>
+<p>sub_fsaverage: list of str</p>
+<blockquote>
+<div><p>volume of fsaverage (MNI305 space) - for subcortical analyses.</p>
+</div></blockquote>
+<p>bbr_sum: str</p>
+<blockquote>
+<div><p>a file containing functional-anatomical cross-modal registration
+QC score. The QC value will be between 0 and 1, with 0 being
+perfect and 1 being terrible. Generally, anything over 0.8 indicates
+that something is probably wrong. View registrations using the
+following command tkregister-sess -s sess02 -fsd bold -per-run.</p>
+</div></blockquote>
+<p>mc_plots: list of str</p>
+<blockquote class="last">
+<div><p>a list of motion correction plot for each session.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyfreesurfer.fmri.mkstat_sess">
+<code class="descclassname">pyfreesurfer.fmri.</code><code class="descname">mkstat_sess</code><span class="sig-paren">(</span><em>sessid</em>, <em>outdir</em>, <em>fsdir</em>, <em>analysis_names</em>, <em>svres=False</em>, <em>svres_unwhitened=False</em>, <em>run_wise=False</em>, <em>max_threads=False</em>, <em>overwrite=False</em>, <em>fsconfig='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em>, <em>verbose=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/fmri.html#mkstat_sess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.fmri.mkstat_sess" title="Permalink to this definition">¶</a></dt>
+<dd><p>First-Level GLM Analysis</p>
+<p>Binding around the FreeSurfer&#8217;s &#8216;selxavg3-sess &#8216; command.</p>
+<p>Requires matlab or octave.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>sessid: str (mandatory)</strong></p>
+<blockquote>
+<div><p>the session id file or string.</p>
+</div></blockquote>
+<p><strong>outdir: str (mandatory)</strong></p>
+<blockquote>
+<div><p>the folder where the organized FreeSurfer data are.</p>
+</div></blockquote>
+<p><strong>fsdir: str (mandatory)</strong></p>
+<blockquote>
+<div><p>the FreeSurfer working home directory.</p>
+</div></blockquote>
+<p><strong>analysis_names: list of str (mandatory)</strong></p>
+<blockquote>
+<div><p>the configured model names.</p>
+</div></blockquote>
+<p><strong>svres: bool (optional, default False)</strong></p>
+<blockquote>
+<div><p>save residuals (usually not needed).</p>
+</div></blockquote>
+<p><strong>svres_unwhitened: bool (optional, default False)</strong></p>
+<blockquote>
+<div><p>save unwhitened residuals (usually not needed).</p>
+</div></blockquote>
+<p><strong>run_wise: bool (optional, default False)</strong></p>
+<blockquote>
+<div><p>analyze each run separately.</p>
+</div></blockquote>
+<p><strong>max_threads: bool (optional, default False)</strong></p>
+<blockquote>
+<div><p>use all CPUs.</p>
+</div></blockquote>
+<p><strong>overwrite: bool (optional, default False)</strong></p>
+<blockquote>
+<div><p>delete analysis if session of already analyzed.</p>
+</div></blockquote>
+<p><strong>fsconfig: str (optional, default DEFAULT_FREESURFER_PATH)</strong></p>
+<blockquote>
+<div><p>the FreeSurfer configuration batch.</p>
+</div></blockquote>
+<p><strong>verbose: int (optional, default 0)</strong></p>
+<blockquote class="last">
+<div><p>the verbosity level.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+
+
+          </div>
+        </div>
+      </div>
+
+    <div class="clearer">
+    </div>
+  </div>
+  
+</div>
+
+<div class="footer">
+    &copy; 2017, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
+</div>
+  </body>
+</html>

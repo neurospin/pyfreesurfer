@@ -1,0 +1,421 @@
+
+
+.. _sphx_glr_auto_gallery_pyfreesurfer_fmri.py:
+
+
+Pyfreesurfer Fmri
+=================
+
+Example automatically generated from package script.
+
+
+
+.. code-block:: python
+
+
+
+    # System import
+    from __future__ import print_function
+    import os
+    import shutil
+    import argparse
+    from datetime import datetime
+    import json
+    import numpy
+    from pprint import pprint
+    import textwrap
+    from argparse import RawTextHelpFormatter
+
+    # Bredala import
+    try:
+        import bredala
+        bredala.USE_PROFILER = False
+        bredala.register("pyfreesurfer.fmri",
+                         names=["mkpreproc_sess", "mkmodel_sess", "mkstat_sess"])
+    except:
+        pass
+
+    # Package import
+    from pyfreesurfer import __version__ as version
+    from pyfreesurfer.fmri import mkpreproc_sess
+    from pyfreesurfer.fmri import mkmodel_sess
+    from pyfreesurfer.fmri import mkstat_sess
+    from pyfreesurfer.wrapper import FSWrapper
+    from pyfreesurfer import DEFAULT_FREESURFER_PATH
+
+    # Pyconnectome import
+    from pyconnectome import __version__ as pyconnectome_version
+    from pyconnectome.wrapper import FSLWrapper
+    from pyconnectome import DEFAULT_FSL_PATH
+
+
+    # Parameters to keep trace
+    __hopla__ = ["runtime", "inputs", "outputs"]
+
+
+    # Script documentation
+    DOC = """
+    Freesurfer fMRI first level analysis
+
+    * Time-series analysis
+    * Everything inside of a functional subdir (all runs)
+    * Preprocessing
+    * GLM Analysis
+
+    Preprocessing steps.
+    Binding around the FreeSurfer's 'preproc-sess' command.
+
+    * Registration Template Creation
+    * Motion Correction
+    * Slice-timing correction (if using)
+    * Functional-Anatomical Registration
+    * Mask creation
+    * Intensity normalization, Part 1
+    * Resampling raw time series to mni305, lh, and rh
+    * Spatial smoothing
+
+    First Level GLM Analysis steps.
+    Binding around the FreeSurfer's 'mkanalysis-sess', 'mkcontrast-sess' and
+    'selxavg3-sess' commands.
+
+    * Configure Analysis
+    * Create Contrasts
+    * Perform Analysis
+
+    Command example in the IMAGEN data:
+
+    python $HOME/git/pyfreesurfer/pyfreesurfer/scripts/pyfreesurfer_fmri \
+        -v 2 \
+        -o /volatile/tmp/freesurfer_fmri \
+        -d /neurospin/imagen/BL/processed/freesurfer \
+        -s 000000820294 \
+        -f /neurospin/imagen/BL/processed/nifti/000000820294/SessionA/EPI_stop_signal/000000820294s701a1007.nii.gz \
+        -f /neurospin/imagen/BL/processed/nifti/000000820294/SessionA/EPI_stop_signal/000000820294s701a1007.nii.gz \
+        -p /volatile/tmp/freesurfer_fmri/paradigm.txt \
+        -a bold \
+        -t 2.2 \
+        -n 4 \
+        -c /volatile/tmp/freesurfer_fmri/contrasts.json \
+        -R
+    """
+
+
+    def is_file(filearg):
+        """ Type for argparse - checks that file exists but does not open.
+        """
+        if not os.path.isfile(filearg):
+            raise argparse.ArgumentError(
+                "The file '{0}' does not exist!".format(filearg))
+        return filearg
+
+
+    def is_directory(dirarg):
+        """ Type for argparse - checks that directory exists.
+        """
+        if not os.path.isdir(dirarg):
+            raise argparse.ArgumentError(
+                "The directory '{0}' does not exist!".format(dirarg))
+        return dirarg
+
+
+    def get_cmd_line_args():
+        """
+        Create a command line argument parser and return a dict mapping
+        <argument name> -> <argument value>.
+        """
+        parser = argparse.ArgumentParser(
+            prog="python pyfreesurfer_fmri_preproc",
+            description=textwrap.dedent(DOC),
+            formatter_class=RawTextHelpFormatter)
+
+        # Required arguments
+        required = parser.add_argument_group("required arguments")
+        required.add_argument(
+            "-o", "--outdir",
+            required=True, metavar="<path>",
+            help="the destination folder.")
+        required.add_argument(
+            "-d", "--fsdir",
+            required=True, type=is_directory, metavar="<path>",
+            help="the FreeSurfer home directory.")
+        required.add_argument(
+            "-a", "--acquisition",
+            required=True, choices=["bold", "rest"], metavar="<choice>",
+            help="the acquisition type.")
+        required.add_argument(
+            "-s", "--subjectid",
+            required=True, metavar="<str>",
+            help="the subject identifier.")
+        required.add_argument(
+            "-f", "--funcfiles",
+            required=True, type=is_file, metavar="<session files>", nargs="+",
+            action="append",
+            help="the subject functional volumes (one per session) to be "
+                 "processed.")
+        required.add_argument(
+            "-p", "--paradigms",
+            required=True, type=is_file, metavar="<session files>", nargs="+",
+            action="append",
+            help="the pragigms file that follow the FreeSurfer convension.")
+        required.add_argument(
+            "-t", "--tr",
+            required=True, type=float, metavar="<float>",
+            help="the repetition time.")
+        required.add_argument(
+            "-n", "--nconditions",
+            required=True, type=int, metavar="<int>",
+            help="number of conditions (excluding fixation).")
+        parser.add_argument(
+            "-c", "--contrasts",
+            required=True, type=is_file, metavar="<file>",
+            help="a JSON file that contains a list of contrasts with each contrast "
+                 "being a tuple of the form: ('name', 'stat', [condition list], "
+                 "[condition list ids], [weight list]).")
+
+        # Optional arguments
+        parser.add_argument(
+            "-H", "--fs-sh",
+            type=is_file, metavar="<path>",
+            help="Bash script initializing FreeSurfer's environment.")
+        parser.add_argument(
+            "-F", "--fsl-sh",
+            type=is_file, metavar="<path>",
+            help="Bash script initializing FSL's environment.")
+        parser.add_argument(
+            "-R", "--force",
+            action="store_true",
+            help="if activated, force reprocessing of all stages.")
+        parser.add_argument(
+            "-v", "--verbose",
+            type=int, choices=[0, 1, 2], default=0,
+            help="increase the verbosity level: 0 silent, [1, 2] verbose.")
+
+        # Create a dict of arguments to pass to the 'main' function
+        args = parser.parse_args()
+        kwargs = vars(args)
+        verbose = kwargs.pop("verbose")
+        if kwargs["fs_sh"] is None:
+            kwargs["fs_sh"] = DEFAULT_FREESURFER_PATH
+        if kwargs["fsl_sh"] is None:
+            kwargs["fsl_sh"] = DEFAULT_FSL_PATH
+
+        return kwargs, verbose
+
+
+
+Parse the command line.
+
+
+
+.. code-block:: python
+
+
+    inputs, verbose = get_cmd_line_args()
+    tool = "pyfreesurfer_fmri"
+    timestamp = datetime.now().isoformat()
+    tool_version = version
+    fsl_version = FSLWrapper([], shfile=inputs["fsl_sh"]).version
+    freesurfer_version = FSWrapper([], inputs["fs_sh"]).version
+    params = locals()
+    runtime = dict([(name, params[name])
+                   for name in ("tool", "tool_version", "fsl_version",
+                                "freesurfer_version", "timestamp",
+                                "pyconnectome_version")])
+    outputs = None
+    if verbose > 0:
+        pprint("[info] Starting FreeSurfer fMRI preprocessing ...")
+        pprint("[info] Runtime:")
+        pprint(runtime)
+        pprint("[info] Inputs:")
+        pprint(inputs)
+
+
+Copy/rename the functional volumes in order to be compliant with the FreeSurfer
+ontology.
+
+
+
+.. code-block:: python
+
+
+    sessionid_file = os.path.join(inputs["outdir"], inputs["subjectid"], "sessid")
+    if os.path.isfile(sessionid_file):
+        os.remove(sessionid_file)
+    for session_cnt, (session_paths, session_paradigms) in enumerate(
+            zip(inputs["funcfiles"], inputs["paradigms"])):
+        sessionid = "Sess{0:03d}".format(session_cnt + 1)
+        with open(sessionid_file, "at") as open_file:
+            open_file.write(sessionid + "\n")
+        for run_cnt, (run_path, run_paradigm) in enumerate(
+                zip(session_paths, session_paradigms)):
+            extensions = os.path.basename(run_path).split(".")[1:]
+            extension = "." + ".".join(extensions)
+            runid = "{0:03d}".format(run_cnt + 1)
+            subjectdir = os.path.join(inputs["outdir"], inputs["subjectid"],
+                                      sessionid, inputs["acquisition"], runid)
+            if not os.path.isdir(subjectdir):
+                os.makedirs(subjectdir)
+            funcfile = os.path.join(subjectdir, "f" + extension)
+            shutil.copy2(run_path, funcfile)
+            parafile = os.path.join(subjectdir, "odd.even.par")
+            shutil.copy2(run_paradigm, parafile)
+        subjectname_file = os.path.join(inputs["outdir"], inputs["subjectid"],
+                                        sessionid, "subjectname")
+        with open(subjectname_file, "wt") as open_file:
+            open_file.write(inputs["subjectid"])
+
+
+
+Preprocessiong
+
+
+
+.. code-block:: python
+
+
+    lh_fsaverage, rh_fsaverage, sub_fsaverage, bbr_sum, mc_plots = mkpreproc_sess(
+        sessid=sessionid_file,
+        outdir=os.path.join(inputs["outdir"], inputs["subjectid"]),
+        fsdir=inputs["fsdir"],
+        fsd=inputs["acquisition"],
+        perrun=True,
+        persession=False, 
+        fwhm=5.,
+        update=not inputs["force"],
+        force=inputs["force"],
+        sliceorder=None,
+        surface="lhrh",
+        mni3052mm=True,
+        mni3051mm=False,
+        nomc=False,
+        nostc=False,
+        nosmooth=False,
+        nomask=False,
+        noreg=False,
+        noinorm=False,
+        fsconfig=inputs["fs_sh"],
+        fslconfig=inputs["fsl_sh"],
+        verbose=verbose)
+
+
+
+First level configuration
+refeventdur parameter has no influence on the design matrix. It controls a
+scaling factor so that the beta value (regression coef) will equal to the
+height of the hemodynamic response when viewed in the raw data. This sounds
+like it should be simple but it is actually quite tricky. The bottom line is 
+that it is only a scale factor, so it does not affect p-values or 
+t-values. Can be set to the mean of the task event durations.
+
+
+
+.. code-block:: python
+
+
+    analysis_names = mkmodel_sess(
+        outdir=os.path.join(inputs["outdir"], inputs["subjectid"]),
+        tr=inputs["tr"],
+        contrasts_file=inputs["contrasts"],
+        funcstem=os.path.basename(sub_fsaverage[0]),
+        fsd=inputs["acquisition"],
+        perrun=True,
+        persession=False,
+        #fwhm=5.,
+        mni3052mm=True,
+        mni3051mm=False,
+        blocked_design=True,
+        retinototy_design=False,
+        abblocked_design=False,
+        spmhrf=0,
+        fslhrf=None,
+        gammafit=None,
+        ngammaderiv=None,
+        fir=None,
+        nconditions=inputs["nconditions"],
+        refeventdur=1.,
+        polyfit=2,
+        mcextreg=True,
+        nuisreg=None,
+        nskip=4,
+        fsconfig=inputs["fs_sh"],
+        verbose=verbose)
+
+    #analysis_names= ['odd.even.sm5.0.lh']
+                     #'odd.even.sm5.0.rh']
+                     #'odd.even.sm5.0.mni305']
+
+
+
+First level analysis
+
+
+
+.. code-block:: python
+
+
+    mkstat_sess(
+        sessid=sessionid_file,
+        outdir=os.path.join(inputs["outdir"], inputs["subjectid"]),
+        fsdir=inputs["fsdir"],
+        analysis_names=analysis_names,
+        svres=False,
+        svres_unwhitened=False,
+        run_wise=False,
+        max_threads=False,
+        overwrite=False,
+        fsconfig=inputs["fs_sh"],
+        verbose=verbose)
+
+
+
+Update the outputs and save them and the inputs in a 'logs' directory.
+
+
+
+.. code-block:: python
+
+
+    logdir = os.path.join(inputs["outdir"], inputs["subjectid"], "logs")
+    if not os.path.isdir(logdir):
+        os.mkdir(logdir)
+    params = locals()
+    outputs = dict([(name, params[name])
+                   for name in ("lh_fsaverage", "rh_fsaverage", "sub_fsaverage",
+                                "bbr_sum", "mc_plots", "analysis_names")])
+    for name, final_struct in [("inputs", inputs), ("outputs", outputs),
+                               ("runtime", runtime)]:
+        log_file = os.path.join(logdir, "{0}.json".format(name))
+        with open(log_file, "wt") as open_file:
+            json.dump(final_struct, open_file, sort_keys=True, check_circular=True,
+                      indent=4)
+    if verbose > 1:
+        print("[info] Outputs:")
+        pprint(outputs)
+
+**Total running time of the script:** ( 0 minutes  0.000 seconds)
+
+
+
+.. only :: html
+
+ .. container:: sphx-glr-footer
+
+
+  .. container:: sphx-glr-download
+
+     :download:`Download Python source code: pyfreesurfer_fmri.py <pyfreesurfer_fmri.py>`
+
+
+
+  .. container:: sphx-glr-download
+
+     :download:`Download Jupyter notebook: pyfreesurfer_fmri.ipynb <pyfreesurfer_fmri.ipynb>`
+
+
+.. only:: html
+
+ .. rst-class:: sphx-glr-signature
+
+    Gallery generated by Sphinx-Gallery
+
+

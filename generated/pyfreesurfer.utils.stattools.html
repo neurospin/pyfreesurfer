@@ -15,11 +15,12 @@
     
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.0.0',
+        VERSION:     '1.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -51,7 +52,18 @@
   </script>
 
   </head>
-  <body><nav class="navbar navbar-default navbar-static-top">
+  <body role="document"><div class="banner">
+  <div class="container-fluid banner-container">
+    <div class="row banner-inner">
+      <div class="col-xs-4">
+        <img alt="Logo" src="../_static/pyfreesurfer.png">
+      </div>
+      <div class="col-xs-8">
+            <p>Using FreeSurfer in Python.</p>
+      </div>
+    </div>  
+  </div>
+</div><nav class="navbar navbar-default navbar-static-top">
   <div class="container-fluid">
     <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -61,38 +73,37 @@
           <span class="icon-bar"></span>
         </button>
         <a class="navbar-brand" href="../index.html">
-        <img alt="Logo" src="../_static/pyfreesurfer.png">
         </a>
     </div>
     <div id="navbar" class="navbar-collapse collapse" ng-controller="navCtrl" ng-app="navApp">
       <ul class="nav navbar-nav">
         <li ng-class="{ active: isActive('index') }"><a href="../index.html">Home</a></li>
         <li ng-class="{ active: isActive('installation') }"><a href="installation.html">Installation</a></li>
-        <li ng-class="{ active: isActive('documentation') }"><a href="documentation.html">Documentation</a></li>
-        <li class="dropdown">
+        <li ng-class="{ active: isActive('gallery') }"><a href="../auto_gallery/gallery.html">Gallery</a></li>
+        <li ng-class="{ active: isActive('documentation') }"><a href="documentation.html">API documentation</a></li>
+        <!--<li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="caret"></span></a>
           <ul class="dropdown-menu">
 	        <li><a href="pyfreesurfer.html">Pyfreesurfer</a></li>
-<li><a href="pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
+<li><a href="pyfreesurfer.utils.html">Pyfreesurfer.utils</a></li>
 <li><a href="pyfreesurfer.conversions.html">Pyfreesurfer.conversions</a></li>
 <li><a href="pyfreesurfer.segmentation.html">Pyfreesurfer.segmentation</a></li>
-<li><a href="pyfreesurfer.utils.html">Pyfreesurfer.utils</a></li>
+<li><a href="pyfreesurfer.diffusion.html">Pyfreesurfer.diffusion</a></li>
+<li><a href="pyfreesurfer.plots.html">Pyfreesurfer.plots</a></li>
           </ul>
-        </li>
+        </li>-->
         <li><a href="https://github.com/AGrigis/pysphinxdoc">PYSPHINXDOC</a></li>
       </ul>
     </div>
   </div>
 </nav>
-
-
 <div class="content-wrapper">
     <div class="sphinxsidebar">
       <div class="sphinxsidebarwrapper">
 
         <!-- info setup -->
           <p class="doc-version">
-           This documentation is for pyfreesurfer <strong>version 1.0.0</strong>
+           This documentation is for pyfreesurfer <strong>version 1.2.0</strong>
           </p>
         <p class="citing">
           If you use the software, please do not esitate to 
@@ -113,11 +124,12 @@
       
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
-  <span class="target" id="module-pyfreesurfer.utils.stattools"></span><dl class="function">
+  <span class="target" id="module-pyfreesurfer.utils.stattools"></span><p>Modules that provides stat file manipulation tools.</p>
+<dl class="function">
 <dt id="pyfreesurfer.utils.stattools.aparcstats2table">
-<tt class="descclassname">pyfreesurfer.utils.stattools.</tt><tt class="descname">aparcstats2table</tt><big>(</big><em>fsdir</em>, <em>outdir</em>, <em>fsconfig='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em><big>)</big><a class="reference internal" href="../_modules/pyfreesurfer/utils/stattools.html#aparcstats2table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.utils.stattools.aparcstats2table" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pyfreesurfer.utils.stattools.</code><code class="descname">aparcstats2table</code><span class="sig-paren">(</span><em>fsdir</em>, <em>outdir</em>, <em>fsconfig='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/utils/stattools.html#aparcstats2table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.utils.stattools.aparcstats2table" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate text/ascii tables of freesurfer parcellation stats data
 &#8216;?h.aparc.stats&#8217;.</p>
 <p>This can then be easily imported into a spreadsheet and/or stats program.</p>
@@ -146,7 +158,7 @@
 
 <dl class="function">
 <dt id="pyfreesurfer.utils.stattools.asegstats2table">
-<tt class="descclassname">pyfreesurfer.utils.stattools.</tt><tt class="descname">asegstats2table</tt><big>(</big><em>fsdir</em>, <em>outdir</em>, <em>fsconfig='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em><big>)</big><a class="reference internal" href="../_modules/pyfreesurfer/utils/stattools.html#asegstats2table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.utils.stattools.asegstats2table" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pyfreesurfer.utils.stattools.</code><code class="descname">asegstats2table</code><span class="sig-paren">(</span><em>fsdir</em>, <em>outdir</em>, <em>fsconfig='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/utils/stattools.html#asegstats2table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.utils.stattools.asegstats2table" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate text/ascii tables of freesurfer parcellation stats data
 &#8216;aseg.stats&#8217;.</p>
 <p>This can then be easily imported into a spreadsheet and/or stats program.</p>
@@ -175,7 +187,7 @@
 
 <dl class="function">
 <dt id="pyfreesurfer.utils.stattools.population_summary">
-<tt class="descclassname">pyfreesurfer.utils.stattools.</tt><tt class="descname">population_summary</tt><big>(</big><em>statsdir</em>, <em>sid=None</em><big>)</big><a class="reference internal" href="../_modules/pyfreesurfer/utils/stattools.html#population_summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.utils.stattools.population_summary" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pyfreesurfer.utils.stattools.</code><code class="descname">population_summary</code><span class="sig-paren">(</span><em>statsdir</em>, <em>sid=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/utils/stattools.html#population_summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.utils.stattools.population_summary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the mean, std from the FreeSurfer individual scores.
 If a subject identifier is given, return the FreeSurfer subject scores.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -207,7 +219,7 @@ otherwise return only the specified subject scores.</p>
 
 <dl class="function">
 <dt id="pyfreesurfer.utils.stattools.textures2table">
-<tt class="descclassname">pyfreesurfer.utils.stattools.</tt><tt class="descname">textures2table</tt><big>(</big><em>regex</em>, <em>ico_order</em>, <em>fsdir</em>, <em>outdir</em>, <em>keep_individual_textures=False</em>, <em>save_mode='numpy'</em>, <em>fsconfig='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em><big>)</big><a class="reference internal" href="../_modules/pyfreesurfer/utils/stattools.html#textures2table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.utils.stattools.textures2table" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pyfreesurfer.utils.stattools.</code><code class="descname">textures2table</code><span class="sig-paren">(</span><em>regex</em>, <em>ico_order</em>, <em>fsdir</em>, <em>outdir</em>, <em>keep_individual_textures=False</em>, <em>save_mode='numpy'</em>, <em>fsconfig='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/utils/stattools.html#textures2table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.utils.stattools.textures2table" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate text/ascii tables of freesurfer textures data.</p>
 <p>This can then be easily imported into a spreadsheet and/or stats program.
 Note that all the subject texture vertices need to be resampled in a common
@@ -262,11 +274,84 @@ a single file.</p>
 </table>
 </dd></dl>
 
+<dl class="function">
+<dt id="pyfreesurfer.utils.stattools.trac_all">
+<code class="descclassname">pyfreesurfer.utils.stattools.</code><code class="descname">trac_all</code><span class="sig-paren">(</span><em>outdir</em>, <em>subjects_dir=None</em>, <em>temp_dir=None</em>, <em>fsconfig='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em>, <em>fslconfig='/etc/fsl/5.0/fsl.sh'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/utils/stattools.html#trac_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.utils.stattools.trac_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Anisotropy and diffusivity along the trajectory of a pathway.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>outdir: str</strong></p>
+<blockquote>
+<div><p>Root directory where to create the subject&#8217;s output directory.
+Created if not existing.</p>
+</div></blockquote>
+<p><strong>subjects_dir: str, default None</strong></p>
+<blockquote>
+<div><p>Path to the FreeSurfer subjects directory. Required if the
+environment variable $SUBJECTS_DIR is not set.</p>
+</div></blockquote>
+<p><strong>temp_dir: str, default None</strong></p>
+<blockquote>
+<div><p>Directory to use to store temporary files. By default OS tmp dir.</p>
+</div></blockquote>
+<p><strong>fsconfig: str, default &lt;pyfreesurfer.DEFAULT_FREESURFER_PATH&gt;</strong></p>
+<blockquote>
+<div><p>Path to the FreeSurfer configuration file.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">statdir: str</p>
+<blockquote>
+<div><p>The directory containing the FreeSurfer summary files.</p>
+</div></blockquote>
+<p>outlierfile: str</p>
+<blockquote class="last">
+<div><p>A file that contains the subjects flagged as outliers.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyfreesurfer.utils.stattools.tractstats2table">
+<code class="descclassname">pyfreesurfer.utils.stattools.</code><code class="descname">tractstats2table</code><span class="sig-paren">(</span><em>fsdir</em>, <em>outdir</em>, <em>fsconfig='/i2bm/local/freesurfer/SetUpFreeSurfer.sh'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyfreesurfer/utils/stattools.html#tractstats2table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyfreesurfer.utils.stattools.tractstats2table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate text/ascii tables of FreeSurfer tracula pathways anisotropy
+and diffusivity summary from &#8216;dpath/&lt;hemi&gt;.&lt;path&gt;/pathstats.overall.txt&#8217;
+and &#8216;dpath/&lt;hemi&gt;.&lt;path&gt;/pathstats.byvoxel.txt&#8217;.</p>
+<p>This can then be easily imported into a spreadsheet and/or stats program.</p>
+<p>Binding over the FreeSurfer&#8217;s &#8216;tractstats2table&#8217; command.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fsdir: (mandatory)</strong></p>
+<blockquote>
+<div><p>The freesurfer working directory with all the subjects.</p>
+</div></blockquote>
+<p><strong>outdir: str (mandatory)</strong></p>
+<blockquote>
+<div><p>The destination folder.</p>
+</div></blockquote>
+<p><strong>fsconfig: str (optional)</strong></p>
+<blockquote class="last">
+<div><p>The FreeSurfer configuration batch.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 
 
           </div>
         </div>
       </div>
+
     <div class="clearer">
     </div>
   </div>
@@ -274,7 +359,7 @@ a single file.</p>
 </div>
 
 <div class="footer">
-    &copy; 2016, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
+    &copy; 2017, pyFreeSurfer developers &lt;antoine.grigis@cea.fr&gt;.
 </div>
   </body>
 </html>
