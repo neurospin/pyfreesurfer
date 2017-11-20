@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 from sklearn import preprocessing
 
 
-def sort_features(features, outdir, name, verbose=0):
+def sort_features(features, outdir, name, header=None, verbose=0):
     """ Sort a feature array using a Ward hierachical clustering analysis on
     the rows and the columns.
 
@@ -28,6 +28,8 @@ def sort_features(features, outdir, name, verbose=0):
         the destination folder where the ouputs will be saved.
     name: str
         the name of the plot.
+    header: list (M, ), default None
+        the features names.
     verbose: int, default 0
         the verbosity level.
 
@@ -80,7 +82,16 @@ def sort_features(features, outdir, name, verbose=0):
         im = axmatrix.matshow(matrix, aspect="auto", origin="lower",
                               cmap=plt.cm.get_cmap("Spectral"),
                               vmin=-1, vmax=1)
-        axmatrix.xaxis.set_visible(False)
+        if header is not None:
+            clusterized_labels = [header[i] for i in idx2]
+            axmatrix.xaxis.set_visible(True)
+            axmatrix.xaxis.set_label_position("bottom")
+            axmatrix.xaxis.tick_bottom()
+            axmatrix.set_xticks(range(len(header)))
+            axmatrix.set_xticklabels(clusterized_labels, fontsize=8,
+                                     rotation=-90)
+        else:
+            axmatrix.xaxis.set_visible(False)
         axmatrix.yaxis.set_visible(False)
         axcolor = fig.add_axes([0.91, 0.15, 0.02, 0.73])
         plt.colorbar(im, cax=axcolor)

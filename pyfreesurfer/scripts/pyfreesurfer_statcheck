@@ -140,7 +140,8 @@ for path in statfiles:
     df = pandas.read_csv(path, sep=",")
     name = os.path.basename(path).split(".")[0]
     features_snaps.append(
-        sort_features(df.values[:, 1:], inputs["outdir"], name, verbose=verbose))
+        sort_features(df.values[:, 1:], inputs["outdir"], name,
+                      header=df.columns.values[1:], verbose=verbose))
 
 
 """
@@ -157,7 +158,7 @@ for name, final_struct in [("inputs", inputs), ("outputs", outputs),
     with open(log_file, "wt") as open_file:
         json.dump(final_struct, open_file, sort_keys=True, check_circular=True,
                   indent=4)
-if args.verbose > 1:
+if verbose > 1:
     print("[final]")
     pprint(outputs)
 
