@@ -1,0 +1,324 @@
+#! /usr/bin/env python
+##########################################################################
+# NSAp - Copyright (C) CEA, 2013 - 2016
+# Distributed under the terms of the CeCILL-B license, as published by
+# the CEA-CNRS-INRIA. Refer to the LICENSE file or to
+# http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
+# for details.
+##########################################################################
+
+# System import
+from __future__ import print_function
+import argparse
+import os
+import shutil
+from datetime import datetime
+import json
+from pprint import pprint
+import textwrap
+from argparse import RawTextHelpFormatter
+
+# Bredala import
+try:
+    import bredala
+    bredala.USE_PROFILER = False
+    bredala.register("pyfreesurfer.utils.stattools",
+                     names=["population_summary"])
+    bredala.register("pyfreesurfer.plots.slicer",
+                     names=["tkmedit_slice"])
+    bredala.register("pyfreesurfer.plots.polar",
+                     names=["polar_plot"])
+    bredala.register("pyfreesurfer.utils.filetools",
+                     names=["surf2ctm"])
+    bredala.register("pyconnectomist.utils.pdftools",
+                     names=["generate_pdf"])
+except:
+    pass
+
+# Pyfreesurfer import
+import pyfreesurfer
+from pyfreesurfer import __version__ as version
+from pyfreesurfer.utils.stattools import population_summary
+from pyfreesurfer.plots.slicer import tkmedit_slice
+from pyfreesurfer.plots.slicer import AXIS_NAME
+from pyfreesurfer.plots.polar import polar_plot
+from pyfreesurfer.wrapper import FSWrapper
+from pyfreesurfer import DEFAULT_FREESURFER_PATH
+from pyfreesurfer.utils.filetools import surf2ctm
+from pyconnectomist.utils.pdftools import generate_pdf
+
+
+# Parameters to keep trace
+__hopla__ = ["runtime", "inputs", "outputs"]
+
+
+# Script documentation
+DOC = """
+FreeSurfer Quality Check
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Inspect the results returned by the FreeSurfer segmentation.
+
+Steps:
+
+1- Create the population statistic.
+2- Create polar plots.
+3- Create white/pial mesh overlays.
+4- Compress the FreeSurfer surfaces.
+
+Command:
+
+python $HOME/git/pyfreesurfer/pyfreesurfer/scripts/pyfreesurfer_report_reconall \
+    -v 2 \
+    -c /i2bm/local/freesurfer/SetUpFreeSurfer.sh \
+    -d /neurospin/senior/nsap/data/V4/freesurfer \
+    -m /neurospin/senior/nsap/data/V4/freesurfer/stats \
+    -s ag110371 \
+    -o /neurospin/senior/nsap/data/V4/qc/freesurfer \
+    -i 20 \
+    -a C \
+    -P SENIOR \
+    -T V4 \
+    -e
+"""
+
+
+def is_file(filearg):
+    """ Type for argparse - checks that file exists but does not open.
+    """
+    if not os.path.isfile(filearg):
+        raise argparse.ArgumentError(
+            "The file '{0}' does not exist!".format(filearg))
+    return filearg
+
+
+def is_directory(dirarg):
+    """ Type for argparse - checks that directory exists.
+    """
+    if not os.path.isdir(dirarg):
+        raise argparse.ArgumentError(
+            "The directory '{0}' does not exist!".format(dirarg))
+    return dirarg
+
+
+def get_cmd_line_args():
+    """
+    Create a command line argument parser and return a dict mapping
+    <argument name> -> <argument value>.
+    """
+    parser = argparse.ArgumentParser(
+        prog="python pyfreesurfer_report_reconall",
+        description=textwrap.dedent(DOC),
+        formatter_class=RawTextHelpFormatter)
+
+    # Required arguments
+    required = parser.add_argument_group("required arguments")
+    required.add_argument(
+        "-P", "--projectname",
+        required=True,
+        help="the project name.")
+    required.add_argument(
+        "-T", "--timestep",
+        required=True,
+        help="the time step assocaited to the diffusion dataset.")
+    required.add_argument(
+        "-m", "--statdir",
+        required=True, metavar="PATH", type=is_directory,
+        help="the path to the summary FreeSurfer 'stats'.")
+    required.add_argument(
+        "-d", "--fsdir",
+        required=True, metavar="PATH", type=is_directory,
+        help="the FreeSurfer processing home directory.")
+    required.add_argument(
+        "-s", "--subjectid",
+        required=True,
+        help="the subject identifier.")
+    required.add_argument(
+        "-a", "--cutaxis",
+        nargs="+", choices=["C", "A", "S"],
+        help=("the cut axis, use 'C' for Coronal, 'A' for Axial and 'S' for "
+              "Sagittal."))
+
+    # Optional arguments
+    parser.add_argument(
+        "-v", "--verbose",
+        type=int, choices=[0, 1, 2], default=0,
+        help="increase the verbosity level: 0 silent, [1, 2] verbose.")
+    parser.add_argument(
+        "-e", "--erase",
+        action="store_true",
+        help="if activated, clean the result folder if already created.")
+    parser.add_argument(
+        "-C", "--clientname",
+        default="NC",
+        help="the client name.")
+    parser.add_argument(
+        "-c", "--fsconfig",
+        metavar="FILE", type=is_file,
+        help="the FreeSurfer configuration file.")
+    parser.add_argument(
+        "-o", "--outdir",
+        metavar="PATH", type=is_directory,
+        help="the FreeSurfer QC home directory, default is 'fsdir'.")
+    parser.add_argument(
+        "-i", "--incr",
+        default=1, type=int,
+        help="the increment between two slices.")
+
+    # Create a dict of arguments to pass to the 'main' function
+    args = parser.parse_args()
+    if args.fsconfig is None:
+        args.fsconfig = DEFAULT_FREESURFER_PATH
+
+    return args
+
+
+"""
+Parse the command line.
+"""
+args = get_cmd_line_args()
+tool = "pyfreesurfer_report_reconall"
+timestamp = datetime.now().isoformat()
+tool_version = version
+freesurfer_config = args.fsconfig
+freesurfer_version = FSWrapper([], freesurfer_config).version
+params = locals()
+runtime = dict([(name, params[name])
+               for name in ("freesurfer_config", "tool", "tool_version",
+                            "freesurfer_version", "timestamp")])
+if args.verbose > 0:
+    print("[info] Start FreeSurfer QC...")
+    print("[info] Directory: {0}.".format(args.fsdir))
+    print("[info] Subject: {0}.".format(args.subjectid))
+clientname = args.clientname
+projectname = args.projectname
+timepoint = args.timestep
+sid = args.subjectid
+subjdir = os.path.join(args.fsdir, args.subjectid)
+outdir = args.outdir
+if outdir is None:
+    outdir = args.fsdir
+statdir = args.statdir
+increment = args.incr
+cut_axis = args.cutaxis
+qcdir = os.path.join(outdir, args.subjectid, "qc")
+params = locals()
+inputs = dict([(name, params[name])
+               for name in ("sid", "subjdir", "outdir", "statdir", "increment",
+                            "qcdir", "cut_axis", "clientname", "projectname",
+                            "timepoint")])
+outputs = None
+if not os.path.isdir(subjdir):
+    raise ValueError(
+        "'{0}' is not a FreeSurfer subject folder.".format(subjdir))
+if not os.path.isdir(qcdir):
+    os.makedirs(qcdir)
+elif args.erase:
+    shutil.rmtree(qcdir)
+    os.mkdir(qcdir)
+
+
+"""
+Create the population statistic and get the subjects measures
+"""
+popstats = population_summary(statdir)
+indstats = population_summary(statdir, args.subjectid)
+
+
+"""
+Create polar plots
+"""
+polars = []
+for name, cohort_stats in popstats.items():
+    individual_stats = indstats[name]
+    snapfile = os.path.join(qcdir, "polarplot-{0}.png".format(name))
+    polars.append(snapfile)
+    polar_plot(individual_stats,
+               cohort_stats,
+               snapfile,
+               name="polarplot-{0}".format(name))
+
+
+"""
+Create white/pial mesh overlays
+"""
+slices = {}
+path_lut = os.path.join(os.path.dirname(freesurfer_config),
+                        "FreeSurferColorLUT.txt")
+for axis in cut_axis:
+    slices[AXIS_NAME[axis]] = {}
+    for stype in ["aparc", "edges", "aseg"]:
+        axisdir = os.path.join(qcdir, AXIS_NAME[axis], stype)
+        if not os.path.isdir(axisdir):
+            os.makedirs(axisdir)
+        slices[AXIS_NAME[axis]][stype] = tkmedit_slice(
+            args.fsdir,
+            args.subjectid,
+            axisdir,
+            stype,
+            cut_axis=axis,
+            slice_interval=(0, 255, increment),
+            path_lut=path_lut,
+            fsconfig=freesurfer_config)
+
+
+"""
+Compress the FreeSurfer surfaces
+"""
+surfaces = surf2ctm(subjdir, qcdir)
+
+
+"""
+Generate QC reporting
+"""
+if "C" in cut_axis or increment != 20:
+    reportfile = os.path.join(qcdir, "QcFreeSurfer_{0}_{1}_{2}.pdf".format(
+        projectname, sid, timepoint))
+    tic = datetime.now()
+    generate_pdf(
+        datapath=qcdir,
+        struct_file=os.path.join(
+            os.path.abspath(os.path.dirname(pyfreesurfer.__file__)), "plots",
+            "resources", "pyfreesurfer.json"),
+        author="NeuroSpin",
+        client=clientname,
+        poweredby="PyFreeSurfer-{0}".format(tool_version),
+        project=projectname,
+        timepoint=timepoint,
+        subject=sid,
+        date="{0}-{1}-{2}".format(tic.year, tic.month, tic.day),
+        title="FreeSurfer QC Reporting",
+        filename=reportfile,
+        pagesize=None,
+        left_margin=10,
+        right_margin=10,
+        top_margin=20,
+        bottom_margin=20,
+        show_boundary=False,
+        verbose=0)
+    if args.verbose > 1:
+        print("[result] In file: {0}.".format(reportfile))
+else:
+  print("[warn] Impossible to compute the report, the 'C' cut axis must be "
+        "set with a '20' increment.")
+  reportfile = None  
+
+
+"""
+Update the outputs and save them and the inputs in a 'logs' directory.
+"""
+logdir = os.path.join(qcdir, "logs")
+if not os.path.isdir(logdir):
+    os.mkdir(logdir)
+params = locals()
+outputs = dict([(name, params[name])
+               for name in ("polars", "surfaces", "slices", "reportfile")])
+for name, final_struct in [("inputs", inputs), ("outputs", outputs),
+                           ("runtime", runtime)]:
+    log_file = os.path.join(logdir, "{0}.json".format(name))
+    with open(log_file, "wt") as open_file:
+        json.dump(final_struct, open_file, sort_keys=True, check_circular=True,
+                  indent=4)
+if args.verbose > 1:
+    print("[final]")
+    pprint(outputs)
