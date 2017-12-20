@@ -20,8 +20,9 @@ def sst_paradigm(behav_file, outfile, timepoint):
     Also check trial timeline reset.
     Each line of the output file represents one stimulus presentation.
     First column is the event time, second column is the event code
-    (0 for fixation (baseline) and >0 for stimuli), third column is the stimulus
-    duration in seconds, fourth column is the associated weight (default 1.),
+    (0 for fixation (baseline) and >0 for stimuli), third column is the
+    stimulus duration in seconds, fourth column is the associated weight
+    (default 1.),
     and last column is the stimulus name (ignored by FsFast).
     Althought it's an event related protocol, we define stimuli duration to be
     non zero, else the design matrix can not be inverted by FsFast.
@@ -151,8 +152,8 @@ def sst_paradigm(behav_file, outfile, timepoint):
                             [stop_pres/1000., idx, stop_dur/1000., 1, cname])
                         # Store the stop duration
                         durations.append(stop_dur)
-                # Add a line for the fixation period between latest stimulus end
-                # and next go presentation time
+                # Add a line for the fixation period between latest stimulus
+                # end and next go presentation time
                 if i < nb_trials - 1:
                     fix_start = go_start + go_dur + stop_dur
                     fix_end = float(csv_data[i + 1][go_st_idx])
