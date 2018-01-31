@@ -253,7 +253,10 @@ class TriSurface(object):
         """
         # Import here since vtk is not required by the package
         import vtk
-        import vtk.util.numpy_support
+        try:
+            import vtk.util.numpy_support
+        except:
+            pass
 
         # Construct the mesh grid from shape
         nx, ny, nz = shape
