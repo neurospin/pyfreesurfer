@@ -72,6 +72,7 @@ class FreeSurferTriSurface(unittest.TestCase):
 
                 def __getattr__(self, _): return self.nop
             sys.modules["vtk"] = dummy_vtk()
+            sys.modules["vtk.util.numpy_support"] = dummy_vtk()
 
         # Define default arguments
         self.kwargs = {
