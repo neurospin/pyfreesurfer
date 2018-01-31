@@ -164,6 +164,51 @@ class TriSurface(object):
         """
         return self.vertices.shape[0], self.nedges(), self.triangles.shape[0]
 
+    def geodesic_distance(self, point1, point2):
+        """ Compute the geodesic path between two points of a mesh.
+
+        Parameters
+        ----------
+        point1: array (3, )
+            a point of the mesh.
+        point2: array (3, )
+            a point of the mesh.
+
+        Returns
+        -------
+        path: array (M, 3)
+            the geodesic path between two points.
+        """
+        # Import here since vtk is not required by the package
+        import vtk
+
+        # Create polydata
+        surf_polydata = self._polydata()
+
+        # Get point indices
+        ind1 = numpy.argwhere(
+            numpy.all(self.vertices == point1, axis=1)).squeeze().tolist()
+        ind2 = numpy.argwhere(
+            numpy.all(self.vertices == point2, axis=1)).squeeze().tolist()
+        if not isinstance(ind1, int) or not isinstance(ind2, int):
+            raise ValueError("Input points are not in mesh.")
+
+        # Create distance
+        dijkstra = vtk.vtkDijkstraGraphGeodesicPath()
+        dijkstra.SetInput(surf_polydata)
+        dijkstra.SetStartVertex(ind1)
+        dijkstra.SetEndVertex(ind2)
+        dijkstra.Update()
+
+        # Get the path
+        path = []
+        output = dijkstra.GetOutput()
+        for ind in range(output.GetNumberOfPoints()):
+            path.append(output.GetPoint(ind))
+        path = numpy.asarray(path)
+
+        return path
+
     def labelize(self, shape, shift=0):
         """ Compute a label image of the TriSurface.
 
@@ -208,6 +253,7 @@ class TriSurface(object):
         """
         # Import here since vtk is not required by the package
         import vtk
+        import vtk.util.numpy_support
 
         # Construct the mesh grid from shape
         nx, ny, nz = shape
