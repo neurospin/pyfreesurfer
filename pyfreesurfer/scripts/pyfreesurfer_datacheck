@@ -35,7 +35,7 @@ the expected number of generated files.
 python $HOME/git/pyfreesurfer/pyfreesurfer/scripts/pyfreesurfer_datacheck \
     -v 2 \
     -d /neurospin/senior/nsap/data/V4/freesurfer \
-    -r '[a-z]{2}\d{6}' \
+    -r 'sub-[a-zA-Z0-9]{*}' \
     -c 30 \
     -q 66
 """

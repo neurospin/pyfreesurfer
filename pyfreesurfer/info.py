@@ -22,7 +22,7 @@ DEFAULT_WORKBENCH_PATH = "/usr/bin"
 DEFAULT_TEMPLATE_SYM_PATH = "/i2bm/local/freesurfer/subjects/fsaverage_sym"
 
 # Define FreeSurfer supported version
-FREESURFER_RELEASE = "5.3.0"
+FREESURFER_RELEASE = ["5.3.0", "6.0.0"]
 
 # Expected by setup.py: the status of the project
 CLASSIFIERS = ["Development Status :: 5 - Production/Stable",
@@ -55,15 +55,11 @@ SUMMARY = """
       statistics.
     * pyfreesurfer_textures: build texture arrays aligned across subjects.
 """
-long_description = """
-============
-pyFreeSurfer
-============
-
-Python wrappers for FreeSurfer: wrap the FreeSurfer software and simplify
-scripting calls. Such calls can be performed through the use of a
-dedicated function of the package.
-"""
+long_description = (
+    "pyFreeSurfer\n\n"
+    "Python wrappers for FreeSurfer: wrap the FreeSurfer software and "
+    "simplify scripting calls. Such calls can be performed through the use "
+    "of a dedicated function of the package.\n")
 
 # Main setup parameters
 NAME = "pyFreeSurfer"
@@ -92,14 +88,19 @@ EXTRA_REQUIRES = {}
 SCRIPTS = [
     "pyfreesurfer/scripts/pyfreesurfer_conversion",
     "pyfreesurfer/scripts/pyfreesurfer_datacheck",
+    "pyfreesurfer/scripts/pyfreesurfer_euler",
     "pyfreesurfer/scripts/pyfreesurfer_fmri",
     "pyfreesurfer/scripts/pyfreesurfer_hcp",
+    "pyfreesurfer/scripts/pyfreesurfer_localgi",
     "pyfreesurfer/scripts/pyfreesurfer_qualitycheck",
     "pyfreesurfer/scripts/pyfreesurfer_reconall",
     "pyfreesurfer/scripts/pyfreesurfer_reconall_custom_wm_mask",
     "pyfreesurfer/scripts/pyfreesurfer_reconall_longitudinal",
+    "pyfreesurfer/scripts/pyfreesurfer_report_reconall",
+    "pyfreesurfer/scripts/pyfreesurfer_statcheck",
     "pyfreesurfer/scripts/pyfreesurfer_stats",
     "pyfreesurfer/scripts/pyfreesurfer_textures",
     "pyfreesurfer/scripts/pyfreesurfer_tracall",
-    "pyfreesurfer/scripts/pyfreesurfer_tracall_longitudinal"
+    "pyfreesurfer/scripts/pyfreesurfer_tracall_longitudinal",
+    "pyfreesurfer/scripts/pyfreesurfer_tracall_stats"
 ]

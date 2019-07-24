@@ -99,7 +99,7 @@ def recon_all(fsdir, anatfile, sid, reconstruction_stage="all", resume=False,
 
     # Call FreeSurfer segmentation
     cmd = ["recon-all", "-{0}".format(reconstruction_stage), "-subjid", sid,
-           "-i", anatfile, "-sd", fsdir]
+           "-i", anatfile, "-sd", fsdir, "-noappend", "-no-isrunning"]
     if t2file is not None:
         cmd.extend(["-T2", t2file, "-T2pial"])
     if flairfile is not None:
@@ -253,3 +253,44 @@ def recon_all_longitudinal(outdir, subject_id, subjects_dirs, timepoints=None,
         subject_long_ids += ["%s.long.%s" % (subj_tp_id, subject_template_id)]
 
     return subject_template_id, subject_long_ids
+
+
+def recon_all_localgi(outdir, subject_id, subjects_dir,
+                      fsconfig=DEFAULT_FREESURFER_PATH):
+    """
+    Computes local measurements of pial-surface gyrification at thousands of
+    points over the cortical surface.
+
+    Parameters
+    ----------
+    outdir: str
+        Directory where to output. Created if not already existing.
+    subject_id: str
+        Identifier of subject.
+    subjects_dir: str
+        The FreeSurfer SUBJECTS_DIR.
+    fsconfig: str, default <pyfreesurfer.DEFAULT_FREESURFER_PATH>
+        The FreeSurfer configuration batch.
+
+    Return
+    ------
+    subject_dir: str
+        the FreeSurfer results for the subject.
+    """
+    # Check input parameters
+    subject_dir = os.path.join(subjects_dir, subject_id)
+    if not os.path.isdir(subject_dir):
+        raise ValueError("'{0}' FreeSurfer subject directory does not "
+                         "exists.".format(subject_dir))
+
+    # If <outdir> does not exist, create it
+    # if not os.path.isdir(outdir):
+    #    os.mkdir(outdir)
+
+    # Call FreeSurfer local gyrification
+    cmd = ["recon-all", "-localGI", "-subjid", subject_id, "-sd", subjects_dir,
+           "-no-isrunning"]
+    recon = FSWrapper(cmd, shfile=fsconfig, env=os.environ)
+    recon()
+
+    return subject_dir

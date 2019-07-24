@@ -105,10 +105,12 @@ class FreeSurferReconAll(unittest.TestCase):
             cenv = {"SUBJECTS_DIR": os.environ["SUBJECTS_DIR"]}
         self.assertEqual([
             mock.call(["which", "recon-all"], env=cenv, stderr=-1, stdout=-1),
-            mock.call(["recon-all", "-all", "-subjid", self.kwargs["sid"],
-                       "-i", self.kwargs["anatfile"], "-sd",
-                       self.kwargs["fsdir"], "-T2", self.kwargs["t2file"],
-                       "-T2pial"], env=cenv, stderr=-1, stdout=-1)],
+            mock.call([
+                "recon-all", "-all", "-subjid", self.kwargs["sid"],
+                "-i", self.kwargs["anatfile"], "-sd",
+                self.kwargs["fsdir"], "-noappend", "-no-isrunning",
+                "-T2", self.kwargs["t2file"], "-T2pial"],
+                env=cenv, stderr=-1, stdout=-1)],
             self.mock_popen.call_args_list)
         self.assertEqual(len(self.mock_env.call_args_list), 1)
         self.assertEqual(subjfsdir, os.path.join(self.kwargs["fsdir"],

@@ -135,7 +135,7 @@ def midgray_surface(
         fsdir,
         sid,
         fsconfig=DEFAULT_FREESURFER_PATH):
-    """ Create a mid-thickness gray surface.
+    """ Create a mid-thickness gray/white surfaces.
 
     Binding over the FreeSurfer's 'mris_expand' command.
 
@@ -156,6 +156,8 @@ def midgray_surface(
     -------
     midgray_file: str
         the mid-thickness gray surface.
+    mirror_midgray_file: str
+        the mirror mid-thickness white surface.
     """
     # Check input parameters
     white_file = os.path.join(fsdir, sid, "surf", "{0}.white".format(hemi))
@@ -169,20 +171,93 @@ def midgray_surface(
         raise ValueError("'{0}' is not a valid hemisphere value which must be "
                          "in ['lh', 'rh']".format(hemi))
 
-    # Define FreeSurfer command
-    midgray_file = os.path.join(outdir, "{0}.graymid".format(hemi))
-    cmd = ["mris_expand", "-thickness", white_file, "0.5", midgray_file]
+    # Go through options
+    output_files = []
+    for factor, name in ((0.5, "graymid"), (-0.5, "mirror.graymid")):
 
-    # Execute the FreeSurfer command
-    recon = FSWrapper(cmd, shfile=fsconfig)
-    recon()
+        # Define FreeSurfer command
+        midgray_file = os.path.join(outdir, "{0}.{1}".format(hemi, name))
+        output_files.append(midgray_file)
+        cmd = ["mris_expand", "-thickness", white_file, str(factor),
+               midgray_file]
 
-    # Create a symlink to the 'surf' FreeSurfer subject folder
-    surf_file = os.path.join(fsdir, sid, "surf", "{0}.graymid".format(hemi))
-    if not os.path.islink(surf_file):
-        os.symlink(midgray_file, surf_file)
+        # Execute the FreeSurfer command
+        recon = FSWrapper(cmd, shfile=fsconfig)
+        recon()
 
-    return midgray_file
+        # Create a symlink to the 'surf' FreeSurfer subject folder
+        surf_file = os.path.join(fsdir, sid, "surf", "{0}.{1}".format(
+            hemi, name))
+        if not os.path.islink(surf_file):
+            os.symlink(midgray_file, surf_file)
+
+    return output_files
+
+
+def measure_smoothing(
+        measure,
+        fsdir,
+        sid,
+        outdir,
+        fwhm,
+        fsconfig=DEFAULT_FREESURFER_PATH):
+    """ Smooth a measure in the ico7/fsaverge subject space.
+
+    Parameters
+    ----------
+    measure: str
+        the measure name to be smoothed.
+    sid: str (mandatory)
+        FreeSurfer subject identifier.
+    fsdir: str (mandatory)
+        FreeSurfer subjects directory 'SUBJECTS_DIR'.
+    fwhm: float
+        the smoothing factor.
+    outdir: str
+        the destination folder.
+
+    Returns
+    -------
+    resampled_files: list of str
+        the resampled measure left/right hemisphere files.
+    smoothed_files: list of str
+        the smoothed measure left/right hemisphere files.
+    """
+    # Need fsaverage symlink
+    fsaverage_dir = os.path.join(
+        os.path.dirname(fsconfig), "subjects", "fsaverage")
+    fsaverage_local_dir = os.path.join(fsdir, "fsaverage")
+    if not os.path.islink(fsaverage_local_dir):
+        os.symlink(fsaverage_dir, fsaverage_local_dir)
+
+    # Go through each hemisphere
+    resampled_files = []
+    smoothed_files = []
+    for hemi in ("lh", "rh"):
+
+        # Convert measure
+        resampled_measure_file = os.path.join(
+            outdir,
+            "{0}.{1}.fsaverage.mgz".format(hemi, measure))
+        cmd = ["mris_preproc", "--s", sid, "--hemi", hemi, "--meas", measure,
+               "--target", "fsaverage", "--out", resampled_measure_file,
+               "--SUBJECTS_DIR", fsdir]
+        recon = FSWrapper(cmd, shfile=fsconfig)
+        recon()
+        resampled_files.append(resampled_measure_file)
+
+        # Smooth measure
+        smoothed_measure_file = os.path.join(
+            outdir,
+            "{0}.{1}.fwhm{2}.fsaverage.mgz".format(hemi, measure, fwhm))
+        cmd = ["mri_surf2surf", "--prune", "--s", "fsaverage", "--hemi", hemi,
+               "--fwhm", str(fwhm), "--sval", resampled_measure_file,
+               "--tval", smoothed_measure_file, "--cortex", "--sd", fsdir]
+        recon = FSWrapper(cmd, shfile=fsconfig)
+        recon()
+        smoothed_files.append(smoothed_measure_file)
+
+    return resampled_files, smoothed_files
 
 
 def mri_surf2surf(

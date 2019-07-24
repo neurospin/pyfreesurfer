@@ -94,20 +94,25 @@ class FreeSurferAparc2Table(unittest.TestCase):
         # Test execution
         statfiles = aparcstats2table(**self.kwargs)
         fsoutdir = os.path.join(self.kwargs["outdir"], "stats")
-        expected_statfiles = []
+        expected_statfiles_1 = []
+        expected_statfiles_2 = []
         for hemi in ["lh", "rh"]:
             for meas in ["area", "volume", "thickness", "thicknessstd",
                          "meancurv", "gauscurv", "foldind", "curvind"]:
-                expected_statfiles.append(os.path.join(
+                expected_statfiles_1.append(os.path.join(
                     fsoutdir, "aparc_stats_{0}_{1}.csv".format(hemi, meas)))
+                expected_statfiles_2.append(os.path.join(
+                    fsoutdir, "aparc.2009s_stats_{0}_{1}.csv".format(
+                        hemi, meas)))
         self.assertEqual([
             mock.call(self.kwargs["fsdir"]),
             mock.call(self.kwargs["outdir"]),
             mock.call(fsoutdir)],
             mock_isdir.call_args_list)
-        self.assertEqual(len(self.mock_popen.call_args_list), 32)
-        self.assertEqual(len(self.mock_env.call_args_list), 16)
-        self.assertEqual(statfiles, expected_statfiles)
+        self.assertEqual(len(self.mock_popen.call_args_list), 64)
+        self.assertEqual(len(self.mock_env.call_args_list), 32)
+        self.assertEqual(
+            statfiles, expected_statfiles_1 + expected_statfiles_2)
 
 
 class FreeSurferAseg2Table(unittest.TestCase):

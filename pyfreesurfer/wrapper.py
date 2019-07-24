@@ -169,7 +169,7 @@ class FSWrapper(object):
                     raise ValueError(message)
                 else:
                     self.version = match_object[0]
-                    if self.version != FREESURFER_RELEASE:
+                    if self.version not in FREESURFER_RELEASE:
                         message = ("Installed '{0}' version of FreeSurfer "
                                    "not tested. Currently supported version "
                                    "is '{1}'.".format(self.version,

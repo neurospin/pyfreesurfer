@@ -16,6 +16,7 @@ Modules that provides surface manipulation tools.
 import copy
 import numpy
 from nibabel import freesurfer
+from nibabel.gifti import giftiio
 
 
 class TriSurface(object):
@@ -52,13 +53,15 @@ class TriSurface(object):
         self.metadata = metadata
         self.inflated_vertices = inflated_vertices
 
-    def save(self, out_file):
+    def save(self, out_file, gifti=False):
         """ Export a mesh in the FreeSurfer format.
 
         Parameters
         ----------
         out_file: str (mandatory)
             the location where the mesh will be written.
+        gifti: bool, default False
+            if set save the result in Gifti format.
         """
         freesurfer.write_geometry(out_file, self.vertices, self.triangles)
         if self.inflated_vertices is not None:
@@ -135,7 +138,8 @@ class TriSurface(object):
 
         # Write the polydata
         writer = vtk.vtkPolyDataWriter()
-        writer.SetDataModeToAscii()
+        # writer.SetDataModeToAscii()
+        writer.SetFileTypeToASCII()
         writer.SetFileName(outfile)
         if vtk.VTK_MAJOR_VERSION <= 5:
             writer.SetInput(polydata)

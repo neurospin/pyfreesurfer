@@ -138,7 +138,7 @@ for path in statfiles:
     if verbose > 0:
         print("[info] Loading '{0}'...".format(path))
     df = pandas.read_csv(path, sep=",")
-    name = os.path.basename(path).split(".")[0]
+    name = os.path.basename(path).rsplit(".", 1)[0]
     features_snaps.append(
         sort_features(df.values[:, 1:], inputs["outdir"], name,
                       header=df.columns.values[1:], verbose=verbose))

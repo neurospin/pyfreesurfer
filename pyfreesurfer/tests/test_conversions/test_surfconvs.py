@@ -220,7 +220,7 @@ class FreeSurferMidgraySurface(unittest.TestCase):
         mock_isdir.side_effect = [True, False]
 
         # Test execution
-        midgray_file = midgray_surface(**self.kwargs)
+        midgray_file, mirror_midgray_file = midgray_surface(**self.kwargs)
         white_file = os.path.join(
             self.kwargs["fsdir"], self.kwargs["sid"], "surf",
             "{0}.white".format(self.kwargs["hemi"]))
@@ -232,9 +232,14 @@ class FreeSurferMidgraySurface(unittest.TestCase):
                       stdout=-1),
             mock.call(["mris_expand", "-thickness", white_file, "0.5",
                       midgray_file],
+                      env=cenv, stderr=-1, stdout=-1),
+            mock.call(["which", "mris_expand"], env=cenv, stderr=-1,
+                      stdout=-1),
+            mock.call(["mris_expand", "-thickness", white_file, "-0.5",
+                      mirror_midgray_file],
                       env=cenv, stderr=-1, stdout=-1)],
             self.mock_popen.call_args_list)
-        self.assertEqual(len(self.mock_env.call_args_list), 1)
+        self.assertEqual(len(self.mock_env.call_args_list), 2)
 
 
 class FreeSurferMRISurf2Surf(unittest.TestCase):

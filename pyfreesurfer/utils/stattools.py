@@ -217,7 +217,10 @@ def population_summary(statsdir, sid=None):
     for fpath in stats:
 
         # Detect file type
-        basename = os.path.basename(fpath).split(".")[0]
+        basename = os.path.basename(fpath)
+        if basename.startswith("aparc.2009s"):
+            continue
+        basename = basename.split(".")[0]
         if basename.startswith("aseg"):
             stype, _, sname = basename.split("_")
             hemi = "aseg"
@@ -255,7 +258,7 @@ def population_summary(statsdir, sid=None):
 
 def aparcstats2table(fsdir, outdir, fsconfig=DEFAULT_FREESURFER_PATH):
     """ Generate text/ascii tables of freesurfer parcellation stats data
-    '?h.aparc.stats'.
+    '?h.aparc.stats' for both templates (Desikan & Destrieux).
 
     This can then be easily imported into a spreadsheet and/or stats program.
 
@@ -298,7 +301,7 @@ def aparcstats2table(fsdir, outdir, fsconfig=DEFAULT_FREESURFER_PATH):
     if not os.path.isdir(fsoutdir):
         os.mkdir(fsoutdir)
 
-    # Call freesurfer
+    # Call freesurfer: Desikan template
     for hemi in ["lh", "rh"]:
         for meas in ["area", "volume", "thickness", "thicknessstd",
                      "meancurv", "gauscurv", "foldind", "curvind"]:
@@ -309,6 +312,22 @@ def aparcstats2table(fsdir, outdir, fsconfig=DEFAULT_FREESURFER_PATH):
             cmd = ["aparcstats2table", "--subjects"] + subjects + [
                 "--hemi", hemi, "--meas", meas, "--tablefile", statfile,
                 "--delimiter", "comma", "--parcid-only"]
+
+            recon = FSWrapper(cmd, shfile=fsconfig)
+            recon()
+
+    # Call freesurfer: Destrieux template
+    for hemi in ["lh", "rh"]:
+        for meas in ["area", "volume", "thickness", "thicknessstd",
+                     "meancurv", "gauscurv", "foldind", "curvind"]:
+
+            statfile = os.path.join(
+                fsoutdir, "aparc.2009s_stats_{0}_{1}.csv".format(hemi, meas))
+            statfiles.append(statfile)
+            cmd = ["aparcstats2table", "--subjects"] + subjects + [
+                "--parc", "aparc.a2009s", "--hemi", hemi, "--meas", meas,
+                "--tablefile", statfile, "--delimiter", "comma",
+                "--parcid-only"]
 
             recon = FSWrapper(cmd, shfile=fsconfig)
             recon()

@@ -45,9 +45,11 @@ DOC = """
 Freesurfer textures
 ~~~~~~~~~~~~~~~~~~~
 
-Generate text/ascii tables of freesurfer 'sulc' and 'curv' textures data. This
-can then be easily imported into a spreadsheet and/or stats program. Note that
-all the subject texture vertices need to be resampled in a common space.
+Generate text/ascii tables of freesurfer 'thikness', 'sulc' and 'curv' textures
+data.
+This can then be easily imported into a spreadsheet and/or stats program.
+Note that all the subject texture vertices need to be resampled in a common
+space.
 
 The statistics are generated in a 'textures' sub folder of the FreeSurfer
 processing home directory.

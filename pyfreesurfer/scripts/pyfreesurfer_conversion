@@ -28,7 +28,8 @@ try:
                      names=["mri_convert"])
     bredala.register("pyfreesurfer.conversions.surfconvs",
                      names=["resample_cortical_surface", "surf_convert",
-                            "midgray_surface", "interhemi_surfreg"])
+                            "midgray_surface", "interhemi_surfreg",
+                            "measure_smoothing"])
     bredala.register("pyfreesurfer.utils.regtools",
                      names=["conformed_to_native_space"])
 except:
@@ -44,6 +45,7 @@ from pyfreesurfer.conversions.surfconvs import surf_convert
 from pyfreesurfer.conversions.surfconvs import resample_cortical_surface
 from pyfreesurfer.conversions.surfconvs import midgray_surface
 from pyfreesurfer.conversions.surfconvs import interhemi_surfreg
+from pyfreesurfer.conversions.surfconvs import measure_smoothing
 from pyfreesurfer.utils.regtools import conformed_to_native_space
 
 
@@ -71,8 +73,8 @@ Steps:
 
 3- Create the ribbon right and left hemispheres masks.
 
-4- Create the mid thickness right and left hemispheres surfaces.
-   [optional 10-30 min]
+4- Create the mid thickness white and pial, right and left surfaces.
+   (optional 10-30 min)
 
 5- Surface conversions: resample the white or pial FreeSurfer
    surfaces at different resolutions (impacts the number of vertex)
@@ -83,6 +85,8 @@ Steps:
 
 6- Align the interhemispheric surface vertices by aplying an existing atlas.
    [optional 1-2 hours]
+
+7- Smooth the thickness texture with a fwhm of 10 (optional)
 
 Command:
 
@@ -156,7 +160,11 @@ def get_cmd_line_args():
     parser.add_argument(
         "-m", "--midgray",
         action="store_true",
-        help=("if activated, compute the mid thickness surfaces."))
+        help=("if activated, compute the mid gray thickness surfaces."))
+    parser.add_argument(
+        "-f", "--smooth",
+        action="store_true",
+        help=("if activated, smooth the thickness texture with a fwhm of 10."))
     parser.add_argument(
         "-r", "--surfreg",
         choices=["lh", "rh", "lhrh"],
@@ -200,20 +208,22 @@ subjdir = os.path.join(args.fsdir, subjectid)
 convertdir = os.path.join(args.outdir, args.subjectid, "convert")
 imagedir = os.path.join(convertdir, "images")
 surfacedir = os.path.join(convertdir, "surfaces")
+texturedir = os.path.join(convertdir, "textures")
 addmidgray = args.midgray
 surfreg = args.surfreg
+smooth = args.smooth
 params = locals()
 inputs = dict([(name, params[name])
                for name in ("subjectid", "subjdir", "convertdir", "imagedir",
                             "surfacedir", "addmidgray", "surfreg",
-                            "templatesym")])
+                            "templatesym", "smooth", "texturedir")])
 outputs = None
 if not os.path.isdir(subjdir):
     raise ValueError(
         "'{0}' is not a FreeSurfer subject folder.".format(subjdir))
 if args.erase and os.path.isdir(convertdir):
     shutil.rmtree(convertdir)
-for directory in (convertdir, imagedir, surfacedir):
+for directory in (convertdir, imagedir, surfacedir, texturedir):
     if not os.path.isdir(directory):
         os.makedirs(directory)
 
@@ -347,6 +357,23 @@ if surfreg is not None:
 
 
 """
+Step 7: Smooth the thickness texture with a fwhm of 10.
+Note that we need an actual real subject and use fsaverage that is the same as
+ico7.
+"""
+if smooth:
+    resampled_files, smoothed_files = measure_smoothing(
+        measure="thickness",
+        fsdir=args.fsdir,
+        sid=subjectid,
+        outdir=texturedir,
+        fwhm=10,
+        fsconfig=freesurfer_config)
+else:
+    resampled_files, smoothed_files = (None, None)
+
+
+"""
 Update the outputs and save them and the inputs in a 'logs' directory.
 """
 logdir = os.path.join(convertdir, "logs")
@@ -355,7 +382,8 @@ if not os.path.isdir(logdir):
 params = locals()
 outputs = dict([(name, params[name])
                for name in ("niftifiles", "trffile", "surfaces",
-                            "annotations", "xhemidirs", "spherefiles")])
+                            "annotations", "xhemidirs", "spherefiles",
+                            "resampled_files", "smoothed_files")])
 for name, final_struct in [("inputs", inputs), ("outputs", outputs),
                            ("runtime", runtime)]:
     log_file = os.path.join(logdir, "{0}.json".format(name))
