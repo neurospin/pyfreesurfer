@@ -14,7 +14,6 @@ import shutil
 import argparse
 from datetime import datetime
 import json
-import numpy
 from pprint import pprint
 import textwrap
 from argparse import RawTextHelpFormatter
@@ -182,6 +181,14 @@ def get_cmd_line_args():
         "-v", "--verbose",
         type=int, choices=[0, 1, 2], default=0,
         help="increase the verbosity level: 0 silent, [1, 2] verbose.")
+    parser.add_argument(
+        "-S", "--sliceorder", type=str, default=None,
+        help="Turn on slice timing correction (STC) with the given slice order")
+    parser.add_argument(
+        "-D", "--refeventdur", type=float, default=1.,
+        help=("Duration (sec) of reference event for scaling "
+              "(e.g. mean of the events durations)")
+    )
 
     # Create a dict of arguments to pass to the 'main' function
     args = parser.parse_args()
@@ -221,7 +228,10 @@ if verbose > 0:
 Copy/rename the functional volumes in order to be compliant with the FreeSurfer
 ontology.
 """
-sessionid_file = os.path.join(inputs["outdir"], inputs["subjectid"], "sessid")
+project_dir = os.path.join(inputs["outdir"], inputs["subjectid"])
+sessionid_file = os.path.join(project_dir, "sessid")
+if not os.path.isdir(project_dir):
+    os.makedirs(project_dir)
 if os.path.isfile(sessionid_file):
     os.remove(sessionid_file)
 for session_cnt, (session_paths, session_paradigms) in enumerate(
@@ -234,7 +244,7 @@ for session_cnt, (session_paths, session_paradigms) in enumerate(
         extensions = os.path.basename(run_path).split(".")[1:]
         extension = "." + ".".join(extensions)
         runid = "{0:03d}".format(run_cnt + 1)
-        subjectdir = os.path.join(inputs["outdir"], inputs["subjectid"],
+        subjectdir = os.path.join(project_dir,
                                   sessionid, inputs["acquisition"], runid)
         if not os.path.isdir(subjectdir):
             os.makedirs(subjectdir)
@@ -242,7 +252,7 @@ for session_cnt, (session_paths, session_paradigms) in enumerate(
         shutil.copy2(run_path, funcfile)
         parafile = os.path.join(subjectdir, "odd.even.par")
         shutil.copy2(run_paradigm, parafile)
-    subjectname_file = os.path.join(inputs["outdir"], inputs["subjectid"],
+    subjectname_file = os.path.join(project_dir,
                                     sessionid, "subjectname")
     with open(subjectname_file, "wt") as open_file:
         open_file.write(inputs["subjectid"])
@@ -257,11 +267,11 @@ lh_fsaverage, rh_fsaverage, sub_fsaverage, bbr_sum, mc_plots = mkpreproc_sess(
     fsdir=inputs["fsdir"],
     fsd=inputs["acquisition"],
     perrun=True,
-    persession=False, 
-    fwhm=5.,
+    persession=False,
+    fwhm=5,
     update=not inputs["force"],
     force=inputs["force"],
-    sliceorder=None,
+    sliceorder=inputs["sliceorder"],
     surface="lhrh",
     mni3052mm=True,
     mni3051mm=False,
@@ -281,19 +291,20 @@ First level configuration
 refeventdur parameter has no influence on the design matrix. It controls a
 scaling factor so that the beta value (regression coef) will equal to the
 height of the hemodynamic response when viewed in the raw data. This sounds
-like it should be simple but it is actually quite tricky. The bottom line is 
-that it is only a scale factor, so it does not affect p-values or 
+like it should be simple but it is actually quite tricky. The bottom line is
+that it is only a scale factor, so it does not affect p-values or
 t-values. Can be set to the mean of the task event durations.
 """
 analysis_names = mkmodel_sess(
     outdir=os.path.join(inputs["outdir"], inputs["subjectid"]),
     tr=inputs["tr"],
     contrasts_file=inputs["contrasts"],
-    funcstem=os.path.basename(sub_fsaverage[0]),
+    funcstem=None,
     fsd=inputs["acquisition"],
     perrun=True,
     persession=False,
-    #fwhm=5.,
+    fwhm=5,
+    sliceorder=inputs["sliceorder"],
     mni3052mm=True,
     mni3051mm=False,
     blocked_design=True,
@@ -305,7 +316,7 @@ analysis_names = mkmodel_sess(
     ngammaderiv=None,
     fir=None,
     nconditions=inputs["nconditions"],
-    refeventdur=1.,
+    refeventdur=inputs["refeventdur"],
     polyfit=2,
     mcextreg=True,
     nuisreg=None,
